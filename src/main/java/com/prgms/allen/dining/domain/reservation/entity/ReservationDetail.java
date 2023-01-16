@@ -25,4 +25,23 @@ public class ReservationDetail {
 
 	protected ReservationDetail() {
 	}
+
+	public ReservationDetail(LocalDate visitDate, LocalTime visitTime, int visitorCount, String consumerMemo) {
+		this.visitDate = visitDate;
+		this.visitTime = visitTime;
+		this.visitorCount = visitorCount;
+		this.consumerMemo = consumerMemo;
+	}
+
+	public LocalDate getVisitDate() {
+		return visitDate;
+	}
+
+	public LocalTime getVisitTime() {
+		return visitTime;
+	}
+
+	public int getVisitorCount() {
+		return visitorCount;
+	}
 }

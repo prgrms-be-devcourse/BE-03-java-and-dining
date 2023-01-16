@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -41,5 +43,58 @@ public class Reservation extends BaseEntity {
 	private ReservationDetail detail;
 
 	protected Reservation() {
+	}
+
+	public Reservation(Long id, Customer customer, Restaurant restaurant, ReservationStatus status,
+		ReservationDetail detail) {
+		this.id = id;
+		this.customer = customer;
+		this.restaurant = restaurant;
+		this.status = status;
+		this.detail = detail;
+	}
+
+	public Reservation(Customer customer, Restaurant restaurant, ReservationStatus status, ReservationDetail detail) {
+		this(null, customer, restaurant, status, detail);
+	}
+
+	public long getRestaurantId() {
+		return restaurant.getId();
+	}
+
+	public LocalDateTime getVisitDateTime() {
+		return LocalDateTime.of(detail.getVisitDate(), detail.getVisitTime());
+	}
+
+	public int getVisitorCount() {
+		return detail.getVisitorCount();
+	}
+
+	public String getCustomerPhone() {
+		return customer.getPhone();
+	}
+
+	public String getCustomerName() {
+		return customer.getName();
+	}
+
+	public ReservationStatus getStatus() {
+		return status;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public ReservationDetail getDetail() {
+		return detail;
 	}
 }

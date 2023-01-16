@@ -86,4 +86,11 @@ public class Customer {
 		Assert.notNull(customerType, "customerType must be not null.");
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
 }
