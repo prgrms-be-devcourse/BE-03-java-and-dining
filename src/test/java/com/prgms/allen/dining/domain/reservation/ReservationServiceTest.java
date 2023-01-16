@@ -46,7 +46,7 @@ class ReservationServiceTest {
 	}
 
 	@ParameterizedTest
-	@CsvSource({"PENDING", "CONFIRMED", "VISIT", "CANCEL", "NO_SHOW"})
+	@CsvSource({"PENDING", "CONFIRMED", "VISITED", "CANCELLED", "NO_SHOW"})
 	@DisplayName("식당의 특정 상태의 예약들을 조회할 수 있다.")
 	public void getReservationsTest(String status) {
 		// given
