@@ -24,7 +24,7 @@ class CustomerTest {
 		public void fail_by_length(String invalidNickname) {
 			// when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(invalidNickname, VALID_NAME, VALID_PHONE, VALID_PASSWORD, CustomerType.CUSTOMER)
+				new Customer(invalidNickname, VALID_NAME, VALID_PHONE, VALID_PASSWORD, CustomerType.CONSUMER)
 			);
 		}
 
@@ -36,7 +36,7 @@ class CustomerTest {
 
 			// when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(invalidNickname, VALID_NAME, VALID_PHONE, VALID_PASSWORD, CustomerType.CUSTOMER)
+				new Customer(invalidNickname, VALID_NAME, VALID_PHONE, VALID_PASSWORD, CustomerType.CONSUMER)
 			);
 		}
 	}
@@ -51,7 +51,7 @@ class CustomerTest {
 
 			// when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(VALID_NICKNAME, invalid, VALID_PHONE, VALID_PASSWORD, CustomerType.CUSTOMER)
+				new Customer(VALID_NICKNAME, invalid, VALID_PHONE, VALID_PASSWORD, CustomerType.CONSUMER)
 			);
 		}
 
@@ -62,7 +62,7 @@ class CustomerTest {
 
 			//when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(VALID_NICKNAME, invalid, VALID_PHONE, VALID_PASSWORD, CustomerType.CUSTOMER)
+				new Customer(VALID_NICKNAME, invalid, VALID_PHONE, VALID_PASSWORD, CustomerType.CONSUMER)
 			);
 		}
 	}
@@ -77,7 +77,7 @@ class CustomerTest {
 
 			// when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(VALID_NICKNAME, VALID_NAME, VALID_PHONE, invalid, CustomerType.CUSTOMER)
+				new Customer(VALID_NICKNAME, VALID_NAME, VALID_PHONE, invalid, CustomerType.CONSUMER)
 			);
 		}
 
@@ -88,7 +88,7 @@ class CustomerTest {
 
 			//when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(VALID_NICKNAME, VALID_NAME, VALID_PHONE, invalid, CustomerType.CUSTOMER)
+				new Customer(VALID_NICKNAME, VALID_NAME, VALID_PHONE, invalid, CustomerType.CONSUMER)
 			);
 		}
 	}
@@ -103,7 +103,7 @@ class CustomerTest {
 
 			//when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(VALID_NICKNAME, VALID_NAME, invalid, VALID_PASSWORD, CustomerType.CUSTOMER)
+				new Customer(VALID_NICKNAME, VALID_NAME, invalid, VALID_PASSWORD, CustomerType.CONSUMER)
 			);
 		}
 	}
