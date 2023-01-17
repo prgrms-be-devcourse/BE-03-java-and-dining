@@ -55,4 +55,17 @@ public class Restaurant {
 
 	protected Restaurant() {
 	}
+
+	public Restaurant(Customer owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+		LocalTime lastOrderTime, String location, String description, String phone) {
+		this.owner = owner;
+		this.foodType = foodType;
+		this.name = name;
+		this.capacity = capacity;
+		this.openTime = openTime;
+		this.lastOrderTime = lastOrderTime;
+		this.location = location;
+		this.description = description;
+		this.phone = phone;
+	}
 }

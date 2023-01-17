@@ -1,6 +1,7 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 import org.assertj.core.api.Assertions;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import com.prgms.allen.dining.domain.customer.entity.Customer;
 import com.prgms.allen.dining.domain.customer.entity.CustomerType;
+import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 class ReservationTest {
@@ -36,7 +38,14 @@ class ReservationTest {
 
 		validRestaurant = new Restaurant(
 			validOwner,
-			"식당"
+			FoodType.CHINESE,
+			"맛있는 식당",
+			30,
+			LocalTime.now(),
+			LocalTime.now(),
+			"서울시 뭐뭐구 뭐뭐동 202",
+			"맛있는 식당입니다.",
+			"01012342345"
 		);
 	}
 
