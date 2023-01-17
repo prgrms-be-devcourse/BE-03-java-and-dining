@@ -9,31 +9,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.prgms.allen.dining.domain.customer.entity.Customer;
-import com.prgms.allen.dining.domain.customer.entity.CustomerType;
+import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 class ReservationTest {
 
-	private Customer validConsumer;
+	private Member validCustomer;
 	private Restaurant validRestaurant;
 
 	@BeforeEach
 	void init() {
-		validConsumer = new Customer(
+		validCustomer = new Member(
 			"consumer123",
 			"소비",
 			"01012342345",
 			"asdfg123!",
-			CustomerType.CUSTOMER
+			MemberType.CUSTOMER
 		);
-		Customer validOwner = new Customer(
+		Member validOwner = new Member(
 			"onwer123",
 			"점주님",
 			"01012342345",
 			"asdfg123!",
-			CustomerType.OWNER
+			MemberType.OWNER
 		);
 
 		validRestaurant = new Restaurant(
@@ -59,7 +59,7 @@ class ReservationTest {
 
 		// when
 		Reservation reservation = new Reservation(
-			validConsumer,
+			validCustomer,
 			validRestaurant,
 			new ReservationDetail(
 				notVisitToday,
@@ -83,7 +83,7 @@ class ReservationTest {
 
 		// when
 		Reservation reservation = new Reservation(
-			validConsumer,
+			validCustomer,
 			validRestaurant,
 			new ReservationDetail(
 				visitToday,

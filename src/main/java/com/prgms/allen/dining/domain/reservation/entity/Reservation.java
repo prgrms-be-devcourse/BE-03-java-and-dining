@@ -60,8 +60,7 @@ public class Reservation extends BaseEntity {
 		this(null, customer, restaurant, status, detail);
 	}
 
-
-	public Reservation(Customer customer, Restaurant restaurant, ReservationDetail detail) {
+	public Reservation(Member customer, Restaurant restaurant, ReservationDetail detail) {
 		validation(customer, restaurant, detail);
 
 		this.customer = customer;
@@ -74,13 +73,13 @@ public class Reservation extends BaseEntity {
 		this.detail = detail;
 	}
 
-	private void validation(Customer customer, Restaurant restaurant, ReservationDetail detail) {
+	private void validation(Member customer, Restaurant restaurant, ReservationDetail detail) {
 		validateCustomer(customer);
 		validateRestaurant(restaurant);
 		validateReservationDetail(detail);
 	}
 
-	private void validateCustomer(Customer customer) {
+	private void validateCustomer(Member customer) {
 		Assert.notNull(customer, "Customer must not be null.");
 	}
 
@@ -90,10 +89,6 @@ public class Reservation extends BaseEntity {
 
 	private void validateReservationDetail(ReservationDetail detail) {
 		Assert.notNull(detail, "ReservationDetail must not be null.");
-	}
-
-	public ReservationStatus getStatus() {
-		return status;
 	}
 
 	public Long getId() {

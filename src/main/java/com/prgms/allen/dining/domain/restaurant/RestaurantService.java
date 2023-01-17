@@ -1,7 +1,7 @@
 package com.prgms.allen.dining.domain.restaurant;
 
-import java.util.Optional;
 import java.text.MessageFormat;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,6 @@ public class RestaurantService {
 	public Optional<Restaurant> findById(Long restaurantId) {
 		return restaurantRepository.findById(restaurantId);
 	}
-}
 
 	public void validateRestaurantExists(long restaurantId) {
 		if (!restaurantRepository.existsById(restaurantId)) {

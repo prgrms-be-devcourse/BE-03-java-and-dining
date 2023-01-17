@@ -6,15 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.prgms.allen.dining.domain.customer.CustomerService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateRequest;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.global.error.ErrorCode;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
-
 
 @Service
 @Transactional(readOnly = true)
@@ -22,16 +21,13 @@ public class ReservationService {
 
 	private final ReservationRepository reservationRepository;
 	private final RestaurantService restaurantService;
-	private final CustomerService customerService;
 
 	public ReservationService(
 		ReservationRepository reservationRepository,
-		RestaurantService restaurantService,
-		CustomerService customerService
+		RestaurantService restaurantService
 	) {
 		this.reservationRepository = reservationRepository;
 		this.restaurantService = restaurantService;
-		this.customerService = customerService;
 	}
 
 	/**
@@ -44,7 +40,8 @@ public class ReservationService {
 
 		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId())
 			.orElseThrow(() -> new NotFoundResourceException(
-				String.format("Not found restaurantId: %d", createRequest.restaurantId())
+					ErrorCode.NOT_FOUND_RESOURCE,
+					String.format("Not found restaurantId: %d", createRequest.restaurantId())
 				)
 			);
 

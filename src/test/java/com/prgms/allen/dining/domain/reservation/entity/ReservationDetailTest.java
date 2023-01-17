@@ -45,7 +45,7 @@ class ReservationDetailTest {
 				.isEqualTo(actualVisitTime);
 			Assertions.assertThat(reservationDetail.getVisitorCount())
 				.isEqualTo(VALID_VISITOR_COUNT);
-			Assertions.assertThat(reservationDetail.getMemo())
+			Assertions.assertThat(reservationDetail.getCustomerMemo())
 				.isEqualTo(VALID_MEMO);
 		}
 
