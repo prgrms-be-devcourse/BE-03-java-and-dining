@@ -29,7 +29,7 @@ public class RestaurantApi {
 		@RequestParam ReservationStatus reservationStatus,
 		Pageable pageable
 	) {
-		return ResponseEntity.ok(reservationService.getOwnerReservations(
+		return ResponseEntity.ok(reservationService.getRestaurantReservations(
 			restaurantId,
 			reservationStatus,
 			pageable
