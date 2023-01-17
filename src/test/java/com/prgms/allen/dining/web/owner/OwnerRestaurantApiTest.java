@@ -24,10 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.prgms.allen.dining.domain.customer.CustomerRepository;
-import com.prgms.allen.dining.domain.customer.dto.CustomerSignupRequest;
-import com.prgms.allen.dining.domain.customer.entity.Customer;
-import com.prgms.allen.dining.domain.customer.entity.CustomerType;
+import com.prgms.allen.dining.domain.member.MemberRepository;
+import com.prgms.allen.dining.domain.member.dto.MemberSignupRequest;
+import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayCreateRequest;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateRequest;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateRequest;
@@ -43,17 +43,16 @@ class OwnerRestaurantApiTest {
 	private MockMvc mockMvc;
 
 	@Autowired
-	private CustomerRepository customerRepository;
+	private MemberRepository memberRepository;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
-	private static Customer owner;
+	private static Member owner;
 
 	@Test
 	@DisplayName("점주는 식당을 하나 등록할 수 있다.")
 	void testSave() throws Exception {
 
 		owner = createOwner();
-		System.out.println("오너 아이디" + owner.getId());
 		mockMvc.perform(post("/owner/api/restaurants?ownerId=" + owner.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.registerModule(new JavaTimeModule())
@@ -81,20 +80,20 @@ class OwnerRestaurantApiTest {
 			);
 	}
 
-	private Customer createOwner() {
+	private Member createOwner() {
 		String nickName = "이세상에제일가는짱구";
-		CustomerSignupRequest customerSignupRequest =
-			new CustomerSignupRequest(
+		MemberSignupRequest memberSignupRequest =
+			new MemberSignupRequest(
 				nickName,
 				"짱구",
 				"01011112222",
 				"1q2w3e4r!",
-				CustomerType.OWNER);
+				MemberType.OWNER);
 
-		customerRepository.save(customerSignupRequest.toEntity());
-		return customerRepository.findAll()
+		memberRepository.save(memberSignupRequest.toEntity());
+		return memberRepository.findAll()
 			.stream()
-			.filter(customer -> nickName.equals(customer.getNickname()))
+			.filter(member -> nickName.equals(member.getNickname()))
 			.findAny()
 			.get();
 	}
@@ -108,9 +107,15 @@ class OwnerRestaurantApiTest {
 		);
 
 		return new RestaurantCreateRequest(
-			FoodType.KOREAN, "유명 레스토랑", 30,
-			LocalTime.of(11, 0), LocalTime.of(21, 0),
-			"서울특별시 강남구 어딘가로 123 무슨빌딩 1층", "우리는 유명한 한식당입니다.", "0211112222",
-			menuList, closingDayList);
+			FoodType.KOREAN,
+			"유명 레스토랑",
+			30,
+			LocalTime.of(11, 0),
+			LocalTime.of(21, 0),
+			"서울특별시 강남구 어딘가로 123 무슨빌딩 1층",
+			"우리는 유명한 한식당입니다.",
+			"0211112222",
+			menuList,
+			closingDayList);
 	}
 }

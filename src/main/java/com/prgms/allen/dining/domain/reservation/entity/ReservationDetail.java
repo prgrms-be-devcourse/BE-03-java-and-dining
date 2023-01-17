@@ -1,6 +1,7 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import javax.persistence.Column;
@@ -20,9 +21,32 @@ public class ReservationDetail {
 	private int visitorCount;
 
 	@Lob
-	@Column(name = "consumer_memo")
-	private String consumerMemo;
+	@Column(name = "customer_memo")
+	private String customerMemo;
 
 	protected ReservationDetail() {
+	}
+
+	public ReservationDetail(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
+		this.visitDate = visitDate;
+		this.visitTime = visitTime;
+		this.visitorCount = visitorCount;
+		this.customerMemo = customerMemo;
+	}
+
+	public LocalDate getVisitDate() {
+		return visitDate;
+	}
+
+	public LocalTime getVisitTime() {
+		return visitTime;
+	}
+
+	public int getVisitorCount() {
+		return visitorCount;
+	}
+
+	public LocalDateTime getVisitDateTime() {
+		return LocalDateTime.of(visitDate, visitTime);
 	}
 }

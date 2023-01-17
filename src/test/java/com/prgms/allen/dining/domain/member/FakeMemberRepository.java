@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.customer;
+package com.prgms.allen.dining.domain.member;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,36 +11,36 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import com.prgms.allen.dining.domain.customer.entity.Customer;
-import com.prgms.allen.dining.domain.customer.entity.CustomerType;
+import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 
-public class FakeCustomerRepository implements CustomerRepository {
+public class FakeMemberRepository implements MemberRepository {
 
-	private final List<Customer> customers = new ArrayList<>();
-
-	@Override
-	public List<Customer> findAll() {
-		return customers;
-	}
+	private final List<Member> members = new ArrayList<>();
 
 	@Override
-	public List<Customer> findAll(Sort sort) {
+	public List<Member> findAll() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Page<Customer> findAll(Pageable pageable) {
+	public List<Member> findAll(Sort sort) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<Customer> findAllById(Iterable<Long> longs) {
+	public Page<Member> findAll(Pageable pageable) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<Member> findAllById(Iterable<Long> longs) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public long count() {
-		return customers.size();
+		return members.size();
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public void delete(Customer entity) {
+	public void delete(Member entity) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -59,36 +59,36 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public void deleteAll(Iterable<? extends Customer> entities) {
+	public void deleteAll(Iterable<? extends Member> entities) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void deleteAll() {
-		customers.clear();
+		members.clear();
 	}
 
 	@Override
-	public <S extends Customer> S save(S entity) {
-		Customer customer = new Customer(
+	public <S extends Member> S save(S entity) {
+		Member member = new Member(
 			count() + 1,
 			entity.getNickname(),
 			entity.getName(),
 			entity.getPhone(),
 			entity.getPassword(),
-			entity.getCustomerType()
+			entity.getMemberType()
 		);
-		customers.add(customer);
-		return (S)customer;
+		members.add(member);
+		return (S)member;
 	}
 
 	@Override
-	public <S extends Customer> List<S> saveAll(Iterable<S> entities) {
+	public <S extends Member> List<S> saveAll(Iterable<S> entities) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Optional<Customer> findById(Long aLong) {
+	public Optional<Member> findById(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -103,17 +103,17 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public <S extends Customer> S saveAndFlush(S entity) {
+	public <S extends Member> S saveAndFlush(S entity) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> List<S> saveAllAndFlush(Iterable<S> entities) {
+	public <S extends Member> List<S> saveAllAndFlush(Iterable<S> entities) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void deleteAllInBatch(Iterable<Customer> entities) {
+	public void deleteAllInBatch(Iterable<Member> entities) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -128,64 +128,61 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public Customer getOne(Long aLong) {
+	public Member getOne(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Customer getById(Long aLong) {
-		return customers.stream()
-			.filter(customer -> aLong.equals(customer.getId()))
-			.findAny()
-			.orElseThrow(UnsupportedOperationException::new);
-	}
-
-	@Override
-	public Customer getReferenceById(Long aLong) {
+	public Member getById(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> Optional<S> findOne(Example<S> example) {
+	public Member getReferenceById(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> List<S> findAll(Example<S> example) {
+	public <S extends Member> Optional<S> findOne(Example<S> example) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> List<S> findAll(Example<S> example, Sort sort) {
+	public <S extends Member> List<S> findAll(Example<S> example) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> Page<S> findAll(Example<S> example, Pageable pageable) {
+	public <S extends Member> List<S> findAll(Example<S> example, Sort sort) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> long count(Example<S> example) {
+	public <S extends Member> Page<S> findAll(Example<S> example, Pageable pageable) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> boolean exists(Example<S> example) {
+	public <S extends Member> long count(Example<S> example) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer, R> R findBy(Example<S> example,
+	public <S extends Member> boolean exists(Example<S> example) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <S extends Member, R> R findBy(Example<S> example,
 		Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Optional<Customer> findByIdAndCustomerType(Long id, CustomerType customerType) {
-		return customers.stream()
-			.filter(customer -> id.equals(customer.getId()))
-			.filter(customer -> customerType.equals(customer.getCustomerType()))
+	public Optional<Member> findByIdAndMemberType(Long id, MemberType memberType) {
+		return members.stream()
+			.filter(member -> id.equals(member.getId()))
+			.filter(member -> memberType.equals(member.getMemberType()))
 			.findAny();
 	}
 }

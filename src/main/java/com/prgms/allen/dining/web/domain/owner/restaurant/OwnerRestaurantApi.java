@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.owner;
+package com.prgms.allen.dining.web.domain.owner.restaurant;
 
 import java.net.URI;
 
@@ -14,7 +14,7 @@ import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateRequest;
 
 @RestController
-@RequestMapping("owner/api/restaurants")
+@RequestMapping("/owner/api/restaurants")
 public class OwnerRestaurantApi {
 
 	private final RestaurantService restaurantService;
@@ -23,7 +23,7 @@ public class OwnerRestaurantApi {
 		this.restaurantService = restaurantService;
 	}
 
-	@PostMapping()
+	@PostMapping
 	public ResponseEntity<Void> create(
 		@RequestBody RestaurantCreateRequest restaurantCreateRequest,
 		@RequestParam Long ownerId

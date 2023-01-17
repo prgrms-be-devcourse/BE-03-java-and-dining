@@ -6,7 +6,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.prgms.allen.dining.domain.customer.entity.Customer;
+import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
@@ -42,7 +42,7 @@ public record RestaurantCreateRequest(
 	List<ClosingDayCreateRequest> closingDays
 ) {
 
-	public Restaurant toEntity(Customer owner) {
+	public Restaurant toEntity(Member owner) {
 		List<Menu> menus = menuList.stream()
 			.map(MenuCreateRequest::toEntity)
 			.toList();

@@ -1,7 +1,8 @@
-package com.prgms.allen.dining.domain.restaurant.fake;
+package com.prgms.allen.dining.domain.restaurant;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public class FakeRestaurantRepository implements RestaurantRepository {
@@ -20,7 +20,7 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public List<Restaurant> findAll() {
-		return restaurants;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -70,8 +70,8 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public <S extends Restaurant> S save(S entity) {
-		Restaurant restaurant = new Restaurant(
-			(long)count() + 1,
+		Restaurant newRestaurant = new Restaurant(
+			count() + 1,
 			entity.getOwner(),
 			entity.getFoodType(),
 			entity.getName(),
@@ -84,8 +84,8 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 			entity.getMenu(),
 			entity.getClosingDays()
 		);
-		restaurants.add(restaurant);
-		return (S)restaurant;
+		restaurants.add(newRestaurant);
+		return (S)newRestaurant;
 	}
 
 	@Override
@@ -100,7 +100,9 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public boolean existsById(Long aLong) {
-		throw new UnsupportedOperationException();
+		return restaurants.stream()
+			.anyMatch(restaurant ->
+				Objects.equals(restaurant.getId(), aLong));
 	}
 
 	@Override
@@ -150,7 +152,7 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public <S extends Restaurant> Optional<S> findOne(Example<S> example) {
-		return Optional.empty();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -170,7 +172,7 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public <S extends Restaurant> long count(Example<S> example) {
-		throw new UnsupportedOperationException();
+		return restaurants.size();
 	}
 
 	@Override
@@ -186,7 +188,9 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public boolean existsRestaurantByOwner_Id(Long ownerId) {
-		return restaurants.stream()
-			.filter(restaurant -> ownerId.equals(restaurant.getOwner().getId())).isParallel();
+		return restaurants.stream().anyMatch(restaurant ->
+			ownerId.equals(
+				restaurant.getOwner()
+					.getId()));
 	}
 }

@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import com.prgms.allen.dining.domain.customer.entity.Customer;
-import com.prgms.allen.dining.domain.customer.entity.CustomerType;
+import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 
 class RestaurantTest {
 
@@ -26,19 +26,19 @@ class RestaurantTest {
 	public static final LocalTime VALID_LAST_ORDER_TIME = LocalTime.of(20, 20);
 	public static final FoodType VALID_FOOD_TYPE = FoodType.KOREAN;
 	public static final String VALID_DESCRIPTION = "";
-	public static final Customer owner = new Customer(
+	public static final Member owner = new Member(
 		"nickname",
 		"홍길동",
 		"01022223333",
 		"qwer1234!",
-		CustomerType.OWNER
+		MemberType.OWNER
 	);
-	public static final Customer consumer = new Customer(
+	public static final Member customer = new Member(
 		"nickname",
 		"아버지",
 		"01011112222",
 		"qwer1234!",
-		CustomerType.CUSTOMER
+		MemberType.CUSTOMER
 	);
 
 	@ParameterizedTest
@@ -68,7 +68,7 @@ class RestaurantTest {
 
 		// when & then
 		assertThrows(IllegalArgumentException.class, () ->
-			new Restaurant(consumer,
+			new Restaurant(customer,
 				VALID_FOOD_TYPE,
 				VALID_NAME,
 				VALID_CAPACITY,
@@ -109,7 +109,7 @@ class RestaurantTest {
 
 		// when & then
 		assertThrows(IllegalArgumentException.class, () ->
-			new Restaurant(consumer,
+			new Restaurant(owner,
 				VALID_FOOD_TYPE,
 				VALID_NAME,
 				VALID_CAPACITY,

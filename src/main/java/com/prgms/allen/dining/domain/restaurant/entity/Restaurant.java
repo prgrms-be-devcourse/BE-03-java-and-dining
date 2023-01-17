@@ -19,9 +19,8 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 
 import org.springframework.util.Assert;
-
-import com.prgms.allen.dining.domain.customer.entity.Customer;
-import com.prgms.allen.dining.domain.customer.entity.CustomerType;
+import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 
 @Entity
 public class Restaurant {
@@ -32,8 +31,8 @@ public class Restaurant {
 	private Long id;
 
 	@OneToOne
-	@JoinColumn(name = "customer_id")
-	private Customer owner;
+	@JoinColumn(name = "owner_id")
+	private Member owner;
 
 	@Enumerated(value = EnumType.STRING)
 	@Column(name = "food_type", nullable = false)
@@ -72,14 +71,14 @@ public class Restaurant {
 	protected Restaurant() {
 	}
 
-	public Restaurant(Customer owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+	public Restaurant(Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
 		LocalTime lastOrderTime, String location, String description, String phone, List<Menu> menuList,
 		List<ClosingDay> closingDays) {
 		this(null, owner, foodType, name, capacity, openTime, lastOrderTime, location, description, phone,
 			menuList, closingDays);
 	}
 
-	public Restaurant(Long id, Customer owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+	public Restaurant(Long id, Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
 		LocalTime lastOrderTime, String location, String description, String phone, List<Menu> menuList,
 		List<ClosingDay> closingDays) {
 		validate(owner, name, capacity, phone);
@@ -101,7 +100,7 @@ public class Restaurant {
 		return id;
 	}
 
-	public Customer getOwner() {
+	public Member getOwner() {
 		return owner;
 	}
 
@@ -158,24 +157,24 @@ public class Restaurant {
 		return this.menu.subList(0, 4);
 	}
 
-	public void validate(Customer owner, String name, int capacity, String phone) {
+	public void validate(Member owner, String name, int capacity, String phone) {
 		validateOwnerType(owner);
 		validateName(name);
 		validateCapacity(capacity);
 		validatePhone(phone);
 	}
 
-	private void validateOwnerType(Customer owner) {
-		Assert.isTrue(CustomerType.OWNER.equals(owner.getCustomerType()), "권한이 없습니다.");
+	private void validateOwnerType(Member owner) {
+		Assert.isTrue(MemberType.OWNER.equals(owner.getMemberType()), "권한이 없습니다.");
 	}
 
 	private void validateName(String name) {
-		Assert.isTrue(name.length() > 1, "두 글자 이상 입력해주세요");
-		Assert.isTrue(name.length() < 30, "30글자 이내로 입력해주세요");
+		Assert.isTrue(name.length() > 1, "Length of name must over than 1");
+		Assert.isTrue(name.length() < 30, "Length of name must less than 30");
 	}
 
 	private void validateCapacity(int capacity) {
-		Assert.isTrue(capacity > 2, "최대 수용 인원은 2명 이상이어야 합니다.");
+		Assert.isTrue(capacity > 2, "Capacity must over than 2");
 	}
 
 	private void validatePhone(String phone) {
