@@ -11,10 +11,8 @@ import javax.persistence.Lob;
 
 import org.springframework.util.Assert;
 
-import com.prgms.allen.dining.domain.common.entity.BaseEntity;
-
 @Embeddable
-public class ReservationDetail extends BaseEntity {
+public class ReservationDetail {
 
 	private static final int MIN_VISITOR_COUNT = 2;
 	private static final int MAX_VISITOR_COUNT = 8;
@@ -33,27 +31,34 @@ public class ReservationDetail extends BaseEntity {
 	private int visitorCount;
 
 	@Lob
-	@Column(name = "memo", length = 300)
-	private String memo;
+	@Column(name = "customer_memo", length = 300)
+	private String customerMemo;
 
 	protected ReservationDetail() {
 	}
 
-	public ReservationDetail(LocalDateTime visitAt, int visitorCount, String memo) {
-		validate(visitAt, visitorCount, memo);
+	public ReservationDetail(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
+		this.visitDate = visitDate;
+		this.visitTime = visitTime;
+		this.visitorCount = visitorCount;
+		this.customerMemo = customerMemo;
+	}
+
+	public ReservationDetail(LocalDateTime visitAt, int visitorCount, String customerMemo) {
+		validate(visitAt, visitorCount, customerMemo);
 
 		this.visitDate = visitAt.toLocalDate();
 		this.visitTime = visitAt.toLocalTime()
 			.truncatedTo(ChronoUnit.SECONDS);
 		this.visitorCount = visitorCount;
-		this.memo = memo;
+		this.customerMemo = customerMemo;
 	}
 
-	private void validate(LocalDateTime visitAt, int visitorCount, String memo) {
+	private void validate(LocalDateTime visitAt, int visitorCount, String customerMemo) {
 		validateVisitBoundary(visitAt);
 		validateHour(visitAt.toLocalTime());
 		validateVisitorCount(visitorCount);
-		validateMemo(memo);
+		validateMemo(customerMemo);
 	}
 
 	private void validateVisitBoundary(LocalDateTime visitAt) {
@@ -105,8 +110,12 @@ public class ReservationDetail extends BaseEntity {
 		return visitorCount;
 	}
 
-	public String getMemo() {
-		return memo;
+	public String getCustomerMemo() {
+		return customerMemo;
+	}
+
+	public LocalDateTime getVisitDateTime() {
+		return LocalDateTime.of(visitDate, visitTime);
 	}
 
 	public boolean checkVisitingToday() {
@@ -119,7 +128,7 @@ public class ReservationDetail extends BaseEntity {
 			"visitDate=" + visitDate +
 			", visitTime=" + visitTime +
 			", visitorCount=" + visitorCount +
-			", memo='" + memo + '\'' +
+			", customerMemo='" + customerMemo + '\'' +
 			'}';
 	}
 }

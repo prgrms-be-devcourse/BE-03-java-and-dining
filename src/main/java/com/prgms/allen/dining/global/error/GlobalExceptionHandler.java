@@ -7,6 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -19,10 +21,10 @@ public class GlobalExceptionHandler {
 		return newResponseEntity(response);
 	}
 
-	@ExceptionHandler(IllegalArgumentException.class)
-	public ResponseEntity<ErrorResponse> handelIllegalArgumentException(IllegalArgumentException e) {
-		log.info("IllegalArgumentException occurred.", e);
-		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
+	@ExceptionHandler(NotFoundResourceException.class)
+	public ResponseEntity<ErrorResponse> handleNotFoundResourceException(NotFoundResourceException e) {
+		log.info("NotFoundResourceException occurred.", e);
+		ErrorResponse response = new ErrorResponse(e.getErrorCode());
 		return newResponseEntity(response);
 	}
 

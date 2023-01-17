@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.customer.entity;
+package com.prgms.allen.dining.domain.member.entity;
 
 import java.util.regex.Pattern;
 
@@ -13,11 +13,11 @@ import javax.persistence.Id;
 import org.springframework.util.Assert;
 
 @Entity
-public class Customer {
+public class Member {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "customer_id")
+	@Column(name = "member_id")
 	private Long id;
 
 	@Column(name = "nickname", unique = true, length = 20, nullable = false)
@@ -33,28 +33,28 @@ public class Customer {
 	private String password;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "customer_type", nullable = false)
-	private CustomerType customerType;
+	@Column(name = "member_type", nullable = false)
+	private MemberType memberType;
 
-	protected Customer() {
+	protected Member() {
 	}
 
-	public Customer(String nickname, String name, String phone, String password, CustomerType customerType) {
-		validate(nickname, name, phone, password, customerType);
+	public Member(String nickname, String name, String phone, String password, MemberType memberType) {
+		validate(nickname, name, phone, password, memberType);
 
 		this.nickname = nickname;
 		this.name = name;
 		this.phone = phone;
 		this.password = password;
-		this.customerType = customerType;
+		this.memberType = memberType;
 	}
 
-	private void validate(String nickname, String name, String phone, String password, CustomerType customerType) {
+	private void validate(String nickname, String name, String phone, String password, MemberType memberType) {
 		validateNickname(nickname);
 		validateName(name);
 		validatePhone(phone);
 		validatePassword(password);
-		validateCustomerType(customerType);
+		validateCustomerType(memberType);
 	}
 
 	private void validateNickname(String nickname) {
@@ -82,8 +82,19 @@ public class Customer {
 			"Password is invalid format.");
 	}
 
-	private void validateCustomerType(CustomerType customerType) {
-		Assert.notNull(customerType, "customerType must be not null.");
+	private void validateCustomerType(MemberType memberType) {
+		Assert.notNull(memberType, "customerType must be not null.");
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public Long getId() {
+		return id;
+	}
 }

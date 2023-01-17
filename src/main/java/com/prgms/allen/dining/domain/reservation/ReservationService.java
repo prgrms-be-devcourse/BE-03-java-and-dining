@@ -1,5 +1,8 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,24 +12,26 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+
 
 @Service
 @Transactional(readOnly = true)
 public class ReservationService {
 
-	private final CustomerService customerService;
-	private final RestaurantService restaurantService;
-
 	private final ReservationRepository reservationRepository;
+	private final RestaurantService restaurantService;
+	private final CustomerService customerService;
 
 	public ReservationService(
-		CustomerService customerService,
+		ReservationRepository reservationRepository,
 		RestaurantService restaurantService,
-		ReservationRepository reservationRepository
+		CustomerService customerService
 	) {
-		this.customerService = customerService;
-		this.restaurantService = restaurantService;
 		this.reservationRepository = reservationRepository;
+		this.restaurantService = restaurantService;
+		this.customerService = customerService;
 	}
 
 	/**
@@ -39,7 +44,9 @@ public class ReservationService {
 
 		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId())
 			.orElseThrow(() -> new NotFoundResourceException(
-				String.format("Not found restaurantId: %d", createRequest.restaurantId())));
+				String.format("Not found restaurantId: %d", createRequest.restaurantId())
+				)
+			);
 
 		ReservationDetail reservationDetail = createRequest
 			.reservationDetail()
@@ -56,5 +63,20 @@ public class ReservationService {
 
 		// reservationRepository.save(newReservation);
 		// restaurantService.minusVisitorCount(reservationDetail);
+	}
+
+	public Page<ReservationSimpleResponse> getRestaurantReservations(
+		long restaurantId,
+		ReservationStatus status,
+		Pageable pageable
+	) {
+		restaurantService.validateRestaurantExists(restaurantId);
+
+		return new PageImpl<>(
+			reservationRepository.findAllByRestaurantIdAndStatus(restaurantId, status, pageable)
+				.stream()
+				.map(ReservationSimpleResponse::new)
+				.toList()
+		);
 	}
 }

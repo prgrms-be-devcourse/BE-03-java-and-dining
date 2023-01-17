@@ -1,7 +1,8 @@
-package com.prgms.allen.dining.domain.customer;
+package com.prgms.allen.dining.domain.restaurant;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -11,35 +12,35 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import com.prgms.allen.dining.domain.customer.entity.Customer;
+import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
-public class FakeCustomerRepository implements CustomerRepository {
+public class FakeRestaurantRepository implements RestaurantRepository {
 
-	private final List<Customer> customers = new ArrayList<>();
+	private final List<Restaurant> restaurants = new ArrayList<>();
 
 	@Override
-	public List<Customer> findAll() {
+	public List<Restaurant> findAll() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<Customer> findAll(Sort sort) {
+	public List<Restaurant> findAll(Sort sort) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Page<Customer> findAll(Pageable pageable) {
+	public Page<Restaurant> findAll(Pageable pageable) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<Customer> findAllById(Iterable<Long> longs) {
+	public List<Restaurant> findAllById(Iterable<Long> longs) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public long count() {
-		return customers.size();
+		return restaurants.size();
 	}
 
 	@Override
@@ -48,7 +49,7 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public void delete(Customer entity) {
+	public void delete(Restaurant entity) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -58,34 +59,46 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public void deleteAll(Iterable<? extends Customer> entities) {
+	public void deleteAll(Iterable<? extends Restaurant> entities) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void deleteAll() {
-		customers.clear();
+		restaurants.clear();
 	}
 
 	@Override
-	public <S extends Customer> S save(S entity) {
-		customers.add(entity);
-		return entity;
+	public <S extends Restaurant> S save(S entity) {
+		Restaurant newRestaurant = new Restaurant(
+			count(),
+			entity.getOwner(),
+			entity.getFoodType(),
+			entity.getName(),
+			entity.getCapacity(),
+			entity.getOpenTime(),
+			entity.getLastOrderTime(),
+			entity.getLocation(),
+			entity.getDescription(),
+			entity.getPhone());
+		restaurants.add(newRestaurant);
+		return (S)newRestaurant;
 	}
 
 	@Override
-	public <S extends Customer> List<S> saveAll(Iterable<S> entities) {
+	public <S extends Restaurant> List<S> saveAll(Iterable<S> entities) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Optional<Customer> findById(Long aLong) {
+	public Optional<Restaurant> findById(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public boolean existsById(Long aLong) {
-		throw new UnsupportedOperationException();
+		return restaurants.stream()
+			.anyMatch(restaurant -> Objects.equals(restaurant.getId(), aLong));
 	}
 
 	@Override
@@ -94,17 +107,17 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public <S extends Customer> S saveAndFlush(S entity) {
+	public <S extends Restaurant> S saveAndFlush(S entity) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> List<S> saveAllAndFlush(Iterable<S> entities) {
+	public <S extends Restaurant> List<S> saveAllAndFlush(Iterable<S> entities) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void deleteAllInBatch(Iterable<Customer> entities) {
+	public void deleteAllInBatch(Iterable<Restaurant> entities) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -119,52 +132,52 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public Customer getOne(Long aLong) {
+	public Restaurant getOne(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Customer getById(Long aLong) {
+	public Restaurant getById(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Customer getReferenceById(Long aLong) {
+	public Restaurant getReferenceById(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> Optional<S> findOne(Example<S> example) {
+	public <S extends Restaurant> Optional<S> findOne(Example<S> example) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> List<S> findAll(Example<S> example) {
+	public <S extends Restaurant> List<S> findAll(Example<S> example) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> List<S> findAll(Example<S> example, Sort sort) {
+	public <S extends Restaurant> List<S> findAll(Example<S> example, Sort sort) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> Page<S> findAll(Example<S> example, Pageable pageable) {
+	public <S extends Restaurant> Page<S> findAll(Example<S> example, Pageable pageable) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> long count(Example<S> example) {
+	public <S extends Restaurant> long count(Example<S> example) {
+		return restaurants.size();
+	}
+
+	@Override
+	public <S extends Restaurant> boolean exists(Example<S> example) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> boolean exists(Example<S> example) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public <S extends Customer, R> R findBy(Example<S> example,
+	public <S extends Restaurant, R> R findBy(Example<S> example,
 		Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 		throw new UnsupportedOperationException();
 	}

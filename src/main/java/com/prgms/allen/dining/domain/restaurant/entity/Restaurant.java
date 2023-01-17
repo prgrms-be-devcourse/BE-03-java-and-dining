@@ -13,7 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 
-import com.prgms.allen.dining.domain.customer.entity.Customer;
+import com.prgms.allen.dining.domain.member.entity.Member;
 
 @Entity
 public class Restaurant {
@@ -24,8 +24,8 @@ public class Restaurant {
 	private Long id;
 
 	@OneToOne
-	@JoinColumn(name = "customer_id")
-	private Customer owner;
+	@JoinColumn(name = "owner_id")
+	private Member owner;
 
 	@Enumerated(value = EnumType.STRING)
 	@Column(name = "food_type", nullable = false)
@@ -56,7 +56,7 @@ public class Restaurant {
 	protected Restaurant() {
 	}
 
-	public Restaurant(Customer owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+	public Restaurant(Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
 		LocalTime lastOrderTime, String location, String description, String phone) {
 		this.owner = owner;
 		this.foodType = foodType;
@@ -67,5 +67,64 @@ public class Restaurant {
 		this.location = location;
 		this.description = description;
 		this.phone = phone;
+	}
+
+	public Restaurant(Long id, Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+		LocalTime lastOrderTime, String location, String description, String phone) {
+		this.id = id;
+		this.owner = owner;
+		this.foodType = foodType;
+		this.name = name;
+		this.capacity = capacity;
+		this.openTime = openTime;
+		this.lastOrderTime = lastOrderTime;
+		this.location = location;
+		this.description = description;
+		this.phone = phone;
+	}
+
+	public Restaurant(Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+		LocalTime lastOrderTime, String location, String description, String phone) {
+		this(null, owner, foodType, name, capacity, openTime, lastOrderTime, location, description, phone);
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public Member getOwner() {
+		return owner;
+	}
+
+	public FoodType getFoodType() {
+		return foodType;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public LocalTime getOpenTime() {
+		return openTime;
+	}
+
+	public LocalTime getLastOrderTime() {
+		return lastOrderTime;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getPhone() {
+		return phone;
 	}
 }

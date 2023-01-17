@@ -1,11 +1,14 @@
 package com.prgms.allen.dining.domain.restaurant;
 
 import java.util.Optional;
+import java.text.MessageFormat;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.global.error.ErrorCode;
+import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,5 +22,15 @@ public class RestaurantService {
 
 	public Optional<Restaurant> findById(Long restaurantId) {
 		return restaurantRepository.findById(restaurantId);
+	}
+}
+
+	public void validateRestaurantExists(long restaurantId) {
+		if (!restaurantRepository.existsById(restaurantId)) {
+			throw new NotFoundResourceException(
+				ErrorCode.NOT_FOUND_RESOURCE,
+				MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
+			);
+		}
 	}
 }
