@@ -39,14 +39,19 @@ public class Member {
 	protected Member() {
 	}
 
-	public Member(String nickname, String name, String phone, String password, MemberType memberType) {
+	public Member(Long id, String nickname, String name, String phone, String password, MemberType memberType) {
 		validate(nickname, name, phone, password, memberType);
 
+		this.id = id;
 		this.nickname = nickname;
 		this.name = name;
 		this.phone = phone;
 		this.password = password;
 		this.memberType = memberType;
+	}
+
+	public Member(String nickname, String name, String phone, String password, MemberType memberType) {
+		this(null, nickname, name, phone, password, memberType);
 	}
 
 	private void validate(String nickname, String name, String phone, String password, MemberType memberType) {
@@ -96,5 +101,17 @@ public class Member {
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public MemberType getMemberType() {
+		return memberType;
 	}
 }

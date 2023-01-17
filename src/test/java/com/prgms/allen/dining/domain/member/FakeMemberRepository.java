@@ -70,8 +70,16 @@ public class FakeMemberRepository implements MemberRepository {
 
 	@Override
 	public <S extends Member> S save(S entity) {
-		members.add(entity);
-		return entity;
+		Member newMember = new Member(
+			count(),
+			entity.getNickname(),
+			entity.getName(),
+			entity.getPhone(),
+			entity.getPassword(),
+			entity.getMemberType()
+		);
+		members.add(newMember);
+		return (S)newMember;
 	}
 
 	@Override
