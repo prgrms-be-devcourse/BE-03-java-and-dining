@@ -6,8 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgms.allen.dining.domain.member.MemberService;
+import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateRequest;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
+import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
@@ -21,22 +24,26 @@ public class ReservationService {
 
 	private final ReservationRepository reservationRepository;
 	private final RestaurantService restaurantService;
+	private final MemberService memberService;
 
 	public ReservationService(
 		ReservationRepository reservationRepository,
-		RestaurantService restaurantService
+		RestaurantService restaurantService,
+		MemberService memberService
 	) {
 		this.reservationRepository = reservationRepository;
 		this.restaurantService = restaurantService;
+		this.memberService = memberService;
 	}
 
-	/**
-	 * pull받으면 메서드 명, 파라미터 등 다른 서비스 참조하는 것들 수정
-	 */
+	@Transactional
 	public void reserve(ReservationCreateRequest createRequest) {
-		// Customer consumer = customerService.findConsumerById(createRequest.consumerId())
-		// 	.orElseThrow(() -> new NotFoundResourceException(
-		// 		String.format("Not found customerId: %d", createRequest.consumerId())));
+		Member customer = memberService.findCustomerById(createRequest.customerId())
+			.orElseThrow(() -> new NotFoundResourceException(
+					ErrorCode.NOT_FOUND_RESOURCE,
+					String.format("Not found customerId: %d", createRequest.customerId())
+				)
+			);
 
 		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId())
 			.orElseThrow(() -> new NotFoundResourceException(
@@ -48,18 +55,14 @@ public class ReservationService {
 		ReservationDetail reservationDetail = createRequest
 			.reservationDetail()
 			.toEntity();
-		// restaurantService.checkPossible(
-		// 	reservationDetail.getVisitDate(),
-		// 	reservationDetail.getVisitTime(),
-		// 	reservationDetail.getVisitorCount());
-		// Reservation newReservation = new Reservation(
-		// 	consumer,
-		// 	restaurant,
-		// 	reservationDetail
-		// );
 
-		// reservationRepository.save(newReservation);
-		// restaurantService.minusVisitorCount(reservationDetail);
+		Reservation newReservation = new Reservation(
+			customer,
+			restaurant,
+			reservationDetail
+		);
+
+		reservationRepository.save(newReservation);
 	}
 
 	public Page<ReservationSimpleResponse> getRestaurantReservations(
