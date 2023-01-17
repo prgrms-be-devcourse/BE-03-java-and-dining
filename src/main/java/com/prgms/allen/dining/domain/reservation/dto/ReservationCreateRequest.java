@@ -8,7 +8,7 @@ public record ReservationCreateRequest(
 	Long restaurantId,
 
 	@NotNull
-	Long consumerId,
+	Long customerId,
 
 	@NotNull
 	ReservationDetailRequest reservationDetail
