@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.member;
+package com.prgms.allen.dining.web.domain.member;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

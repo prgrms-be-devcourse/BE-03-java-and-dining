@@ -20,8 +20,10 @@ public class RestaurantService {
 
 	public void validateRestaurantExists(long restaurantId) {
 		if (!restaurantRepository.existsById(restaurantId)) {
-			throw new NotFoundResourceException(ErrorCode.NOT_FOUND_RESOURCE,
-				MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId));
+			throw new NotFoundResourceException(
+				ErrorCode.NOT_FOUND_RESOURCE,
+				MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
+			);
 		}
 	}
 }
