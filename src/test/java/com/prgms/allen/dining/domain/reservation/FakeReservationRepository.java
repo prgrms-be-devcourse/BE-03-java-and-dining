@@ -3,6 +3,7 @@ package com.prgms.allen.dining.domain.reservation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
+import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 
@@ -31,6 +33,18 @@ public class FakeReservationRepository implements ReservationRepository {
 				.limit(pageable.getPageSize())
 				.toList()
 		);
+	}
+
+	@Override
+	public Page<Reservation> findAllByCustomerAndStatusIn(Member customer, List<ReservationStatus> statuses,
+		Pageable pageable) {
+		return new PageImpl<>(
+			reservations.stream()
+				.filter(reservation -> Objects.equals(reservation.getCustomerId(), customer.getId()))
+				.filter(reservation -> statuses.contains(reservation.getStatus()))
+				.skip(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.toList());
 	}
 
 	@Override

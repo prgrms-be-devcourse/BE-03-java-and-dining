@@ -2,6 +2,7 @@ package com.prgms.allen.dining.domain.member;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -80,7 +81,9 @@ public class FakeMemberRepository implements MemberRepository {
 
 	@Override
 	public Optional<Member> findById(Long aLong) {
-		throw new UnsupportedOperationException();
+		return members.stream()
+			.filter(member -> Objects.equals(member.getId(), aLong))
+			.findFirst();
 	}
 
 	@Override

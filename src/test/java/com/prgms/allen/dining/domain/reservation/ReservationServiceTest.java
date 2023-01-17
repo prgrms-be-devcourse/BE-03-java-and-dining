@@ -1,10 +1,12 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,7 +19,9 @@ import com.prgms.allen.dining.domain.member.FakeMemberRepository;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponseForCustomer;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponseForOwner;
+import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -35,6 +39,8 @@ class ReservationServiceTest {
 	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository);
 	private final ReservationService reservationService = new ReservationService(
 		reservationRepository,
+		restaurantRepository,
+		memberRepository,
 		restaurantService
 	);
 
@@ -51,34 +57,75 @@ class ReservationServiceTest {
 	public void getReservationsTest(String status) {
 		// given
 		Member owner = createOwner();
-		Member consumer = createConsumer();
+		Member customer = createCustomer();
 		memberRepository.save(owner);
-		memberRepository.save(consumer);
+		memberRepository.save(customer);
 
 		Restaurant restaurant = createRestaurant(owner);
 		Restaurant savedRestaurant = restaurantRepository.save(restaurant);
 
-		List<Reservation> reservations = createReservations(status, savedRestaurant, consumer);
+		List<Reservation> reservations = createReservations(status, savedRestaurant, customer);
 		List<Reservation> savedReservations = reservationRepository.saveAll(reservations);
 
-		PageImpl<ReservationSimpleResponse> expect = new PageImpl<>(
+		PageImpl<ReservationSimpleResponseForOwner> expect = new PageImpl<>(
 			savedReservations
 				.stream()
-				.map(ReservationSimpleResponse::new)
+				.map(ReservationSimpleResponseForOwner::new)
 				.toList());
 
 		long restaurantId = savedRestaurant.getId();
 
 		// when
-		Page<ReservationSimpleResponse> actual = reservationService.getRestaurantReservations(
+		Page<ReservationSimpleResponseForOwner> actual = reservationService.getRestaurantReservations(
 			restaurantId,
 			ReservationStatus.valueOf(status),
 			PageRequest.of(0, 5)
 		);
 
 		// then
-		Assertions.assertThat(actual)
+		assertThat(actual)
 			.isEqualTo(expect);
+	}
+
+	@ParameterizedTest
+	@CsvSource({"PLANNED", "DONE", "CANCEL"})
+	@DisplayName("구매자는 자신이 예약한 정보들을 상태별로 볼 수 있다.")
+	public void getRestaurantReservationsTest(String status) {
+		// given
+		Member owner = memberRepository.save(createOwner());
+		Member customer = memberRepository.save(createCustomer());
+
+		Restaurant restaurant = createRestaurant(owner);
+		Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+
+		VisitStatus visitStatus = VisitStatus.valueOf(status);
+		List<ReservationStatus> reservationStatuses = visitStatus.getStatuses();
+
+		List<Reservation> reservations = reservationStatuses.stream()
+			.map(reservationStatus -> createReservations(reservationStatus.name(), savedRestaurant, customer))
+			.flatMap(Collection::stream)
+			.toList();
+
+		List<Reservation> savedReservations = reservationRepository.saveAll(reservations);
+
+		PageImpl<ReservationSimpleResForCustomer> expect = new PageImpl<>(
+			savedReservations
+				.stream()
+				.map(ReservationSimpleResForCustomer::new)
+				.toList());
+
+		// when
+		Page<ReservationSimpleResForCustomer> actual =
+			reservationService.getRestaurantReservations(
+				customer.getId(),
+				visitStatus,
+				PageRequest.of(0, 5)
+			);
+
+		// then
+		assertThat(actual)
+			.isEqualTo(expect);
+
 	}
 
 	private List<Reservation> createReservations(String status, Restaurant restaurant, Member consumer) {
@@ -126,7 +173,7 @@ class ReservationServiceTest {
 		);
 	}
 
-	private Member createConsumer() {
+	private Member createCustomer() {
 		return new Member(
 			"dlxortmd321",
 			"이택승이",
