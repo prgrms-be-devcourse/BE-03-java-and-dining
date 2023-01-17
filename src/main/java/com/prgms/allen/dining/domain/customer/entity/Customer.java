@@ -49,6 +49,41 @@ public class Customer {
 		this.customerType = customerType;
 	}
 
+	public Customer(Long id, String nickname, String name, String phone, String password, CustomerType customerType) {
+		validate(nickname, name, phone, password, customerType);
+
+		this.id = id;
+		this.nickname = nickname;
+		this.name = name;
+		this.phone = phone;
+		this.password = password;
+		this.customerType = customerType;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public CustomerType getCustomerType() {
+		return customerType;
+	}
+
 	private void validate(String nickname, String name, String phone, String password, CustomerType customerType) {
 		validateNickname(nickname);
 		validateName(name);
