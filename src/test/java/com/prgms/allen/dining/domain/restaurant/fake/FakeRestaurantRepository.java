@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.customer;
+package com.prgms.allen.dining.domain.restaurant.fake;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,36 +11,36 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import com.prgms.allen.dining.domain.customer.entity.Customer;
-import com.prgms.allen.dining.domain.customer.entity.CustomerType;
+import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
+import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
-public class FakeCustomerRepository implements CustomerRepository {
+public class FakeRestaurantRepository implements RestaurantRepository {
 
-	private final List<Customer> customers = new ArrayList<>();
+	private final List<Restaurant> restaurants = new ArrayList<>();
 
 	@Override
-	public List<Customer> findAll() {
-		return customers;
+	public List<Restaurant> findAll() {
+		return restaurants;
 	}
 
 	@Override
-	public List<Customer> findAll(Sort sort) {
+	public List<Restaurant> findAll(Sort sort) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Page<Customer> findAll(Pageable pageable) {
+	public Page<Restaurant> findAll(Pageable pageable) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<Customer> findAllById(Iterable<Long> longs) {
+	public List<Restaurant> findAllById(Iterable<Long> longs) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public long count() {
-		return customers.size();
+		return restaurants.size();
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public void delete(Customer entity) {
+	public void delete(Restaurant entity) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -59,36 +59,42 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public void deleteAll(Iterable<? extends Customer> entities) {
+	public void deleteAll(Iterable<? extends Restaurant> entities) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void deleteAll() {
-		customers.clear();
+		restaurants.clear();
 	}
 
 	@Override
-	public <S extends Customer> S save(S entity) {
-		Customer customer = new Customer(
-			count() + 1,
-			entity.getNickname(),
+	public <S extends Restaurant> S save(S entity) {
+		Restaurant restaurant = new Restaurant(
+			(long)count() + 1,
+			entity.getOwner(),
+			entity.getFoodType(),
 			entity.getName(),
+			entity.getCapacity(),
+			entity.getOpenTime(),
+			entity.getLastOrderTime(),
+			entity.getLocation(),
+			entity.getDescription(),
 			entity.getPhone(),
-			entity.getPassword(),
-			entity.getCustomerType()
+			entity.getMenu(),
+			entity.getClosingDays()
 		);
-		customers.add(customer);
-		return (S)customer;
+		restaurants.add(restaurant);
+		return (S)restaurant;
 	}
 
 	@Override
-	public <S extends Customer> List<S> saveAll(Iterable<S> entities) {
+	public <S extends Restaurant> List<S> saveAll(Iterable<S> entities) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Optional<Customer> findById(Long aLong) {
+	public Optional<Restaurant> findById(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -103,17 +109,17 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public <S extends Customer> S saveAndFlush(S entity) {
+	public <S extends Restaurant> S saveAndFlush(S entity) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> List<S> saveAllAndFlush(Iterable<S> entities) {
+	public <S extends Restaurant> List<S> saveAllAndFlush(Iterable<S> entities) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void deleteAllInBatch(Iterable<Customer> entities) {
+	public void deleteAllInBatch(Iterable<Restaurant> entities) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -128,64 +134,59 @@ public class FakeCustomerRepository implements CustomerRepository {
 	}
 
 	@Override
-	public Customer getOne(Long aLong) {
+	public Restaurant getOne(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Customer getById(Long aLong) {
-		return customers.stream()
-			.filter(customer -> aLong.equals(customer.getId()))
-			.findAny()
-			.orElseThrow(UnsupportedOperationException::new);
-	}
-
-	@Override
-	public Customer getReferenceById(Long aLong) {
+	public Restaurant getById(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> Optional<S> findOne(Example<S> example) {
+	public Restaurant getReferenceById(Long aLong) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> List<S> findAll(Example<S> example) {
+	public <S extends Restaurant> Optional<S> findOne(Example<S> example) {
+		return Optional.empty();
+	}
+
+	@Override
+	public <S extends Restaurant> List<S> findAll(Example<S> example) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> List<S> findAll(Example<S> example, Sort sort) {
+	public <S extends Restaurant> List<S> findAll(Example<S> example, Sort sort) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> Page<S> findAll(Example<S> example, Pageable pageable) {
+	public <S extends Restaurant> Page<S> findAll(Example<S> example, Pageable pageable) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> long count(Example<S> example) {
+	public <S extends Restaurant> long count(Example<S> example) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer> boolean exists(Example<S> example) {
+	public <S extends Restaurant> boolean exists(Example<S> example) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <S extends Customer, R> R findBy(Example<S> example,
+	public <S extends Restaurant, R> R findBy(Example<S> example,
 		Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Optional<Customer> findByIdAndCustomerType(Long id, CustomerType customerType) {
-		return customers.stream()
-			.filter(customer -> id.equals(customer.getId()))
-			.filter(customer -> customerType.equals(customer.getCustomerType()))
-			.findAny();
+	public boolean existsRestaurantByOwner_Id(Long ownerId) {
+		return restaurants.stream()
+			.filter(restaurant -> ownerId.equals(restaurant.getOwner().getId())).isParallel();
 	}
 }
