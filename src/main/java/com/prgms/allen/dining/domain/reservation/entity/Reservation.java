@@ -12,12 +12,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.prgms.allen.dining.domain.common.entity.BaseEntity;
+import org.springframework.util.Assert;
+
 import com.prgms.allen.dining.domain.customer.entity.Customer;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Entity
-public class Reservation extends BaseEntity {
+public class Reservation {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -41,5 +42,40 @@ public class Reservation extends BaseEntity {
 	private ReservationDetail detail;
 
 	protected Reservation() {
+	}
+
+	public Reservation(Customer customer, Restaurant restaurant, ReservationDetail detail) {
+		validation(customer, restaurant, detail);
+
+		this.customer = customer;
+		this.restaurant = restaurant;
+		if (detail.checkVisitingToday()) {
+			this.status = ReservationStatus.CONFIRMED;
+		} else {
+			this.status = ReservationStatus.PENDING;
+		}
+		this.detail = detail;
+	}
+
+	private void validation(Customer customer, Restaurant restaurant, ReservationDetail detail) {
+		validateCustomer(customer);
+		validateRestaurant(restaurant);
+		validateReservationDetail(detail);
+	}
+
+	private void validateCustomer(Customer customer) {
+		Assert.notNull(customer, "Customer must not be null.");
+	}
+
+	private void validateRestaurant(Restaurant restaurant) {
+		Assert.notNull(restaurant, "Restaurant must not be null.");
+	}
+
+	private void validateReservationDetail(ReservationDetail detail) {
+		Assert.notNull(detail, "ReservationDetail must not be null.");
+	}
+
+	public ReservationStatus getStatus() {
+		return status;
 	}
 }
