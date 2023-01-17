@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
-import com.prgms.allen.dining.global.error.ErrorCode;
-import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,12 +22,12 @@ public class ReservationService {
 		this.restaurantService = restaurantService;
 	}
 
-	public Page<ReservationSimpleResponse> getOwnerReservations(
+	public Page<ReservationSimpleResponse> getRestaurantReservations(
 		long restaurantId,
 		ReservationStatus status,
 		Pageable pageable
 	) {
-		validExistRestaurant(restaurantId);
+		restaurantService.validateRestaurantExists(restaurantId);
 
 		return new PageImpl<>(
 			reservationRepository.findAllByRestaurantIdAndStatus(restaurantId, status, pageable)
@@ -37,11 +35,5 @@ public class ReservationService {
 				.map(ReservationSimpleResponse::new)
 				.toList()
 		);
-	}
-
-	private void validExistRestaurant(long restaurantId) {
-		if (!restaurantService.existRestaurant(restaurantId)) {
-			throw new NotFoundResourceException(ErrorCode.NOT_FOUND_RESOURCE);
-		}
 	}
 }
