@@ -97,4 +97,16 @@ public class Reservation extends BaseEntity {
 	public ReservationDetail getDetail() {
 		return detail;
 	}
+
+	public Long getCustomerId() {
+		return customer.getId();
+	}
+
+	public String getRestaurantName() {
+		return restaurant.getName();
+	}
+
+	public String getRestaurantAddress() {
+		return restaurant.getLocation();
+	}
 }
