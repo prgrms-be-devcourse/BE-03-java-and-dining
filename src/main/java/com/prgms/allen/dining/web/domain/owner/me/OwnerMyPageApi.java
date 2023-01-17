@@ -1,9 +1,9 @@
-package com.prgms.allen.dining.web.customer.restaurant;
+package com.prgms.allen.dining.web.domain.owner.me;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/customer/api/restaurants")
-public class CustomerRestaurantApi {
+@RequestMapping("/owner/api/me")
+public class OwnerMyPageApi {
 }
