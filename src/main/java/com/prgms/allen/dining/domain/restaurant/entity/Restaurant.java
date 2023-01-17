@@ -13,7 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 
-import com.prgms.allen.dining.domain.customer.entity.Customer;
+import com.prgms.allen.dining.domain.member.entity.Member;
 
 @Entity
 public class Restaurant {
@@ -24,8 +24,8 @@ public class Restaurant {
 	private Long id;
 
 	@OneToOne
-	@JoinColumn(name = "customer_id")
-	private Customer owner;
+	@JoinColumn(name = "owner_id")
+	private Member owner;
 
 	@Enumerated(value = EnumType.STRING)
 	@Column(name = "food_type", nullable = false)
@@ -56,7 +56,7 @@ public class Restaurant {
 	protected Restaurant() {
 	}
 
-	public Restaurant(Long id, Customer owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+	public Restaurant(Long id, Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
 		LocalTime lastOrderTime, String location, String description, String phone) {
 		this.id = id;
 		this.owner = owner;
@@ -70,7 +70,7 @@ public class Restaurant {
 		this.phone = phone;
 	}
 
-	public Restaurant(Customer owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+	public Restaurant(Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
 		LocalTime lastOrderTime, String location, String description, String phone) {
 		this(null, owner, foodType, name, capacity, openTime, lastOrderTime, location, description, phone);
 	}
@@ -79,7 +79,7 @@ public class Restaurant {
 		return id;
 	}
 
-	public Customer getOwner() {
+	public Member getOwner() {
 		return owner;
 	}
 

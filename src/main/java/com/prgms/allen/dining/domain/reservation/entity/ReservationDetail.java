@@ -20,17 +20,17 @@ public class ReservationDetail {
 	private int visitorCount;
 
 	@Lob
-	@Column(name = "consumer_memo")
-	private String consumerMemo;
+	@Column(name = "customer_memo")
+	private String customerMemo;
 
 	protected ReservationDetail() {
 	}
 
-	public ReservationDetail(LocalDate visitDate, LocalTime visitTime, int visitorCount, String consumerMemo) {
+	public ReservationDetail(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
 		this.visitDate = visitDate;
 		this.visitTime = visitTime;
 		this.visitorCount = visitorCount;
-		this.consumerMemo = consumerMemo;
+		this.customerMemo = customerMemo;
 	}
 
 	public LocalDate getVisitDate() {

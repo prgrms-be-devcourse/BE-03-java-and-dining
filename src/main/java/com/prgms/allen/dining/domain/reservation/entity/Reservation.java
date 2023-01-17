@@ -15,7 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.prgms.allen.dining.domain.common.entity.BaseEntity;
-import com.prgms.allen.dining.domain.customer.entity.Customer;
+import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Entity
@@ -28,7 +28,7 @@ public class Reservation extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id", nullable = false)
-	private Customer customer;
+	private Member customer;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "restaurant_id", nullable = false)
@@ -45,7 +45,7 @@ public class Reservation extends BaseEntity {
 	protected Reservation() {
 	}
 
-	public Reservation(Long id, Customer customer, Restaurant restaurant, ReservationStatus status,
+	public Reservation(Long id, Member customer, Restaurant restaurant, ReservationStatus status,
 		ReservationDetail detail) {
 		this.id = id;
 		this.customer = customer;
@@ -54,7 +54,7 @@ public class Reservation extends BaseEntity {
 		this.detail = detail;
 	}
 
-	public Reservation(Customer customer, Restaurant restaurant, ReservationStatus status, ReservationDetail detail) {
+	public Reservation(Member customer, Restaurant restaurant, ReservationStatus status, ReservationDetail detail) {
 		this(null, customer, restaurant, status, detail);
 	}
 
@@ -86,7 +86,7 @@ public class Reservation extends BaseEntity {
 		return id;
 	}
 
-	public Customer getCustomer() {
+	public Member getCustomer() {
 		return customer;
 	}
 
