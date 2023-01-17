@@ -13,10 +13,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import com.prgms.allen.dining.domain.customer.CustomerRepository;
-import com.prgms.allen.dining.domain.customer.FakeCustomerRepository;
-import com.prgms.allen.dining.domain.customer.entity.Customer;
-import com.prgms.allen.dining.domain.customer.entity.CustomerType;
+import com.prgms.allen.dining.domain.member.FakeMemberRepository;
+import com.prgms.allen.dining.domain.member.MemberRepository;
+import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
@@ -31,7 +31,7 @@ class ReservationServiceTest {
 
 	private final ReservationRepository reservationRepository = new FakeReservationRepository();
 	private final RestaurantRepository restaurantRepository = new FakeRestaurantRepository();
-	private final CustomerRepository customerRepository = new FakeCustomerRepository();
+	private final MemberRepository memberRepository = new FakeMemberRepository();
 	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository);
 	private final ReservationService reservationService = new ReservationService(
 		reservationRepository,
@@ -41,7 +41,7 @@ class ReservationServiceTest {
 	@AfterEach
 	void tearDown() {
 		reservationRepository.deleteAll();
-		customerRepository.deleteAll();
+		memberRepository.deleteAll();
 		restaurantRepository.deleteAll();
 	}
 
@@ -50,10 +50,10 @@ class ReservationServiceTest {
 	@DisplayName("식당의 특정 상태의 예약들을 조회할 수 있다.")
 	public void getReservationsTest(String status) {
 		// given
-		Customer owner = createOwner();
-		Customer consumer = createConsumer();
-		customerRepository.save(owner);
-		customerRepository.save(consumer);
+		Member owner = createOwner();
+		Member consumer = createConsumer();
+		memberRepository.save(owner);
+		memberRepository.save(consumer);
 
 		Restaurant restaurant = createRestaurant(owner);
 		Restaurant savedRestaurant = restaurantRepository.save(restaurant);
@@ -81,7 +81,7 @@ class ReservationServiceTest {
 			.isEqualTo(expect);
 	}
 
-	private List<Reservation> createReservations(String status, Restaurant restaurant, Customer consumer) {
+	private List<Reservation> createReservations(String status, Restaurant restaurant, Member consumer) {
 		Reservation reservation1 = createReservation(
 			status,
 			consumer,
@@ -97,7 +97,7 @@ class ReservationServiceTest {
 		return List.of(reservation1, reservation2);
 	}
 
-	private Reservation createReservation(String status, Customer consumer, Restaurant savedRestaurant) {
+	private Reservation createReservation(String status, Member consumer, Restaurant savedRestaurant) {
 		ReservationDetail detail = new ReservationDetail(
 			LocalDate.of(2023, 1, 16),
 			LocalTime.of(16, 59), 2,
@@ -112,7 +112,7 @@ class ReservationServiceTest {
 		);
 	}
 
-	private Restaurant createRestaurant(Customer owner) {
+	private Restaurant createRestaurant(Member owner) {
 		return new Restaurant(
 			owner,
 			FoodType.KOREAN,
@@ -126,23 +126,23 @@ class ReservationServiceTest {
 		);
 	}
 
-	private Customer createConsumer() {
-		return new Customer(
+	private Member createConsumer() {
+		return new Member(
 			"dlxortmd321",
 			"이택승이",
 			"01012341234",
 			"qwer1234!",
-			CustomerType.CONSUMER
+			MemberType.CUSTOMER
 		);
 	}
 
-	private Customer createOwner() {
-		return new Customer(
+	private Member createOwner() {
+		return new Member(
 			"dlxortmd123",
 			"이택승",
 			"01012341234",
 			"qwer1234!",
-			CustomerType.OWNER
+			MemberType.OWNER
 		);
 	}
 

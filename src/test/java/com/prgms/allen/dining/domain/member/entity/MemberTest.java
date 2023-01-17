@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.customer.entity;
+package com.prgms.allen.dining.domain.member.entity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-class CustomerTest {
+class MemberTest {
 
 	public static final String VALID_NICKNAME = "홍길동123";
 	public static final String VALID_NAME = "홍길동";
@@ -24,7 +24,7 @@ class CustomerTest {
 		public void fail_by_length(String invalidNickname) {
 			// when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(invalidNickname, VALID_NAME, VALID_PHONE, VALID_PASSWORD, CustomerType.CONSUMER)
+				new Member(invalidNickname, VALID_NAME, VALID_PHONE, VALID_PASSWORD, MemberType.CUSTOMER)
 			);
 		}
 
@@ -36,7 +36,7 @@ class CustomerTest {
 
 			// when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(invalidNickname, VALID_NAME, VALID_PHONE, VALID_PASSWORD, CustomerType.CONSUMER)
+				new Member(invalidNickname, VALID_NAME, VALID_PHONE, VALID_PASSWORD, MemberType.CUSTOMER)
 			);
 		}
 	}
@@ -51,7 +51,7 @@ class CustomerTest {
 
 			// when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(VALID_NICKNAME, invalid, VALID_PHONE, VALID_PASSWORD, CustomerType.CONSUMER)
+				new Member(VALID_NICKNAME, invalid, VALID_PHONE, VALID_PASSWORD, MemberType.CUSTOMER)
 			);
 		}
 
@@ -62,7 +62,7 @@ class CustomerTest {
 
 			//when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(VALID_NICKNAME, invalid, VALID_PHONE, VALID_PASSWORD, CustomerType.CONSUMER)
+				new Member(VALID_NICKNAME, invalid, VALID_PHONE, VALID_PASSWORD, MemberType.CUSTOMER)
 			);
 		}
 	}
@@ -77,7 +77,7 @@ class CustomerTest {
 
 			// when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(VALID_NICKNAME, VALID_NAME, VALID_PHONE, invalid, CustomerType.CONSUMER)
+				new Member(VALID_NICKNAME, VALID_NAME, VALID_PHONE, invalid, MemberType.CUSTOMER)
 			);
 		}
 
@@ -88,7 +88,7 @@ class CustomerTest {
 
 			//when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(VALID_NICKNAME, VALID_NAME, VALID_PHONE, invalid, CustomerType.CONSUMER)
+				new Member(VALID_NICKNAME, VALID_NAME, VALID_PHONE, invalid, MemberType.CUSTOMER)
 			);
 		}
 	}
@@ -103,7 +103,7 @@ class CustomerTest {
 
 			//when & then
 			assertThrows(IllegalStateException.class, () ->
-				new Customer(VALID_NICKNAME, VALID_NAME, invalid, VALID_PASSWORD, CustomerType.CONSUMER)
+				new Member(VALID_NICKNAME, VALID_NAME, invalid, VALID_PASSWORD, MemberType.CUSTOMER)
 			);
 		}
 	}
