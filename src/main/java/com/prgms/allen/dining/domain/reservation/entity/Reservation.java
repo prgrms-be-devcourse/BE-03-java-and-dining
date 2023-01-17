@@ -93,4 +93,8 @@ public class Reservation extends BaseEntity {
 	public String getCustomerName() {
 		return customer.getName();
 	}
+
+	public LocalDateTime getVisitDateTime() {
+		return detail.getVisitDateTime();
+	}
 }
