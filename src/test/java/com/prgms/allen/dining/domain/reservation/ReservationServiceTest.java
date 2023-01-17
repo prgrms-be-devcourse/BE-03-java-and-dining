@@ -50,19 +50,27 @@ class ReservationServiceTest {
 	@DisplayName("식당의 특정 상태의 예약들을 조회할 수 있다.")
 	public void getReservationsTest(String status) {
 		// given
-		List<Reservation> reservations = createReservations(status);
+		Customer owner = createOwner();
+		Customer consumer = createConsumer();
+		customerRepository.save(owner);
+		customerRepository.save(consumer);
+
+		Restaurant restaurant = createRestaurant(owner);
+		Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+
+		List<Reservation> reservations = createReservations(status, savedRestaurant, consumer);
+		List<Reservation> savedReservations = reservationRepository.saveAll(reservations);
 
 		PageImpl<ReservationSimpleResponse> expect = new PageImpl<>(
-			reservations
+			savedReservations
 				.stream()
 				.map(ReservationSimpleResponse::new)
 				.toList());
 
-		long restaurantId = reservations.get(0)
-			.getRestaurantId();
+		long restaurantId = savedRestaurant.getId();
 
 		// when
-		Page<ReservationSimpleResponse> actual = reservationService.getOwnerReservations(
+		Page<ReservationSimpleResponse> actual = reservationService.getRestaurantReservations(
 			restaurantId,
 			ReservationStatus.valueOf(status),
 			PageRequest.of(0, 5)
@@ -73,28 +81,20 @@ class ReservationServiceTest {
 			.isEqualTo(expect);
 	}
 
-	private List<Reservation> createReservations(String status) {
-		Customer owner = createOwner();
-		Customer consumer = createConsumer();
-		customerRepository.save(owner);
-		customerRepository.save(consumer);
-
-		Restaurant restaurant = createRestaurant(owner);
-		Restaurant savedRestaurant = restaurantRepository.save(restaurant);
-
+	private List<Reservation> createReservations(String status, Restaurant restaurant, Customer consumer) {
 		Reservation reservation1 = createReservation(
 			status,
 			consumer,
-			savedRestaurant
+			restaurant
 		);
 
 		Reservation reservation2 = createReservation(
 			status,
 			consumer,
-			savedRestaurant
+			restaurant
 		);
 
-		return reservationRepository.saveAll(List.of(reservation1, reservation2));
+		return List.of(reservation1, reservation2);
 	}
 
 	private Reservation createReservation(String status, Customer consumer, Restaurant savedRestaurant) {
