@@ -6,7 +6,8 @@ public class NotFoundResourceException extends IllegalArgumentException {
 
 	private final ErrorCode errorCode;
 
-	public NotFoundResourceException(ErrorCode errorCode) {
+	public NotFoundResourceException(ErrorCode errorCode, String message) {
+		super(message);
 		this.errorCode = errorCode;
 	}
 
