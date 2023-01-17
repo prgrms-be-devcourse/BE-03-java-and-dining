@@ -168,4 +168,9 @@ public class FakeMemberRepository implements MemberRepository {
 		Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public Optional<Member> findCustomerById(Long memberId) {
+		throw new UnsupportedOperationException();
+	}
 }

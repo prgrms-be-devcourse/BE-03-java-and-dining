@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.member;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,5 +22,9 @@ public class MemberService {
 	public void signup(MemberSignupRequest signupRequest) {
 		final Member newMember = signupRequest.toEntity();
 		memberRepository.save(newMember);
+	}
+
+	public Optional<Member> findCustomerById(Long memberId) {
+		return memberRepository.findCustomerById(memberId);
 	}
 }
