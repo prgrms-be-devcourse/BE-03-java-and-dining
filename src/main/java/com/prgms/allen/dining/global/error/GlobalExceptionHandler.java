@@ -3,6 +3,7 @@ package com.prgms.allen.dining.global.error;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -21,6 +22,13 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ErrorResponse> handelIllegalArgumentException(IllegalArgumentException e) {
 		log.info("IllegalArgumentException occurred.", e);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
+		return newResponseEntity(response);
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+		log.info("MethodArgumentNotValidException occurred.", e);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
 		return newResponseEntity(response);
 	}
