@@ -55,4 +55,63 @@ public class Restaurant {
 
 	protected Restaurant() {
 	}
+
+	public Restaurant(Long id, Customer owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+		LocalTime lastOrderTime, String location, String description, String phone) {
+		this.id = id;
+		this.owner = owner;
+		this.foodType = foodType;
+		this.name = name;
+		this.capacity = capacity;
+		this.openTime = openTime;
+		this.lastOrderTime = lastOrderTime;
+		this.location = location;
+		this.description = description;
+		this.phone = phone;
+	}
+
+	public Restaurant(Customer owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+		LocalTime lastOrderTime, String location, String description, String phone) {
+		this(null, owner, foodType, name, capacity, openTime, lastOrderTime, location, description, phone);
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public Customer getOwner() {
+		return owner;
+	}
+
+	public FoodType getFoodType() {
+		return foodType;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public LocalTime getOpenTime() {
+		return openTime;
+	}
+
+	public LocalTime getLastOrderTime() {
+		return lastOrderTime;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
 }

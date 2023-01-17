@@ -24,7 +24,7 @@ class CustomerServiceTest {
 	public void signup() {
 		// given
 		final CustomerSignupRequest customerSignupRequest = new CustomerSignupRequest("닉네임", "이택승", "01012341234",
-			"qwer1234!", CustomerType.CUSTOMER);
+			"qwer1234!", CustomerType.CONSUMER);
 
 		// when
 		customerService.signup(customerSignupRequest);
