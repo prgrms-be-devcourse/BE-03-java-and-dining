@@ -98,4 +98,12 @@ public class Reservation extends BaseEntity {
 	public LocalDateTime getVisitDateTime() {
 		return customerInput.getVisitDateTime();
 	}
+
+	public boolean isStatus(ReservationStatus status) {
+		return this.status == status;
+	}
+
+	public void updateStatus(ReservationStatus status) {
+		this.status = status;
+	}
 }
