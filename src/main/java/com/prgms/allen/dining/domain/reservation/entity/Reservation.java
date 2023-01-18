@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -17,6 +18,8 @@ import javax.persistence.ManyToOne;
 import com.prgms.allen.dining.domain.common.entity.BaseEntity;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.global.error.exception.IllegalReservationStateException;
+import com.prgms.allen.dining.global.util.TimeUtils;
 
 @Entity
 public class Reservation extends BaseEntity {
@@ -103,7 +106,43 @@ public class Reservation extends BaseEntity {
 		return restaurant.getOwner();
 	}
 
-	public boolean isVisitDateTimePrecedes(LocalDateTime target) {
-		return customerInput.isVisitDateTimePrecedes(target);
+	public void confirm(Long ownerId) {
+		validUpdatableReservationState(ownerId, ReservationStatus.PENDING);
+		this.status = ReservationStatus.CONFIRMED;
+	}
+
+	private void validUpdatableReservationState(Long ownerId, ReservationStatus expectedStatus) {
+		assertMatchesOwner(ownerId);
+		assertReservationStatus(expectedStatus);
+		assertCurrentDateTimePrecedesVisitDateTime();
+	}
+
+	private void assertMatchesOwner(Long ownerId) {
+		if (!getRestaurantOwner().matchesId(ownerId)) {
+			throw new IllegalReservationStateException(MessageFormat.format(
+				"Owner does not match. Actual ownerId={0} but was request from ownerId={1}.",
+				getRestaurantOwner().getId(),
+				ownerId
+			));
+		}
+	}
+
+	private void assertReservationStatus(ReservationStatus validStatus) {
+		if (this.status != validStatus) {
+			throw new IllegalReservationStateException(MessageFormat.format(
+				"ReservationStatus should be {0} but was {1}.", validStatus, this.status
+			));
+		}
+	}
+
+	private void assertCurrentDateTimePrecedesVisitDateTime() {
+		LocalDateTime currentDateTime = TimeUtils.getCurrentSeoulDateTime();
+		if (!this.customerInput.isVisitDateTimeBefore(currentDateTime)) {
+			throw new IllegalReservationStateException(MessageFormat.format(
+				"currentDateTime={0} does not precede visitDateTime={1}.",
+				currentDateTime,
+				this.customerInput.getVisitDateTime()
+			));
+		}
 	}
 }
