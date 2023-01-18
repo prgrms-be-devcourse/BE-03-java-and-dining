@@ -97,4 +97,8 @@ public class Member {
 	public Long getId() {
 		return id;
 	}
+
+	public boolean matchesId(Long id) {
+		return this.id.equals(id);
+	}
 }
