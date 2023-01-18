@@ -1,6 +1,6 @@
 package com.prgms.allen.dining.domain.restaurant.dto;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,7 +13,7 @@ public record MenuCreateReq(
 	String name,
 
 	@NotNull
-	BigDecimal price,
+	BigInteger price,
 
 	String description
 ) {

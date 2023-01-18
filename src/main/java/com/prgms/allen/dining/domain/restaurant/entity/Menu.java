@@ -1,6 +1,6 @@
 package com.prgms.allen.dining.domain.restaurant.entity;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -13,7 +13,7 @@ public class Menu {
 	private String name;
 
 	@Column(name = "price", nullable = false)
-	private BigDecimal price;
+	private BigInteger price;
 
 	@Column(name = "description")
 	private String description;
@@ -21,7 +21,7 @@ public class Menu {
 	protected Menu() {
 	}
 
-	public Menu(String name, BigDecimal price, String description) {
+	public Menu(String name, BigInteger price, String description) {
 		this.name = name;
 		this.price = price;
 		this.description = description;
@@ -31,7 +31,7 @@ public class Menu {
 		return name;
 	}
 
-	public BigDecimal getPrice() {
+	public BigInteger getPrice() {
 		return price;
 	}
 

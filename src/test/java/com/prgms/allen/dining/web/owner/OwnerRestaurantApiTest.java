@@ -6,7 +6,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
@@ -103,8 +103,8 @@ class OwnerRestaurantApiTest {
 
 		List<ClosingDayCreateReq> closingDayList = List.of(new ClosingDayCreateReq(DayOfWeek.MONDAY));
 		List<MenuCreateReq> menuList = List.of(
-			new MenuCreateReq("맛있는 밥", BigDecimal.valueOf(10000), "맛있어용"),
-			new MenuCreateReq("맛있는 국", BigDecimal.valueOf(20000), "맛있어용")
+			new MenuCreateReq("맛있는 밥", BigInteger.valueOf(10000), "맛있어용"),
+			new MenuCreateReq("맛있는 국", BigInteger.valueOf(20000), "맛있어용")
 		);
 
 		return new RestaurantCreateReq(

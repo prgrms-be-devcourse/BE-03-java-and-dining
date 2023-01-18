@@ -2,7 +2,7 @@ package com.prgms.allen.dining.domain.restaurant;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
@@ -48,7 +48,7 @@ class RestaurantServiceTest {
 		savedOwner = memberRepository.save(owner);
 
 		closingDayList = List.of(new ClosingDayCreateReq(DayOfWeek.MONDAY));
-		menuList = List.of(new MenuCreateReq("맛있는 밥", BigDecimal.valueOf(10000), "맛있어용"));
+		menuList = List.of(new MenuCreateReq("맛있는 밥", BigInteger.valueOf(10000), "맛있어용"));
 
 		restaurantCreateReq = new RestaurantCreateReq(
 			FoodType.KOREAN,

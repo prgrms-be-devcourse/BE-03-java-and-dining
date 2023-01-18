@@ -1,6 +1,6 @@
 package com.prgms.allen.dining.domain.reservation;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -129,7 +129,7 @@ class ReservationServiceTest {
 			"서울특별시 서초구 어디길11 2층",
 			"실망시키지 않는 맛집",
 			"021234123",
-			List.of(new Menu("메뉴이름", BigDecimal.valueOf(10000), "메모")),
+			List.of(new Menu("메뉴이름", BigInteger.valueOf(10000), "메모")),
 			List.of(new ClosingDay(DayOfWeek.MONDAY))
 		);
 	}
