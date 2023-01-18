@@ -84,7 +84,10 @@ public class FakeMemberRepository implements MemberRepository {
 
 	@Override
 	public <S extends Member> List<S> saveAll(Iterable<S> entities) {
-		throw new UnsupportedOperationException();
+
+		entities.forEach(i -> save(i));
+
+		return (List<S>)members;
 	}
 
 	@Override
