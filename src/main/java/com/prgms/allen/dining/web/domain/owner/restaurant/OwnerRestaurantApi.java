@@ -2,6 +2,8 @@ package com.prgms.allen.dining.web.domain.owner.restaurant;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
-import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateRequest;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 
 @RestController
 @RequestMapping("/owner/api/restaurants")
@@ -25,12 +27,12 @@ public class OwnerRestaurantApi {
 
 	@PostMapping
 	public ResponseEntity<Void> create(
-		@RequestBody RestaurantCreateRequest restaurantCreateRequest,
+		@Valid @RequestBody RestaurantCreateReq restaurantCreateReq,
 		@RequestParam Long ownerId
 	) {
-		final long restaurantId = restaurantService.save(restaurantCreateRequest, ownerId);
+		final long restaurantId = restaurantService.save(restaurantCreateReq, ownerId);
 
-		URI location = UriComponentsBuilder.fromPath("/api/restaurants/{restaurantId}")
+		final URI location = UriComponentsBuilder.fromPath("/owner/api/restaurants/{restaurantId}")
 			.buildAndExpand(restaurantId)
 			.toUri();
 
