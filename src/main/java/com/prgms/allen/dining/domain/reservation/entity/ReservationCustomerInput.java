@@ -27,6 +27,10 @@ public class ReservationCustomerInput {
 	protected ReservationCustomerInput() {
 	}
 
+	public ReservationCustomerInput(LocalDate visitDate, LocalTime visitTime, int visitorCount) {
+		this(visitDate, visitTime, visitorCount, null);
+	}
+
 	public ReservationCustomerInput(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
 		this.visitDate = visitDate;
 		this.visitTime = visitTime;
