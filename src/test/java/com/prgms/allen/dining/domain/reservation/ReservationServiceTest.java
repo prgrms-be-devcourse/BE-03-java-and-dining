@@ -5,6 +5,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
@@ -110,9 +111,11 @@ class ReservationServiceTest {
 
 	private Reservation createReservation(String status, Member consumer, Restaurant savedRestaurant) {
 		ReservationCustomerInput detail = new ReservationCustomerInput(
-			LocalDate.of(2023, 1, 16),
-			LocalTime.of(16, 59), 2,
-			"단무지는 빼주세요"
+			LocalDate.now(),
+			LocalTime.now()
+				.plusHours(1)
+				.truncatedTo(ChronoUnit.HOURS),
+			2, "단무지는 빼주세요"
 		);
 
 		return new Reservation(
@@ -133,7 +136,9 @@ class ReservationServiceTest {
 		Restaurant restaurant = restaurantRepository.save(createRestaurant(owner));
 
 		ReservationCustomerInputCreateReq customerInput = new ReservationCustomerInputCreateReq(
-			LocalDateTime.of(2023, 1, 18, 17, 0),
+			LocalDateTime.now()
+				.plus(2, ChronoUnit.HOURS)
+				.truncatedTo(ChronoUnit.HOURS),
 			2,
 			"맛있게 해주세요"
 		);

@@ -44,33 +44,33 @@ public class ReservationCustomerInput {
 		this.customerMemo = customerMemo;
 	}
 
-	public ReservationCustomerInput(LocalDateTime visitAt, int visitorCount, String customerMemo) {
-		validate(visitAt, visitorCount, customerMemo);
+	public ReservationCustomerInput(LocalDateTime visitDateTime, int visitorCount, String customerMemo) {
+		validate(visitDateTime, visitorCount, customerMemo);
 
-		this.visitDate = visitAt.toLocalDate();
-		this.visitTime = visitAt.toLocalTime()
+		this.visitDate = visitDateTime.toLocalDate();
+		this.visitTime = visitDateTime.toLocalTime()
 			.truncatedTo(ChronoUnit.SECONDS);
 		this.visitorCount = visitorCount;
 		this.customerMemo = customerMemo;
 	}
 
-	private void validate(LocalDateTime visitAt, int visitorCount, String customerMemo) {
-		validateVisitBoundary(visitAt);
-		validateHour(visitAt.toLocalTime());
+	private void validate(LocalDateTime visitDateTime, int visitorCount, String customerMemo) {
+		validateVisitBoundary(visitDateTime);
+		validateHour(visitDateTime.toLocalTime());
 		validateVisitorCount(visitorCount);
 		validateMemo(customerMemo);
 	}
 
-	private void validateVisitBoundary(LocalDateTime visitAt) {
-		Assert.notNull(visitAt, "Field visitAt must not be null");
+	private void validateVisitBoundary(LocalDateTime visitDateTime) {
+		Assert.notNull(visitDateTime, "Field visitDateTime must not be null");
 
 		LocalDateTime now = LocalDateTime.now();
 		Assert.state(
-			visitAt.isAfter(now.truncatedTo(ChronoUnit.HOURS)),
+			visitDateTime.isAfter(now.truncatedTo(ChronoUnit.HOURS)),
 			"Field visitTime must be after the next hour based on the current date time."
 		);
 
-		LocalDate visitDate = visitAt.toLocalDate();
+		LocalDate visitDate = visitDateTime.toLocalDate();
 		LocalDate nowDate = now.toLocalDate();
 		Assert.state(
 			visitDate.isBefore(nowDate.plusDays(DAYS_TO_ADD)),

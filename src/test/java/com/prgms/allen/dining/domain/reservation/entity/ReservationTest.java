@@ -3,6 +3,7 @@ package com.prgms.allen.dining.domain.reservation.entity;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,9 @@ class ReservationTest {
 			LocalTime.now(),
 			"서울시 뭐뭐구 뭐뭐동 202",
 			"맛있는 식당입니다.",
-			"01012342345"
+			"01012342345",
+			new ArrayList<>(),
+			new ArrayList<>()
 		);
 	}
 

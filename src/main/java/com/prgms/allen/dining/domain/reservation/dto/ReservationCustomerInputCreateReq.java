@@ -12,7 +12,7 @@ public record ReservationCustomerInputCreateReq(
 
 	@NotNull
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
-	LocalDateTime visitAt,
+	LocalDateTime visitDateTime,
 
 	int visitorCount,
 
@@ -22,7 +22,7 @@ public record ReservationCustomerInputCreateReq(
 
 	public ReservationCustomerInput toEntity() {
 		return new ReservationCustomerInput(
-			visitAt,
+			visitDateTime,
 			visitorCount,
 			memo
 		);
