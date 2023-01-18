@@ -70,16 +70,16 @@ public class FakeMemberRepository implements MemberRepository {
 
 	@Override
 	public <S extends Member> S save(S entity) {
-		Member newMember = new Member(
-			count(),
+		Member member = new Member(
+			count() + 1,
 			entity.getNickname(),
 			entity.getName(),
 			entity.getPhone(),
 			entity.getPassword(),
 			entity.getMemberType()
 		);
-		members.add(newMember);
-		return (S)newMember;
+		members.add(member);
+		return (S)member;
 	}
 
 	@Override
@@ -179,10 +179,10 @@ public class FakeMemberRepository implements MemberRepository {
 	}
 
 	@Override
-	public Optional<Member> findCustomerById(Long memberId) {
+	public Optional<Member> findByIdAndMemberType(Long id, MemberType memberType) {
 		return members.stream()
-			.filter(member -> member.getId().equals(memberId))
-			.filter(member -> member.getMemberType() == MemberType.CUSTOMER)
+			.filter(member -> id.equals(member.getId()))
+			.filter(member -> memberType.equals(member.getMemberType()))
 			.findAny();
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
+import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,6 +33,14 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 		log.info("MethodArgumentNotValidException occurred.", e);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
+		return newResponseEntity(response);
+	}
+
+	@ExceptionHandler(RestaurantDuplicateCreationException.class)
+	public ResponseEntity<ErrorResponse> handleRestaurantDuplicateCreationException(
+		RestaurantDuplicateCreationException e) {
+		log.info("RestaurantDuplicateCreationException occurred.", e);
+		ErrorResponse response = new ErrorResponse(e.getErrorCode());
 		return newResponseEntity(response);
 	}
 

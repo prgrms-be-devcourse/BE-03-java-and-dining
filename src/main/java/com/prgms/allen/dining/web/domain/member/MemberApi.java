@@ -23,7 +23,9 @@ public class MemberApi {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<Void> signup(@RequestBody @Valid MemberSignupRequest memberSignupRequest) {
+	public ResponseEntity<Void> signup(
+		@Valid @RequestBody MemberSignupRequest memberSignupRequest
+	) {
 		memberService.signup(memberSignupRequest);
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.build();

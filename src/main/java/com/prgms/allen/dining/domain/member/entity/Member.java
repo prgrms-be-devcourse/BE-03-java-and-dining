@@ -39,6 +39,10 @@ public class Member {
 	protected Member() {
 	}
 
+	public Member(String nickname, String name, String phone, String password, MemberType memberType) {
+		this(null, nickname, name, phone, password, memberType);
+	}
+
 	public Member(Long id, String nickname, String name, String phone, String password, MemberType memberType) {
 		validate(nickname, name, phone, password, memberType);
 
@@ -50,16 +54,12 @@ public class Member {
 		this.memberType = memberType;
 	}
 
-	public Member(String nickname, String name, String phone, String password, MemberType memberType) {
-		this(null, nickname, name, phone, password, memberType);
-	}
-
 	private void validate(String nickname, String name, String phone, String password, MemberType memberType) {
 		validateNickname(nickname);
 		validateName(name);
 		validatePhone(phone);
 		validatePassword(password);
-		validateCustomerType(memberType);
+		valdiateMemberType(memberType);
 	}
 
 	private void validateNickname(String nickname) {
@@ -87,8 +87,12 @@ public class Member {
 			"Password is invalid format.");
 	}
 
-	private void validateCustomerType(MemberType memberType) {
+	private void valdiateMemberType(MemberType memberType) {
 		Assert.notNull(memberType, "customerType must be not null.");
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String getNickname() {
@@ -101,10 +105,6 @@ public class Member {
 
 	public String getPhone() {
 		return phone;
-	}
-
-	public Long getId() {
-		return id;
 	}
 
 	public String getPassword() {

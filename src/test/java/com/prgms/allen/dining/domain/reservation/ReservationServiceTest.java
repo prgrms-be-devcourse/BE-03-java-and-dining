@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import java.math.BigInteger;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -29,7 +31,9 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
+import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
+import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 class ReservationServiceTest {
@@ -37,8 +41,8 @@ class ReservationServiceTest {
 	private final ReservationRepository reservationRepository = new FakeReservationRepository();
 	private final RestaurantRepository restaurantRepository = new FakeRestaurantRepository();
 	private final MemberRepository memberRepository = new FakeMemberRepository();
-	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository);
 	private final MemberService memberService = new MemberService(memberRepository);
+	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
 	private final ReservationService reservationService = new ReservationService(
 		reservationRepository,
 		restaurantService,
@@ -157,7 +161,9 @@ class ReservationServiceTest {
 			LocalTime.of(23, 0),
 			"서울특별시 서초구 어디길11 2층",
 			"실망시키지 않는 맛집",
-			"021234123"
+			"021234123",
+			List.of(new Menu("메뉴이름", BigInteger.valueOf(10000), "메모")),
+			List.of(new ClosingDay(DayOfWeek.MONDAY))
 		);
 	}
 
