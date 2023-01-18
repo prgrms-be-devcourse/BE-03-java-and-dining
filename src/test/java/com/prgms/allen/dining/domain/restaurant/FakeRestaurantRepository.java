@@ -20,7 +20,7 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public List<Restaurant> findAll() {
-		throw new UnsupportedOperationException();
+		return restaurants;
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public <S extends Restaurant> S save(S entity) {
 		Restaurant newRestaurant = new Restaurant(
-			count(),
+			count() + 1,
 			entity.getOwner(),
 			entity.getFoodType(),
 			entity.getName(),
@@ -80,7 +80,10 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 			entity.getLastOrderTime(),
 			entity.getLocation(),
 			entity.getDescription(),
-			entity.getPhone());
+			entity.getPhone(),
+			entity.getMenu(),
+			entity.getClosingDays()
+		);
 		restaurants.add(newRestaurant);
 		return (S)newRestaurant;
 	}
@@ -98,7 +101,8 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public boolean existsById(Long aLong) {
 		return restaurants.stream()
-			.anyMatch(restaurant -> Objects.equals(restaurant.getId(), aLong));
+			.anyMatch(restaurant ->
+				Objects.equals(restaurant.getId(), aLong));
 	}
 
 	@Override
@@ -180,5 +184,13 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	public <S extends Restaurant, R> R findBy(Example<S> example,
 		Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean existsRestaurantByOwnerId(Long ownerId) {
+		return restaurants.stream().anyMatch(restaurant ->
+			ownerId.equals(
+				restaurant.getOwner()
+					.getId()));
 	}
 }

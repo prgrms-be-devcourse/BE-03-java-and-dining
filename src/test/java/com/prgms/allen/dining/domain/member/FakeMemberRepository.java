@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 
 public class FakeMemberRepository implements MemberRepository {
 
@@ -176,5 +177,13 @@ public class FakeMemberRepository implements MemberRepository {
 	public <S extends Member, R> R findBy(Example<S> example,
 		Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Optional<Member> findByIdAndMemberType(Long id, MemberType memberType) {
+		return members.stream()
+			.filter(member -> id.equals(member.getId()))
+			.filter(member -> memberType.equals(member.getMemberType()))
+			.findAny();
 	}
 }
