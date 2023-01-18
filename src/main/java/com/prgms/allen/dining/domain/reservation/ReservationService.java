@@ -15,8 +15,6 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
-import com.prgms.allen.dining.global.error.ErrorCode;
-import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,19 +36,8 @@ public class ReservationService {
 
 	@Transactional
 	public void reserve(Long customerId, ReservationCreateRequest createRequest) {
-		Member customer = memberService.findCustomerById(customerId)
-			.orElseThrow(() -> new NotFoundResourceException(
-					ErrorCode.NOT_FOUND_RESOURCE,
-					String.format("Not found customerId: %d", customerId)
-				)
-			);
-
-		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId())
-			.orElseThrow(() -> new NotFoundResourceException(
-					ErrorCode.NOT_FOUND_RESOURCE,
-					String.format("Not found restaurantId: %d", createRequest.restaurantId())
-				)
-			);
+		Member customer = memberService.findCustomerById(customerId);
+		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId());
 
 		ReservationCustomerInput reservationCustomerInput = createRequest
 			.reservationCustomerInput()

@@ -1,12 +1,10 @@
 package com.prgms.allen.dining.domain.restaurant;
 
 import java.text.MessageFormat;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
@@ -31,7 +29,7 @@ public class RestaurantService {
 		return restaurantRepository.findById(restaurantId)
 			.orElseThrow(() -> new NotFoundResourceException(
 				ErrorCode.NOT_FOUND_RESOURCE,
-				MessageFormat.format("Cannot find Restaurant entity for owner id = {0}", ownerId)
+				MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
 			));
 	}
 
