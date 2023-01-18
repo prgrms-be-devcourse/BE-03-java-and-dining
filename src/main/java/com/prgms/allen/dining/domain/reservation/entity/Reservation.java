@@ -99,12 +99,8 @@ public class Reservation extends BaseEntity {
 		return customerInput.getVisitDateTime();
 	}
 
-	public boolean isStatus(ReservationStatus status) {
-		return this.status == status;
-	}
-
-	public void updateStatus(ReservationStatus status) {
-		this.status = status;
+	public Member getRestaurantOwner() {
+		return restaurant.getOwner();
 	}
 
 	public boolean isVisitDateTimePrecedes(LocalDateTime target) {
