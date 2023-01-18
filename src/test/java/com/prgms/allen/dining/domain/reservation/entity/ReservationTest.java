@@ -65,7 +65,7 @@ class ReservationTest {
 
 	@Test
 	@DisplayName("확정 대기 중인 예약을 방문시간 이후에 확정 시 예외가 발생한다.")
-	void testMethodNameHere() {
+	void should_throw_exception_when_visitDateTime_does_not_precede_currentDateTIme() {
 		// given
 		Member owner = memberRepository.save(DummyGenerator.OWNER);
 		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
