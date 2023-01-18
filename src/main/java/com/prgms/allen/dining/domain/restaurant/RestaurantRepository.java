@@ -6,5 +6,5 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-	boolean existsRestaurantByOwner_Id(Long ownerId);
+	boolean existsRestaurantByOwnerId(Long ownerId);
 }

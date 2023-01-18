@@ -48,7 +48,7 @@ public class RestaurantService {
 	}
 
 	private void validAlreadyHasRestaurant(Long ownerId) {
-		if (restaurantRepository.existsRestaurantByOwner_Id(ownerId)) {
+		if (restaurantRepository.existsRestaurantByOwnerId(ownerId)) {
 			throw new RestaurantDuplicateCreationException(ErrorCode.DUPLICATE_ERROR);
 		}
 	}
