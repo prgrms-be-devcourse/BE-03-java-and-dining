@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateRequest;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.global.error.ErrorCode;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
@@ -35,10 +35,15 @@ public class RestaurantService {
 	}
 
 	@Transactional
-	public long save(RestaurantCreateRequest restaurantCreateRequest, Long ownerId) {
+	public long save(RestaurantCreateReq restaurantCreateReq, Long ownerId) {
+
 		validAlreadyHasRestaurant(ownerId);
+
 		final Member owner = memberService.findOwnerById(ownerId);
-		final Restaurant restaurant = restaurantRepository.save(restaurantCreateRequest.toEntity(owner));
+		final Restaurant restaurant = restaurantRepository.save(
+			restaurantCreateReq.toEntity(owner)
+		);
+
 		return restaurant.getId();
 	}
 

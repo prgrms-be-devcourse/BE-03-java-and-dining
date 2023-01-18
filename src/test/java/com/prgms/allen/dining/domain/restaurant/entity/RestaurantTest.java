@@ -41,10 +41,10 @@ class RestaurantTest {
 		MemberType.CUSTOMER
 	);
 
-	@ParameterizedTest
-	@CsvSource({"뭐", "30글자 넘어가는 아주 긴 식당이다 너무 길어서 당황스럽지 더 길게 만들어주지 아주 그냥 길게 만들어"})
-	@DisplayName("점주는 레스토랑 이름 입력시,1 ~ 30 글자 범위를 벗어나면 생성에 실패한다")
-	void fail_by_name(String invalidName) {
+	@Test
+	@DisplayName("점주는 레스토랑 이름 입력시, 30글자를 초과하면 생성에 실패한다")
+	void fail_by_name() {
+		String invalidName = "30글자 넘어가는 아주 긴 식당이다 너무 길어서 당황스럽지 더 길게 만들어주지 아주 그냥 길게 만들어";
 
 		// when & then
 		assertThrows(IllegalArgumentException.class, () ->

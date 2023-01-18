@@ -6,27 +6,29 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
-public record RestaurantCreateRequest(
+public record RestaurantCreateReq(
 
-	@NotBlank
+	@NotNull
 	FoodType foodType,
 
 	@NotBlank
 	String name,
 
-	@NotNull
 	int capacity,
 
 	@NotNull
+	@JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
 	LocalTime openTime,
 
 	@NotNull
+	@JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
 	LocalTime lastOrderTime,
 
 	@NotBlank
@@ -37,18 +39,12 @@ public record RestaurantCreateRequest(
 	@NotBlank
 	String phone,
 
-	List<MenuCreateRequest> menuList,
+	List<MenuCreateReq> menuList,
 
-	List<ClosingDayCreateRequest> closingDays
+	List<ClosingDayCreateReq> closingDays
 ) {
 
 	public Restaurant toEntity(Member owner) {
-		List<Menu> menus = menuList.stream()
-			.map(MenuCreateRequest::toEntity)
-			.toList();
-		List<ClosingDay> closingDayList = closingDays.stream()
-			.map(ClosingDayCreateRequest::toClosingDay)
-			.toList();
 
 		return new Restaurant(
 			owner,
@@ -60,7 +56,32 @@ public record RestaurantCreateRequest(
 			location,
 			description,
 			phone,
-			menus,
-			closingDayList);
+			toMenuValueObjectList(menuList),
+			toClosingDayValueObjectList(closingDays)
+		);
+	}
+
+	private List<ClosingDay> toClosingDayValueObjectList(List<ClosingDayCreateReq> closingDays) {
+		List<ClosingDay> closingDayList = List.of();
+
+		if (closingDays != null) {
+			closingDayList = closingDays.stream()
+				.map(ClosingDayCreateReq::toClosingDay)
+				.toList();
+		}
+
+		return closingDayList;
+	}
+
+	private List<Menu> toMenuValueObjectList(List<MenuCreateReq> menuList) {
+		List<Menu> menus = List.of();
+
+		if (menuList != null) {
+			menus = menuList.stream()
+				.map(MenuCreateReq::toMenu)
+				.toList();
+		}
+
+		return menus;
 	}
 }

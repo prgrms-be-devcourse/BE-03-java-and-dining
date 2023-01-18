@@ -19,6 +19,7 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 
 import org.springframework.util.Assert;
+
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 
@@ -81,7 +82,7 @@ public class Restaurant {
 	public Restaurant(Long id, Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
 		LocalTime lastOrderTime, String location, String description, String phone, List<Menu> menuList,
 		List<ClosingDay> closingDays) {
-		validate(owner, name, capacity, phone);
+		validate(owner, name, capacity, phone, openTime, lastOrderTime, location);
 		this.id = id;
 		this.owner = owner;
 		this.foodType = foodType;
@@ -137,17 +138,15 @@ public class Restaurant {
 	}
 
 	public List<Menu> getMenu() {
-		return new ArrayList<>(menu);
+		return List.copyOf(menu);
 	}
 
 	public List<ClosingDay> getClosingDays() {
-		return new ArrayList<>(closingDays);
+		return List.copyOf(closingDays);
 	}
 
 	public boolean isNotOwner(Long requestOwnerId) {
-		return !requestOwnerId.equals(
-			this.owner
-				.getId());
+		return !requestOwnerId.equals(owner.getId());
 	}
 
 	public List<Menu> getMinorMenu() {
@@ -157,30 +156,43 @@ public class Restaurant {
 		return this.menu.subList(0, 4);
 	}
 
-	public void validate(Member owner, String name, int capacity, String phone) {
+	public void validate(Member owner, String name, int capacity, String phone, LocalTime openTime,
+		LocalTime lastOrderTime, String location) {
 		validateOwnerType(owner);
 		validateName(name);
 		validateCapacity(capacity);
 		validatePhone(phone);
+		validateTimes(openTime, lastOrderTime);
+		validateLocation(location);
 	}
 
 	private void validateOwnerType(Member owner) {
-		Assert.isTrue(MemberType.OWNER.equals(owner.getMemberType()), "권한이 없습니다.");
+		Assert.notNull(owner, "Owner must not be empty");
+		Assert.isTrue(MemberType.OWNER.equals(owner.getMemberType()), "No Authorization");
 	}
 
 	private void validateName(String name) {
-		Assert.isTrue(name.length() > 1, "Length of name must over than 1");
-		Assert.isTrue(name.length() < 30, "Length of name must less than 30");
+		Assert.isTrue(name.length() >= 1, "Length of name must over than 0");
+		Assert.isTrue(name.length() <= 30, "Length of name must less than 31");
 	}
 
 	private void validateCapacity(int capacity) {
-		Assert.isTrue(capacity > 2, "Capacity must over than 2");
+		Assert.isTrue(capacity >= 2, "Capacity must over than 2");
 	}
 
 	private void validatePhone(String phone) {
 		Assert.hasLength(phone, "Phone must be not empty.");
 		Assert.isTrue(phone.length() >= 9 && phone.length() <= 11, "Name must be between 2 and 5.");
 		Assert.isTrue(Pattern.matches("^[0-9]+$", phone), "Phone is invalid format");
+	}
+
+	private void validateTimes(LocalTime openTime, LocalTime lastOrderTime) {
+		Assert.notNull(openTime, "openTime must not be empty");
+		Assert.notNull(lastOrderTime, "lastOrderTime must not by empty");
+	}
+
+	private void validateLocation(String location) {
+		Assert.hasLength(location, "Location must be not empty.");
 	}
 
 }

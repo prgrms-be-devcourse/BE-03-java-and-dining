@@ -7,34 +7,35 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.FakeMemberRepository;
+import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayCreateRequest;
-import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateRequest;
-import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateRequest;
+import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
-@Transactional
 class RestaurantServiceTest {
 
 	private final RestaurantRepository restaurantRepository = new FakeRestaurantRepository();
-	private final FakeMemberRepository customerRepository = new FakeMemberRepository();
-	private final MemberService memberService = new MemberService(customerRepository);
-	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
+	private final MemberRepository memberRepository = new FakeMemberRepository();
+	private final MemberService memberService = new MemberService(memberRepository);
+	private final RestaurantService restaurantService = new RestaurantService(
+		restaurantRepository,
+		memberService
+	);
 
 	private Member savedOwner;
-	private List<ClosingDayCreateRequest> closingDayList;
-	private List<MenuCreateRequest> menuList;
-	private RestaurantCreateRequest restaurantCreateRequest;
+	private List<ClosingDayCreateReq> closingDayList;
+	private List<MenuCreateReq> menuList;
+	private RestaurantCreateReq restaurantCreateReq;
 
 	@BeforeEach
 	void setUp() {
@@ -44,12 +45,12 @@ class RestaurantServiceTest {
 			"01011112222",
 			"qwer1234!",
 			MemberType.OWNER);
-		savedOwner = customerRepository.save(owner);
+		savedOwner = memberRepository.save(owner);
 
-		closingDayList = List.of(new ClosingDayCreateRequest(DayOfWeek.MONDAY));
-		menuList = List.of(new MenuCreateRequest("맛있는 밥", BigDecimal.valueOf(10000), "맛있어용"));
+		closingDayList = List.of(new ClosingDayCreateReq(DayOfWeek.MONDAY));
+		menuList = List.of(new MenuCreateReq("맛있는 밥", BigDecimal.valueOf(10000), "맛있어용"));
 
-		restaurantCreateRequest = new RestaurantCreateRequest(
+		restaurantCreateReq = new RestaurantCreateReq(
 			FoodType.KOREAN,
 			"유명 레스토랑",
 			30,
@@ -62,18 +63,13 @@ class RestaurantServiceTest {
 			closingDayList);
 	}
 
-	@AfterEach
-	void clean() {
-		customerRepository.deleteAll();
-		restaurantRepository.deleteAll();
-	}
-
 	@Test
 	@DisplayName("점주는 식당을 등록할 수 있다.")
 	public void testSave() {
+		System.out.println(savedOwner.getId());
 
 		// when
-		restaurantService.save(restaurantCreateRequest, savedOwner.getId());
+		restaurantService.save(restaurantCreateReq, savedOwner.getId());
 
 		// then
 		assertThat(restaurantRepository.count()).isEqualTo(1);
@@ -82,10 +78,11 @@ class RestaurantServiceTest {
 	@Test
 	@DisplayName("점주가 식당을 2개이상 생성하려할 경우 RestaurantDuplicateCreationException 을 던진다.")
 	public void failSave() {
+		System.out.println(savedOwner.getId());
 
-		final RestaurantCreateRequest restaurantCreateRequest2 = new RestaurantCreateRequest(
+		final RestaurantCreateReq restaurantCreateReq2 = new RestaurantCreateReq(
 			FoodType.KOREAN,
-			"유명 레스토랑",
+			"유명 레스토랑인척하는레스토랑",
 			30,
 			LocalTime.of(11, 0),
 			LocalTime.of(21, 0),
@@ -96,9 +93,9 @@ class RestaurantServiceTest {
 			closingDayList
 		);
 
-		restaurantService.save(restaurantCreateRequest, savedOwner.getId());
+		restaurantService.save(restaurantCreateReq, savedOwner.getId());
 
-		assertThatThrownBy(() -> restaurantService.save(restaurantCreateRequest2, savedOwner.getId()))
+		assertThatThrownBy(() -> restaurantService.save(restaurantCreateReq2, savedOwner.getId()))
 			.isInstanceOf(RestaurantDuplicateCreationException.class);
 	}
 }

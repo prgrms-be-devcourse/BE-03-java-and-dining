@@ -28,9 +28,9 @@ import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.dto.MemberSignupRequest;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayCreateRequest;
-import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateRequest;
-import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateRequest;
+import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 
 @AutoConfigureRestDocs
@@ -64,17 +64,18 @@ class OwnerRestaurantApiTest {
 					fieldWithPath("foodType").type(JsonFieldType.STRING).description("food type"),
 					fieldWithPath("name").type(JsonFieldType.STRING).description("restaurant name"),
 					fieldWithPath("capacity").type(JsonFieldType.NUMBER).description("restaurant capacity"),
-					fieldWithPath("openTime").type(JsonFieldType.ARRAY).description("restaurant open time"),
-					fieldWithPath("lastOrderTime").type(JsonFieldType.ARRAY).description("restaurant last order time"),
+					fieldWithPath("openTime").type(JsonFieldType.STRING).description("restaurant open time"),
+					fieldWithPath("lastOrderTime").type(JsonFieldType.STRING).description("restaurant last order time"),
 					fieldWithPath("location").type(JsonFieldType.STRING).description("restaurant location"),
 					fieldWithPath("description").type(JsonFieldType.STRING).description("restaurant description"),
 					fieldWithPath("phone").type(JsonFieldType.STRING).description("restaurant phone"),
-					fieldWithPath("menuList").type(JsonFieldType.ARRAY).description("menu list"),
-					fieldWithPath("menuList[].name").type(JsonFieldType.STRING).description("menu name"),
-					fieldWithPath("menuList[].price").type(JsonFieldType.NUMBER).description("menu price"),
-					fieldWithPath("menuList[].description").type(JsonFieldType.STRING).description("menu description"),
-					fieldWithPath("closingDays").type(JsonFieldType.ARRAY).description("closing days"),
-					fieldWithPath("closingDays[].dayOfWeek").type(JsonFieldType.STRING)
+					fieldWithPath("menuList").type(JsonFieldType.ARRAY).optional().description("menu list"),
+					fieldWithPath("menuList[].name").type(JsonFieldType.STRING).optional().description("menu name"),
+					fieldWithPath("menuList[].price").type(JsonFieldType.NUMBER).optional().description("menu price"),
+					fieldWithPath("menuList[].description").type(JsonFieldType.STRING).optional()
+						.description("menu description"),
+					fieldWithPath("closingDays").type(JsonFieldType.ARRAY).optional().description("closing days"),
+					fieldWithPath("closingDays[].dayOfWeek").optional().type(JsonFieldType.STRING)
 						.description("closing day of week")
 				))
 			);
@@ -98,15 +99,15 @@ class OwnerRestaurantApiTest {
 			.get();
 	}
 
-	private RestaurantCreateRequest restaurantCreateResource() {
+	private RestaurantCreateReq restaurantCreateResource() {
 
-		List<ClosingDayCreateRequest> closingDayList = List.of(new ClosingDayCreateRequest(DayOfWeek.MONDAY));
-		List<MenuCreateRequest> menuList = List.of(
-			new MenuCreateRequest("맛있는 밥", BigDecimal.valueOf(10000), "맛있어용"),
-			new MenuCreateRequest("맛있는 국", BigDecimal.valueOf(20000), "맛있어용")
+		List<ClosingDayCreateReq> closingDayList = List.of(new ClosingDayCreateReq(DayOfWeek.MONDAY));
+		List<MenuCreateReq> menuList = List.of(
+			new MenuCreateReq("맛있는 밥", BigDecimal.valueOf(10000), "맛있어용"),
+			new MenuCreateReq("맛있는 국", BigDecimal.valueOf(20000), "맛있어용")
 		);
 
-		return new RestaurantCreateRequest(
+		return new RestaurantCreateReq(
 			FoodType.KOREAN,
 			"유명 레스토랑",
 			30,
