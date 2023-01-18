@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateRequest;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleRes;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -35,7 +35,7 @@ public class ReservationService {
 	}
 
 	@Transactional
-	public void reserve(Long customerId, ReservationCreateRequest createRequest) {
+	public void reserve(Long customerId, ReservationCreateReq createRequest) {
 		Member customer = memberService.findCustomerById(customerId);
 		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId());
 
@@ -52,7 +52,7 @@ public class ReservationService {
 		reservationRepository.save(newReservation);
 	}
 
-	public Page<ReservationSimpleResponse> getRestaurantReservations(
+	public Page<ReservationSimpleRes> getRestaurantReservations(
 		long restaurantId,
 		ReservationStatus status,
 		Pageable pageable
@@ -62,7 +62,7 @@ public class ReservationService {
 		return new PageImpl<>(
 			reservationRepository.findAllByRestaurantIdAndStatus(restaurantId, status, pageable)
 				.stream()
-				.map(ReservationSimpleResponse::new)
+				.map(ReservationSimpleRes::new)
 				.toList()
 		);
 	}

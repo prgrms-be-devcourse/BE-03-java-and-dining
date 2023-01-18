@@ -22,9 +22,9 @@ import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateRequest;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateRequest;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleRes;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -72,16 +72,16 @@ class ReservationServiceTest {
 		List<Reservation> reservations = createReservations(status, savedRestaurant, consumer);
 		List<Reservation> savedReservations = reservationRepository.saveAll(reservations);
 
-		PageImpl<ReservationSimpleResponse> expect = new PageImpl<>(
+		PageImpl<ReservationSimpleRes> expect = new PageImpl<>(
 			savedReservations
 				.stream()
-				.map(ReservationSimpleResponse::new)
+				.map(ReservationSimpleRes::new)
 				.toList());
 
 		long restaurantId = savedRestaurant.getId();
 
 		// when
-		Page<ReservationSimpleResponse> actual = reservationService.getRestaurantReservations(
+		Page<ReservationSimpleRes> actual = reservationService.getRestaurantReservations(
 			restaurantId,
 			ReservationStatus.valueOf(status),
 			PageRequest.of(0, 5)
@@ -132,18 +132,18 @@ class ReservationServiceTest {
 
 		Restaurant restaurant = restaurantRepository.save(createRestaurant(owner));
 
-		ReservationCustomerInputCreateRequest customerInput = new ReservationCustomerInputCreateRequest(
+		ReservationCustomerInputCreateReq customerInput = new ReservationCustomerInputCreateReq(
 			LocalDateTime.of(2023, 1, 18, 17, 0),
 			2,
 			"맛있게 해주세요"
 		);
-		ReservationCreateRequest reservationCreateRequest = new ReservationCreateRequest(
+		ReservationCreateReq reservationCreateReq = new ReservationCreateReq(
 			restaurant.getId(),
 			customerInput
 		);
 
 		// when
-		reservationService.reserve(customer.getId(), reservationCreateRequest);
+		reservationService.reserve(customer.getId(), reservationCreateReq);
 
 		// then
 		long actualCount = reservationRepository.count();

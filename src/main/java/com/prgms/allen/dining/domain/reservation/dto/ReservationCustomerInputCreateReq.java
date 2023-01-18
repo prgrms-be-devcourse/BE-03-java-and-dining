@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 
-public record ReservationCustomerInputCreateRequest(
+public record ReservationCustomerInputCreateReq(
 
 	@NotNull
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")

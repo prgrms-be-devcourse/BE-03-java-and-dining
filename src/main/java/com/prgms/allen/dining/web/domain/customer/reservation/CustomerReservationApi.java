@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.prgms.allen.dining.domain.reservation.ReservationService;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateRequest;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
@@ -25,7 +25,7 @@ public class CustomerReservationApi {
 	@PostMapping
 	public ResponseEntity<Void> reserve(
 		@RequestParam Long customerId,
-		@RequestBody @Valid ReservationCreateRequest createRequest) {
+		@RequestBody @Valid ReservationCreateReq createRequest) {
 		reservationService.reserve(customerId, createRequest);
 		return ResponseEntity.ok()
 			.build();
