@@ -1,11 +1,15 @@
 package com.prgms.allen.dining.domain.member;
 
+import java.text.MessageFormat;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.dto.MemberSignupRequest;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.global.error.ErrorCode;
+import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,6 +29,9 @@ public class MemberService {
 
 	public Member findOwnerById(long ownerId) {
 		return memberRepository.findByIdAndMemberType(ownerId, MemberType.OWNER)
-			.orElseThrow(IllegalArgumentException::new);
+			.orElseThrow(() -> new NotFoundResourceException(
+				ErrorCode.NOT_FOUND_RESOURCE,
+				MessageFormat.format("Cannot find Restaurant entity for owner id = {0}", ownerId)
+			));
 	}
 }
