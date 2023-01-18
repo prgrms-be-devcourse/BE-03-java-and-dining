@@ -20,7 +20,7 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public List<Restaurant> findAll() {
-		throw new UnsupportedOperationException();
+		return restaurants;
 	}
 
 	@Override
@@ -187,7 +187,7 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	}
 
 	@Override
-	public boolean existsRestaurantByOwner_Id(Long ownerId) {
+	public boolean existsRestaurantByOwnerId(Long ownerId) {
 		return restaurants.stream().anyMatch(restaurant ->
 			ownerId.equals(
 				restaurant.getOwner()
