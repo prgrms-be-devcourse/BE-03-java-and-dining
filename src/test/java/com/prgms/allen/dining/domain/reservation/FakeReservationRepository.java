@@ -19,6 +19,7 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 public class FakeReservationRepository implements ReservationRepository {
 
 	private final List<Reservation> reservations = new ArrayList<>();
+	private Long id = 0L;
 
 	@Override
 	public Page<Reservation> findAllByRestaurantIdAndStatus(long restaurantId, ReservationStatus status,
@@ -85,8 +86,13 @@ public class FakeReservationRepository implements ReservationRepository {
 
 	@Override
 	public <S extends Reservation> S save(S entity) {
-		Reservation newReservation = new Reservation(count(), entity.getCustomer(), entity.getRestaurant(),
-			entity.getStatus(), entity.getCustomerInput());
+		Reservation newReservation = new Reservation(
+			++id,
+			entity.getCustomer(),
+			entity.getRestaurant(),
+			entity.getStatus(),
+			entity.getCustomerInput()
+		);
 		reservations.add(newReservation);
 		return (S)newReservation;
 	}
