@@ -42,41 +42,42 @@ public class Reservation extends BaseEntity {
 
 	@Embedded
 	@Column(name = "detail", nullable = false)
-	private ReservationDetail detail;
+	private ReservationCustomerInput customerInput;
 
 	protected Reservation() {
 	}
 
 	public Reservation(Long id, Member customer, Restaurant restaurant, ReservationStatus status,
-		ReservationDetail detail) {
+		ReservationCustomerInput customerInput) {
 		this.id = id;
 		this.customer = customer;
 		this.restaurant = restaurant;
 		this.status = status;
-		this.detail = detail;
+		this.customerInput = customerInput;
 	}
 
-	public Reservation(Member customer, Restaurant restaurant, ReservationStatus status, ReservationDetail detail) {
+	public Reservation(Member customer, Restaurant restaurant, ReservationStatus status,
+		ReservationCustomerInput detail) {
 		this(null, customer, restaurant, status, detail);
 	}
 
-	public Reservation(Member customer, Restaurant restaurant, ReservationDetail detail) {
-		validation(customer, restaurant, detail);
+	public Reservation(Member customer, Restaurant restaurant, ReservationCustomerInput customerInput) {
+		validation(customer, restaurant, customerInput);
 
 		this.customer = customer;
 		this.restaurant = restaurant;
-		if (detail.checkVisitingToday()) {
+		if (customerInput.checkVisitingToday()) {
 			this.status = ReservationStatus.CONFIRMED;
 		} else {
 			this.status = ReservationStatus.PENDING;
 		}
-		this.detail = detail;
+		this.customerInput = customerInput;
 	}
 
-	private void validation(Member customer, Restaurant restaurant, ReservationDetail detail) {
+	private void validation(Member customer, Restaurant restaurant, ReservationCustomerInput customerInput) {
 		validateCustomer(customer);
 		validateRestaurant(restaurant);
-		validateReservationDetail(detail);
+		validateReservationDetail(customerInput);
 	}
 
 	private void validateCustomer(Member customer) {
@@ -87,8 +88,8 @@ public class Reservation extends BaseEntity {
 		Assert.notNull(restaurant, "Restaurant must not be null.");
 	}
 
-	private void validateReservationDetail(ReservationDetail detail) {
-		Assert.notNull(detail, "ReservationDetail must not be null.");
+	private void validateReservationDetail(ReservationCustomerInput customerInput) {
+		Assert.notNull(customerInput, "ReservationDetail must not be null.");
 	}
 
 	public Long getId() {
@@ -107,8 +108,8 @@ public class Reservation extends BaseEntity {
 		return status;
 	}
 
-	public ReservationDetail getDetail() {
-		return detail;
+	public ReservationCustomerInput getDetail() {
+		return customerInput;
 	}
 
 	public long getRestaurantId() {
@@ -116,7 +117,7 @@ public class Reservation extends BaseEntity {
 	}
 
 	public int getVisitorCount() {
-		return detail.getVisitorCount();
+		return customerInput.getVisitorCount();
 	}
 
 	public String getCustomerPhone() {
@@ -128,6 +129,6 @@ public class Reservation extends BaseEntity {
 	}
 
 	public LocalDateTime getVisitDateTime() {
-		return detail.getVisitDateTime();
+		return customerInput.getVisitDateTime();
 	}
 }

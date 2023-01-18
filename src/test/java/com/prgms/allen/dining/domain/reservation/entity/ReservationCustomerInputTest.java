@@ -14,7 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class ReservationDetailTest {
+class ReservationCustomerInputTest {
 
 	private static final int VALID_VISITOR_COUNT = 2;
 	private static final String VALID_MEMO = "맛있게 해주세요~";
@@ -34,18 +34,19 @@ class ReservationDetailTest {
 				.truncatedTo(ChronoUnit.HOURS);
 
 			// when
-			ReservationDetail reservationDetail = new ReservationDetail(visitAt, VALID_VISITOR_COUNT, VALID_MEMO);
+			ReservationCustomerInput reservationCustomerInput = new ReservationCustomerInput(visitAt,
+				VALID_VISITOR_COUNT, VALID_MEMO);
 
 			// then
 			LocalDate actualVisitDate = visitAt.toLocalDate();
 			LocalTime actualVisitTime = visitAt.toLocalTime();
-			Assertions.assertThat(reservationDetail.getVisitDate())
+			Assertions.assertThat(reservationCustomerInput.getVisitDate())
 				.isEqualTo(actualVisitDate);
-			Assertions.assertThat(reservationDetail.getVisitTime())
+			Assertions.assertThat(reservationCustomerInput.getVisitTime())
 				.isEqualTo(actualVisitTime);
-			Assertions.assertThat(reservationDetail.getVisitorCount())
+			Assertions.assertThat(reservationCustomerInput.getVisitorCount())
 				.isEqualTo(VALID_VISITOR_COUNT);
-			Assertions.assertThat(reservationDetail.getCustomerMemo())
+			Assertions.assertThat(reservationCustomerInput.getCustomerMemo())
 				.isEqualTo(VALID_MEMO);
 		}
 
@@ -60,7 +61,7 @@ class ReservationDetailTest {
 
 			// when & then
 			assertThrows(IllegalStateException.class, () ->
-				new ReservationDetail(visitAt, VALID_VISITOR_COUNT, VALID_MEMO)
+				new ReservationCustomerInput(visitAt, VALID_VISITOR_COUNT, VALID_MEMO)
 			);
 		}
 
@@ -75,7 +76,7 @@ class ReservationDetailTest {
 
 			// when & then
 			assertThrows(IllegalStateException.class, () ->
-				new ReservationDetail(visitAt, VALID_VISITOR_COUNT, VALID_MEMO)
+				new ReservationCustomerInput(visitAt, VALID_VISITOR_COUNT, VALID_MEMO)
 			);
 		}
 	}

@@ -8,6 +8,6 @@ public record ReservationCreateRequest(
 	Long restaurantId,
 
 	@NotNull
-	ReservationDetailCreateRequest reservationDetail
+	ReservationCustomerInputCreateRequest reservationCustomerInput
 ) {
 }

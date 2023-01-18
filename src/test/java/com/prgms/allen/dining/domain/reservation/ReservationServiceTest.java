@@ -21,10 +21,10 @@ import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateRequest;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailCreateRequest;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateRequest;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
@@ -105,7 +105,7 @@ class ReservationServiceTest {
 	}
 
 	private Reservation createReservation(String status, Member consumer, Restaurant savedRestaurant) {
-		ReservationDetail detail = new ReservationDetail(
+		ReservationCustomerInput detail = new ReservationCustomerInput(
 			LocalDate.of(2023, 1, 16),
 			LocalTime.of(16, 59), 2,
 			"단무지는 빼주세요"
@@ -128,14 +128,14 @@ class ReservationServiceTest {
 
 		Restaurant restaurant = restaurantRepository.save(createRestaurant(owner));
 
-		ReservationDetailCreateRequest detail = new ReservationDetailCreateRequest(
+		ReservationCustomerInputCreateRequest customerInput = new ReservationCustomerInputCreateRequest(
 			LocalDateTime.of(2023, 1, 18, 17, 0),
 			2,
 			"맛있게 해주세요"
 		);
 		ReservationCreateRequest reservationCreateRequest = new ReservationCreateRequest(
 			restaurant.getId(),
-			detail
+			customerInput
 		);
 
 		// when

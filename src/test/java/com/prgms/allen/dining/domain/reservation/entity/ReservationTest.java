@@ -61,7 +61,7 @@ class ReservationTest {
 		Reservation reservation = new Reservation(
 			validCustomer,
 			validRestaurant,
-			new ReservationDetail(
+			new ReservationCustomerInput(
 				notVisitToday,
 				2,
 				"맛있게 해주세요~"
@@ -85,7 +85,7 @@ class ReservationTest {
 		Reservation reservation = new Reservation(
 			validCustomer,
 			validRestaurant,
-			new ReservationDetail(
+			new ReservationCustomerInput(
 				visitToday,
 				2,
 				"맛있게 해주세요~"

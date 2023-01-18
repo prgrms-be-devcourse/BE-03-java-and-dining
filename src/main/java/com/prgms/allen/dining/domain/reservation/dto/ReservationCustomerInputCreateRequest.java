@@ -8,9 +8,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 
-public record ReservationDetailCreateRequest(
+public record ReservationCustomerInputCreateRequest(
 
 	@NotNull
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
@@ -24,8 +24,8 @@ public record ReservationDetailCreateRequest(
 	String memo
 ) {
 
-	public ReservationDetail toEntity() {
-		return new ReservationDetail(
+	public ReservationCustomerInput toEntity() {
+		return new ReservationCustomerInput(
 			visitAt,
 			visitorCount,
 			memo

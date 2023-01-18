@@ -11,7 +11,7 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateRequest;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
@@ -47,19 +47,19 @@ public class ReservationService {
 
 		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId())
 			.orElseThrow(() -> new NotFoundResourceException(
-				ErrorCode.NOT_FOUND_RESOURCE,
-				String.format("Not found restaurantId: %d", createRequest.restaurantId())
+					ErrorCode.NOT_FOUND_RESOURCE,
+					String.format("Not found restaurantId: %d", createRequest.restaurantId())
 				)
 			);
 
-		ReservationDetail reservationDetail = createRequest
-			.reservationDetail()
+		ReservationCustomerInput reservationCustomerInput = createRequest
+			.reservationCustomerInput()
 			.toEntity();
 
 		Reservation newReservation = new Reservation(
 			customer,
 			restaurant,
-			reservationDetail
+			reservationCustomerInput
 		);
 
 		reservationRepository.save(newReservation);

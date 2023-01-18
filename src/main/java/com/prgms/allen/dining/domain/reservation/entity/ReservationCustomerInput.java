@@ -12,7 +12,7 @@ import javax.persistence.Lob;
 import org.springframework.util.Assert;
 
 @Embeddable
-public class ReservationDetail {
+public class ReservationCustomerInput {
 
 	private static final int MIN_VISITOR_COUNT = 2;
 	private static final int MAX_VISITOR_COUNT = 8;
@@ -34,17 +34,17 @@ public class ReservationDetail {
 	@Column(name = "customer_memo", length = 300)
 	private String customerMemo;
 
-	protected ReservationDetail() {
+	protected ReservationCustomerInput() {
 	}
 
-	public ReservationDetail(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
+	public ReservationCustomerInput(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
 		this.visitDate = visitDate;
 		this.visitTime = visitTime;
 		this.visitorCount = visitorCount;
 		this.customerMemo = customerMemo;
 	}
 
-	public ReservationDetail(LocalDateTime visitAt, int visitorCount, String customerMemo) {
+	public ReservationCustomerInput(LocalDateTime visitAt, int visitorCount, String customerMemo) {
 		validate(visitAt, visitorCount, customerMemo);
 
 		this.visitDate = visitAt.toLocalDate();
