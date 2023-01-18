@@ -49,4 +49,8 @@ public class ReservationCustomerInput {
 	public LocalDateTime getVisitDateTime() {
 		return LocalDateTime.of(visitDate, visitTime);
 	}
+
+	public boolean isVisitDateTimeBefore(LocalDateTime target) {
+		return getVisitDateTime().isBefore(target);
+	}
 }

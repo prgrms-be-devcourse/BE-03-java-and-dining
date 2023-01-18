@@ -106,4 +106,8 @@ public class Reservation extends BaseEntity {
 	public void updateStatus(ReservationStatus status) {
 		this.status = status;
 	}
+
+	public boolean isVisitDateTimePrecedes(LocalDateTime target) {
+		return customerInput.isVisitDateTimePrecedes(target);
+	}
 }
