@@ -37,18 +37,18 @@ public class ReservationService {
 	}
 
 	@Transactional
-	public void reserve(ReservationCreateRequest createRequest) {
-		Member customer = memberService.findCustomerById(createRequest.customerId())
+	public void reserve(Long customerId, ReservationCreateRequest createRequest) {
+		Member customer = memberService.findCustomerById(customerId)
 			.orElseThrow(() -> new NotFoundResourceException(
 					ErrorCode.NOT_FOUND_RESOURCE,
-					String.format("Not found customerId: %d", createRequest.customerId())
+					String.format("Not found customerId: %d", customerId)
 				)
 			);
 
 		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId())
 			.orElseThrow(() -> new NotFoundResourceException(
-					ErrorCode.NOT_FOUND_RESOURCE,
-					String.format("Not found restaurantId: %d", createRequest.restaurantId())
+				ErrorCode.NOT_FOUND_RESOURCE,
+				String.format("Not found restaurantId: %d", createRequest.restaurantId())
 				)
 			);
 

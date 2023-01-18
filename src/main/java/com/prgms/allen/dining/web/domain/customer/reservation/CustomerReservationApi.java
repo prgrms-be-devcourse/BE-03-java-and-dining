@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.prgms.allen.dining.domain.reservation.ReservationService;
@@ -23,8 +24,9 @@ public class CustomerReservationApi {
 
 	@PostMapping
 	public ResponseEntity<Void> reserve(
+		@RequestParam Long customerId,
 		@RequestBody @Valid ReservationCreateRequest createRequest) {
-		reservationService.reserve(createRequest);
+		reservationService.reserve(customerId, createRequest);
 		return ResponseEntity.ok()
 			.build();
 	}

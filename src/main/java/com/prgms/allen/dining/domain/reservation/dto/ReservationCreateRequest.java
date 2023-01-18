@@ -8,9 +8,6 @@ public record ReservationCreateRequest(
 	Long restaurantId,
 
 	@NotNull
-	Long customerId,
-
-	@NotNull
-	ReservationDetailRequest reservationDetail
+	ReservationDetailCreateRequest reservationDetail
 ) {
 }
