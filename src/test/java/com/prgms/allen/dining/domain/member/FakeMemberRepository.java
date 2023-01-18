@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 
 public class FakeMemberRepository implements MemberRepository {
 
@@ -69,8 +70,16 @@ public class FakeMemberRepository implements MemberRepository {
 
 	@Override
 	public <S extends Member> S save(S entity) {
-		members.add(entity);
-		return entity;
+		Member newMember = new Member(
+			count(),
+			entity.getNickname(),
+			entity.getName(),
+			entity.getPhone(),
+			entity.getPassword(),
+			entity.getMemberType()
+		);
+		members.add(newMember);
+		return (S)newMember;
 	}
 
 	@Override
@@ -171,6 +180,9 @@ public class FakeMemberRepository implements MemberRepository {
 
 	@Override
 	public Optional<Member> findCustomerById(Long memberId) {
-		throw new UnsupportedOperationException();
+		return members.stream()
+			.filter(member -> member.getId().equals(memberId))
+			.filter(member -> member.getMemberType() == MemberType.CUSTOMER)
+			.findAny();
 	}
 }

@@ -92,7 +92,9 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public Optional<Restaurant> findById(Long aLong) {
-		throw new UnsupportedOperationException();
+		return restaurants.stream()
+			.filter(restaurant -> restaurant.getId().equals(aLong))
+			.findAny();
 	}
 
 	@Override
