@@ -35,7 +35,7 @@ public class ReservationService {
 	}
 
 	@Transactional
-	public void reserve(Long customerId, ReservationCreateReq createRequest) {
+	public Long reserve(Long customerId, ReservationCreateReq createRequest) {
 		Member customer = memberService.findCustomerById(customerId);
 		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId());
 
@@ -50,6 +50,7 @@ public class ReservationService {
 		);
 
 		reservationRepository.save(newReservation);
+		return newReservation.getId();
 	}
 
 	public Page<ReservationSimpleRes> getRestaurantReservations(
