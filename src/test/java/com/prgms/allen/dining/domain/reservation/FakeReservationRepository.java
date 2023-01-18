@@ -86,7 +86,7 @@ public class FakeReservationRepository implements ReservationRepository {
 	@Override
 	public <S extends Reservation> S save(S entity) {
 		Reservation newReservation = new Reservation(count(), entity.getCustomer(), entity.getRestaurant(),
-			entity.getStatus(), entity.getDetail());
+			entity.getStatus(), entity.getCustomerInput());
 		reservations.add(newReservation);
 		return (S)newReservation;
 	}

@@ -9,7 +9,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
 @Embeddable
-public class ReservationDetail {
+public class ReservationCustomerInput {
 
 	@Column(name = "visit_date", nullable = false)
 	private LocalDate visitDate;
@@ -24,10 +24,10 @@ public class ReservationDetail {
 	@Column(name = "customer_memo")
 	private String customerMemo;
 
-	protected ReservationDetail() {
+	protected ReservationCustomerInput() {
 	}
 
-	public ReservationDetail(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
+	public ReservationCustomerInput(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
 		this.visitDate = visitDate;
 		this.visitTime = visitTime;
 		this.visitorCount = visitorCount;

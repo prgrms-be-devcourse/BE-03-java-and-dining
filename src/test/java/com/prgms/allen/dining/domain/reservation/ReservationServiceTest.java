@@ -19,7 +19,7 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
@@ -98,7 +98,7 @@ class ReservationServiceTest {
 	}
 
 	private Reservation createReservation(String status, Member consumer, Restaurant savedRestaurant) {
-		ReservationDetail detail = new ReservationDetail(
+		ReservationCustomerInput customerInput = new ReservationCustomerInput(
 			LocalDate.of(2023, 1, 16),
 			LocalTime.of(16, 59), 2,
 			"단무지는 빼주세요"
@@ -108,7 +108,7 @@ class ReservationServiceTest {
 			consumer,
 			savedRestaurant,
 			ReservationStatus.valueOf(status),
-			detail
+			customerInput
 		);
 	}
 

@@ -40,22 +40,23 @@ public class Reservation extends BaseEntity {
 
 	@Embedded
 	@Column(name = "detail", nullable = false)
-	private ReservationDetail detail;
+	private ReservationCustomerInput customerInput;
 
 	protected Reservation() {
 	}
 
 	public Reservation(Long id, Member customer, Restaurant restaurant, ReservationStatus status,
-		ReservationDetail detail) {
+		ReservationCustomerInput customerInput) {
 		this.id = id;
 		this.customer = customer;
 		this.restaurant = restaurant;
 		this.status = status;
-		this.detail = detail;
+		this.customerInput = customerInput;
 	}
 
-	public Reservation(Member customer, Restaurant restaurant, ReservationStatus status, ReservationDetail detail) {
-		this(null, customer, restaurant, status, detail);
+	public Reservation(Member customer, Restaurant restaurant, ReservationStatus status,
+		ReservationCustomerInput customerInput) {
+		this(null, customer, restaurant, status, customerInput);
 	}
 
 	public Long getId() {
@@ -74,8 +75,8 @@ public class Reservation extends BaseEntity {
 		return status;
 	}
 
-	public ReservationDetail getDetail() {
-		return detail;
+	public ReservationCustomerInput getCustomerInput() {
+		return customerInput;
 	}
 
 	public long getRestaurantId() {
@@ -83,7 +84,7 @@ public class Reservation extends BaseEntity {
 	}
 
 	public int getVisitorCount() {
-		return detail.getVisitorCount();
+		return customerInput.getVisitorCount();
 	}
 
 	public String getCustomerPhone() {
@@ -95,6 +96,6 @@ public class Reservation extends BaseEntity {
 	}
 
 	public LocalDateTime getVisitDateTime() {
-		return detail.getVisitDateTime();
+		return customerInput.getVisitDateTime();
 	}
 }
