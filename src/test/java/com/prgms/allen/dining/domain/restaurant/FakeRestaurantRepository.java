@@ -32,15 +32,10 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public Page<Restaurant> findAll(Pageable pageable) {
 
-		List<Restaurant> answer = new ArrayList<>();
 		int lastIndex = (pageable.getPageNumber() + 1) * pageable.getPageSize() - 1;
 		int firstIndex = lastIndex - (pageable.getPageSize() - 1);
 
-		for (int i = 0; i < pageable.getPageSize(); i++) {
-			if (firstIndex + i < restaurants.size()) {
-				answer.add(restaurants.get(firstIndex + i));
-			}
-		}
+		List<Restaurant> answer = restaurants.subList(firstIndex, lastIndex);
 		return new PageImpl<>(answer);
 	}
 
