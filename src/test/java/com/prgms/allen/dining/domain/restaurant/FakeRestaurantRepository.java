@@ -33,12 +33,12 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	public Page<Restaurant> findAll(Pageable pageable) {
 
 		List<Restaurant> answer = new ArrayList<>();
-		int lastIndex = pageable.getPageNumber() * pageable.getPageSize() - 1;
+		int lastIndex = (pageable.getPageNumber() + 1) * pageable.getPageSize() - 1;
 		int firstIndex = lastIndex - (pageable.getPageSize() - 1);
 
 		for (int i = 0; i < pageable.getPageSize(); i++) {
-			if(firstIndex+i < restaurants.size()) {
-				answer.add(restaurants.get(firstIndex+i));
+			if (firstIndex + i < restaurants.size()) {
+				answer.add(restaurants.get(firstIndex + i));
 			}
 		}
 		return new PageImpl<>(answer);
