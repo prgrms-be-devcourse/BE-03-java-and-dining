@@ -46,9 +46,9 @@ public class OwnerReservationApi {
 	@PatchMapping("/{reservationId}/confirm")
 	public ResponseEntity<Void> confirmReservation(
 		@PathVariable Long reservationId,
-		@RequestParam Long owner
+		@RequestParam Long ownerId
 	) {
-		reservationStatusUpdateService.confirmReservation(reservationId, owner);
+		reservationStatusUpdateService.confirmReservation(reservationId, ownerId);
 		return ResponseEntity.ok()
 			.build();
 	}
