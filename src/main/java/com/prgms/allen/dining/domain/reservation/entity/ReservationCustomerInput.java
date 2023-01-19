@@ -18,7 +18,7 @@ public class ReservationCustomerInput {
 
 	private static final int MIN_VISITOR_COUNT = 2;
 	private static final int MAX_VISITOR_COUNT = 8;
-	private static final long DAYS_TO_ADD = 31L;
+	private static final long MAX_RESERVE_PERIOD = 30L;
 	private static final int MINUTE_FORMAT = 0;
 	private static final int SECOND_FORMAT = 0;
 	private static final int MAX_MEMO_LENGTH = 300;
@@ -55,14 +55,6 @@ public class ReservationCustomerInput {
 			.truncatedTo(ChronoUnit.SECONDS);
 		this.visitorCount = visitorCount;
 		this.customerMemo = customerMemo;
-	}
-
-	public ReservationCustomerInput(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
-		this(
-			LocalDateTime.of(visitDate, visitTime),
-			visitorCount,
-			customerMemo
-		);
 	}
 
 	private void validate(LocalDateTime visitDateTime, int visitorCount, String customerMemo) {
