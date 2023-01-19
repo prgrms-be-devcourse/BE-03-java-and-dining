@@ -141,4 +141,24 @@ class RestaurantServiceTest {
 		}
 	}
 
+	@Test
+	@DisplayName("구매자는 검색한 단어가 포함된 이름을 가진 레스토랑들을 페이징 조회할 수 있다")
+	void getRestaurantsContaining() {
+
+		//Given
+		String filterName = "유명";
+		Pageable pageable = PageRequest.of(0, 2);
+
+		List<Restaurant> expectRestaurants = restaurantRepository.findAll()
+			.stream()
+			.filter(restaurant -> restaurant.getName().contains(filterName))
+			.toList();
+
+		//When
+		Page<RestaurantSimpleRes> actualRestaurants = restaurantService.getRestaurantsContains(pageable, filterName);
+
+		//Then
+		assertThat(actualRestaurants).hasSize(expectRestaurants.size());
+	}
+
 }

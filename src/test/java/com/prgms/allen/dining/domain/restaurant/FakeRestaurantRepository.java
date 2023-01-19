@@ -45,6 +45,26 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	}
 
 	@Override
+	public Page<Restaurant> findAllByNameContains(Pageable pageable, String restaurantName) {
+
+		List<Restaurant> filteredRestaurants = restaurants.stream()
+			.filter(restaurant -> restaurant.getName().contains(restaurantName))
+			.toList();
+
+		List<Restaurant> answer = new ArrayList<>();
+		int lastIndex = (pageable.getPageNumber() + 1) * pageable.getPageSize() - 1;
+		int firstIndex = lastIndex - (pageable.getPageSize() - 1);
+
+		for (int i = 0; i < pageable.getPageSize(); i++) {
+			if (firstIndex + i < filteredRestaurants.size()) {
+				answer.add(filteredRestaurants.get(firstIndex + i));
+			}
+		}
+		return new PageImpl<>(answer);
+
+	}
+
+	@Override
 	public List<Restaurant> findAllById(Iterable<Long> longs) {
 		throw new UnsupportedOperationException();
 	}
