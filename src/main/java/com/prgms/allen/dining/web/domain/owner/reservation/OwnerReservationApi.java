@@ -52,4 +52,14 @@ public class OwnerReservationApi {
 		return ResponseEntity.ok()
 			.build();
 	}
+
+	@PatchMapping("/{reservationId}/cancel")
+	public ResponseEntity<Void> cancel(
+		@PathVariable Long reservationId,
+		@RequestParam Long ownerId
+	) {
+		reservationStatusUpdateService.cancel(reservationId, ownerId);
+		return ResponseEntity.ok()
+			.build();
+	}
 }
