@@ -7,7 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.prgms.allen.dining.global.error.exception.IllegalReservationStateException;
+import com.prgms.allen.dining.global.error.exception.IllegalModificationException;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
@@ -52,9 +52,9 @@ public class GlobalExceptionHandler {
 		return newResponseEntity(response);
 	}
 
-	@ExceptionHandler(IllegalReservationStateException.class)
-	public ResponseEntity<ErrorResponse> handleIllegalReservationStateException(IllegalReservationStateException e) {
-		log.info("IllegalReservationStateException occurred.", e);
+	@ExceptionHandler(IllegalModificationException.class)
+	public ResponseEntity<ErrorResponse> handleIllegalModificationException(IllegalModificationException e) {
+		log.info("IllegalModificationException occurred.", e);
 		ErrorResponse response = new ErrorResponse(e.getErrorCode());
 		return newResponseEntity(response);
 	}
