@@ -18,8 +18,7 @@ public class ReservationStatusUpdateService {
 		this.reservationService = reservationService;
 	}
 
-	@Transactional
-	public void confirmReservation(Long reservationId, Long ownerId) {
+	public void confirm(Long reservationId, Long ownerId) {
 		Reservation findReservation = reservationService.findById(reservationId);
 		findReservation.confirm(ownerId);
 		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
