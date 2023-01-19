@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
+import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
+import com.prgms.allen.dining.global.error.exception.IllegalModificationException;
 
 @Service
+@Transactional
 public class ReservationStatusUpdateService {
 
 	private static final Logger log = LoggerFactory.getLogger(ReservationStatusUpdateService.class);
@@ -20,7 +23,13 @@ public class ReservationStatusUpdateService {
 
 	public void confirm(Long reservationId, Long ownerId) {
 		Reservation findReservation = reservationService.findById(reservationId);
-		findReservation.confirm(ownerId);
+
+		try {
+			findReservation.confirm(ownerId);
+		} catch (IllegalReservationStateException e) {
+			throw new IllegalModificationException(e.getMessage());
+		}
+
 		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
 	}
 }
