@@ -19,12 +19,12 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.FakeReservationRepository;
 import com.prgms.allen.dining.domain.reservation.ReservationRepository;
+import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
-import com.prgms.allen.dining.global.error.exception.IllegalReservationStateException;
 
 class ReservationTest {
 

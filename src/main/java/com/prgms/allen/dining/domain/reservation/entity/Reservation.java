@@ -22,6 +22,7 @@ import org.springframework.util.Assert;
 
 import com.prgms.allen.dining.domain.common.entity.BaseEntity;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.global.error.exception.IllegalReservationStateException;
 import com.prgms.allen.dining.global.util.TimeUtils;
