@@ -31,7 +31,8 @@ public class DummyGenerator {
 	);
 
 	public static final ReservationCustomerInput CUSTOMER_INPUT = new ReservationCustomerInput(
-		LocalDate.now(),
+		LocalDate.now()
+			.plusDays(1),
 		LocalTime.now()
 			.plusHours(1)
 			.truncatedTo(ChronoUnit.HOURS),
