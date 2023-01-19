@@ -155,9 +155,9 @@ public class Reservation extends BaseEntity {
 	private void assertMatchesOwner(Long ownerId) {
 		if (!getRestaurantOwner().matchesId(ownerId)) {
 			throw new IllegalReservationStateException(MessageFormat.format(
-				"Owner does not match. Actual ownerId={0} but was request from ownerId={1}.",
-				getRestaurantOwner().getId(),
-				ownerId
+				"Owner does not match. Parameter ownerId={0} but actual ownerId={1}",
+				ownerId,
+				getRestaurantOwner().getId()
 			));
 		}
 	}
@@ -172,11 +172,11 @@ public class Reservation extends BaseEntity {
 
 	private void assertCurrentDateTimePrecedesVisitDateTime() {
 		LocalDateTime currentDateTime = TimeUtils.getCurrentSeoulDateTime();
-		if (!this.customerInput.isVisitDateTimeBefore(currentDateTime)) {
+		if (!this.customerInput.isVisitDateTimeAfter(currentDateTime)) {
 			throw new IllegalReservationStateException(MessageFormat.format(
-				"visitDateTime={0} should precede currentDateTime={1}",
-				this.customerInput.getVisitDateTime(),
-				currentDateTime
+				"currentDateTime={0} should precede visitDateTime={0}",
+				currentDateTime,
+				this.customerInput.getVisitDateTime()
 			));
 		}
 	}

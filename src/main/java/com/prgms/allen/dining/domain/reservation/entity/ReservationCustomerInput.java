@@ -138,8 +138,8 @@ public class ReservationCustomerInput {
 		return visitDate.equals(LocalDate.now());
 	}
 
-	public boolean isVisitDateTimeBefore(LocalDateTime target) {
-		return getVisitDateTime().isBefore(target);
+	public boolean isVisitDateTimeAfter(LocalDateTime target) {
+		return getVisitDateTime().isAfter(target);
 	}
 
 	@Override
