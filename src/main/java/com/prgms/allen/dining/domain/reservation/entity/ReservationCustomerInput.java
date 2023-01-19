@@ -43,10 +43,7 @@ public class ReservationCustomerInput {
 	}
 
 	public ReservationCustomerInput(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
-		this.visitDate = visitDate;
-		this.visitTime = visitTime;
-		this.visitorCount = visitorCount;
-		this.customerMemo = customerMemo;
+		this(LocalDateTime.of(visitDate, visitTime), visitorCount, customerMemo);
 	}
 
 	public ReservationCustomerInput(LocalDateTime visitDateTime, int visitorCount, String customerMemo) {
