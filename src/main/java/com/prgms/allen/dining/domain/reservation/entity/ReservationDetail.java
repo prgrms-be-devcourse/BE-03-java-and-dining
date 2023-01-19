@@ -1,6 +1,7 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import javax.persistence.Column;
@@ -43,5 +44,9 @@ public class ReservationDetail {
 
 	public int getVisitorCount() {
 		return visitorCount;
+	}
+
+	public LocalDateTime getVisitDateTime() {
+		return LocalDateTime.of(visitDate, visitTime);
 	}
 }

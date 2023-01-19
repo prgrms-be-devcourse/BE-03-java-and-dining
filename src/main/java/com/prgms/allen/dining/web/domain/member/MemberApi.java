@@ -1,8 +1,11 @@
-package com.prgms.allen.dining.web.member;
+package com.prgms.allen.dining.web.domain.member;
+
+import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +23,9 @@ public class MemberApi {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<Void> signup(MemberSignupRequest memberSignupRequest) {
+	public ResponseEntity<Void> signup(
+		@Valid @RequestBody MemberSignupRequest memberSignupRequest
+	) {
 		memberService.signup(memberSignupRequest);
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.build();

@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.customer.reservation;
+package com.prgms.allen.dining.web.domain.customer.reservation;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -58,12 +58,28 @@ public class Reservation extends BaseEntity {
 		this(null, customer, restaurant, status, detail);
 	}
 
-	public long getRestaurantId() {
-		return restaurant.getId();
+	public Long getId() {
+		return id;
 	}
 
-	public LocalDateTime getVisitDateTime() {
-		return LocalDateTime.of(detail.getVisitDate(), detail.getVisitTime());
+	public Member getCustomer() {
+		return customer;
+	}
+
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public ReservationStatus getStatus() {
+		return status;
+	}
+
+	public ReservationDetail getDetail() {
+		return detail;
+	}
+
+	public long getRestaurantId() {
+		return restaurant.getId();
 	}
 
 	public int getVisitorCount() {
@@ -78,24 +94,8 @@ public class Reservation extends BaseEntity {
 		return customer.getName();
 	}
 
-	public ReservationStatus getStatus() {
-		return status;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public Member getCustomer() {
-		return customer;
-	}
-
-	public Restaurant getRestaurant() {
-		return restaurant;
-	}
-
-	public ReservationDetail getDetail() {
-		return detail;
+	public LocalDateTime getVisitDateTime() {
+		return detail.getVisitDateTime();
 	}
 
 	public Long getCustomerId() {
