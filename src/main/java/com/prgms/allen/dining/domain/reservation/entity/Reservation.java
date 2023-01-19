@@ -4,6 +4,7 @@ import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -164,10 +165,10 @@ public class Reservation extends BaseEntity {
 		}
 	}
 
-	private void assertReservationStatus(ReservationStatus validStatus) {
-		if (this.status != validStatus) {
+	private void assertReservationStatus(ReservationStatus... validStatuses) {
+		if (!Arrays.asList(validStatuses).contains(this.status)) {
 			throw new IllegalReservationStateException(MessageFormat.format(
-				"ReservationStatus should be {0} but was {1}", validStatus, this.status
+				"ReservationStatus should be {0} but was {1}", Arrays.toString(validStatuses), this.status
 			));
 		}
 	}
