@@ -2,6 +2,7 @@ package com.prgms.allen.dining.generator;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
@@ -20,6 +21,7 @@ public class DummyGenerator {
 		"password1!",
 		MemberType.CUSTOMER
 	);
+
 	public static final Member OWNER = new Member(
 		"owner",
 		"점주",
@@ -27,9 +29,12 @@ public class DummyGenerator {
 		"qwer1234!",
 		MemberType.OWNER
 	);
+
 	public static final ReservationCustomerInput CUSTOMER_INPUT = new ReservationCustomerInput(
 		LocalDate.now(),
-		LocalTime.now(),
+		LocalTime.now()
+			.plusHours(1)
+			.truncatedTo(ChronoUnit.HOURS),
 		2
 	);
 
@@ -44,15 +49,6 @@ public class DummyGenerator {
 			"서울특별시 서초구 어디길11 2층",
 			"실망시키지 않는 맛집",
 			"021234123"
-		);
-	}
-
-	public static Reservation createReservation(Member customer, Restaurant restaurant, ReservationStatus status) {
-		return new Reservation(
-			customer,
-			restaurant,
-			status,
-			CUSTOMER_INPUT
 		);
 	}
 
