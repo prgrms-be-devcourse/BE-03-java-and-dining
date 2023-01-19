@@ -182,4 +182,14 @@ public class Reservation extends BaseEntity {
 			));
 		}
 	}
+
+	private void assertVisitDateTimeBefore(LocalDateTime dateTime) {
+		if (!this.customerInput.isVisitDateTimeBefore(dateTime)) {
+			throw new IllegalReservationStateException(MessageFormat.format(
+				"visitDateTime={0} should precede dateTime={1}",
+				dateTime,
+				this.customerInput.getVisitDateTime()
+			));
+		}
+	}
 }
