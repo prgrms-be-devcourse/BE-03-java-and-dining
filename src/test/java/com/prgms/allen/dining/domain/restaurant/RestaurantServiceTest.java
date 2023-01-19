@@ -7,7 +7,6 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,11 +65,6 @@ class RestaurantServiceTest {
 			"0211112222",
 			menuList,
 			closingDayList);
-	}
-
-	@AfterEach
-	void clear() {
-		memberRepository.deleteAll();
 	}
 
 	@Test
