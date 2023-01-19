@@ -17,17 +17,18 @@ import org.springframework.data.repository.query.FluentQuery;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public class FakeReservationRepository implements ReservationRepository {
 
 	private final List<Reservation> reservations = new ArrayList<>();
 
 	@Override
-	public Page<Reservation> findAllByRestaurantIdAndStatus(long restaurantId, ReservationStatus status,
+	public Page<Reservation> findAllByRestaurantAndStatus(Restaurant restaurant, ReservationStatus status,
 		Pageable pageable) {
 		return new PageImpl<>(
 			reservations.stream()
-				.filter(reservation -> reservation.getRestaurantId() == restaurantId)
+				.filter(reservation -> Objects.equals(reservation.getRestaurantId(), restaurant.getId()))
 				.filter(reservation -> reservation.getStatus() == status)
 				.skip(pageable.getOffset())
 				.limit(pageable.getPageSize())
