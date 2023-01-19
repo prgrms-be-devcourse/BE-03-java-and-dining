@@ -16,7 +16,7 @@ public class ReservationCustomerInput {
 
 	private static final int MIN_VISITOR_COUNT = 2; // TODO: 예외 코드에 상수 사용할수 있다면 싹다 사용
 	private static final int MAX_VISITOR_COUNT = 8;
-	private static final long DAYS_TO_ADD = 31L; // TODO: 정책에 맞게 수정 & 테스트 코드도 실패할테니 수정
+	private static final long MAX_RESERVE_PERIOD = 30L; // TODO: 정책에 맞게 수정 & 테스트 코드도 실패할테니 수정
 	private static final int MINUTE_FORMAT = 0;
 	private static final int SECOND_FORMAT = 0;
 	private static final int MAX_MEMO_LENGTH = 300;
@@ -74,7 +74,7 @@ public class ReservationCustomerInput {
 		LocalDate visitDate = visitDateTime.toLocalDate();
 		LocalDate nowDate = now.toLocalDate();
 		Assert.state(
-			visitDate.isBefore(nowDate.plusDays(DAYS_TO_ADD)),
+			visitDate.isBefore(nowDate.plusDays(MAX_RESERVE_PERIOD)),
 			"Field visitDate must be within 30 days."
 		);
 	}

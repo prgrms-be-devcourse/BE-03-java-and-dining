@@ -24,12 +24,12 @@ class ReservationCustomerInputTest {
 	class visitDateTime {
 
 		@ParameterizedTest
-		@ValueSource(longs = {0L, 30L})
-		@DisplayName("예약일 당일 다음 단위시간 ~ 30일 사이의 날짜로 방문 날짜를 잡으면 예약에 성공한다.")
-		void success_by_valid_date_time_format(long validDay) {
+		@ValueSource(longs = {0L, 29L})
+		@DisplayName("예약일로부터 30일동안을 방문 날짜를 잡으면 예약에 성공한다.")
+		void success_by_valid_date_time_format(long daysAfterToday) {
 			// given
 			LocalDateTime visitAt = LocalDateTime.now()
-				.plusDays(validDay)
+				.plusDays(daysAfterToday)
 				.plusHours(1L)
 				.truncatedTo(ChronoUnit.HOURS);
 
@@ -51,8 +51,8 @@ class ReservationCustomerInputTest {
 		}
 
 		@ParameterizedTest
-		@ValueSource(longs = {0L, 31L})
-		@DisplayName("예약일보다 일찍, 혹은 30일을 넘겨서 날짜를 잡으면 예약에 실패한다.")
+		@ValueSource(longs = {0L, 30L})
+		@DisplayName("예약일보다 일찍, 혹은 예야일로부터 30일을 넘겨서 날짜를 잡으면 예약에 실패한다.")
 		void fail_by_invalid_day(long invalidDay) {
 			// given
 			LocalDateTime visitAt = LocalDateTime.now()
