@@ -16,7 +16,7 @@ import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
@@ -28,12 +28,23 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 public class ReservationRepositoryTest {
 
 	private static final int VISITOR_COUNT = 2;
+
 	@Autowired
 	private ReservationRepository reservationRepository;
+
 	@Autowired
 	private RestaurantRepository restaurantRepository;
+
 	@Autowired
 	private MemberRepository memberRepository;
+
+	private LocalDate reserveDate = LocalDate.of(
+		LocalDate.now().getYear(),
+		LocalDate.now().getMonth(),
+		LocalDate.now().getDayOfMonth() + 1
+	);
+
+	private LocalTime reserveTime = LocalTime.of(13, 0);
 
 	@Test
 	void countTotalVisitorCount() {
@@ -45,8 +56,8 @@ public class ReservationRepositoryTest {
 
 		// when
 		Optional<Integer> currentReservedCount = reservationRepository.countTotalVisitorCount(restaurant,
-			LocalDate.of(2023, 1, 16),
-			LocalTime.of(16, 3),
+			reserveDate,
+			reserveTime,
 			List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING));
 
 		// then
@@ -56,9 +67,10 @@ public class ReservationRepositoryTest {
 
 	private Reservation createReservation(ReservationStatus status, Member consumer, Restaurant savedRestaurant) {
 
-		ReservationDetail detail = new ReservationDetail(
-			LocalDate.of(2023, 1, 16),
-			LocalTime.of(16, 3), VISITOR_COUNT,
+		ReservationCustomerInput detail = new ReservationCustomerInput(
+			reserveDate,
+			reserveTime,
+			2,
 			"단무지는 빼주세요"
 		);
 

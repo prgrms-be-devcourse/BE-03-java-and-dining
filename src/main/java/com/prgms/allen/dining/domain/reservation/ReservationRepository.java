@@ -19,12 +19,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
 	Page<Reservation> findAllByRestaurantIdAndStatus(long restaurantId, ReservationStatus status, Pageable pageable);
 
-	@Query("select sum(r.detail.visitorCount) "
+	@Query("select sum(r.customerInput.visitorCount) "
 		+ " from Reservation r "
 		+ " where r.restaurant = :restaurant "
 		+ " AND r.status In (:statuses) "
-		+ " AND r.detail.visitDate = :visitDate"
-		+ " AND r.detail.visitTime = :visitTime")
+		+ " AND r.customerInput.visitDate = :visitDate"
+		+ " AND r.customerInput.visitTime = :visitTime")
 	Optional<Integer> countTotalVisitorCount(
 		@Param("restaurant") Restaurant restaurant,
 		@Param("visitDate") LocalDate visitDate,
