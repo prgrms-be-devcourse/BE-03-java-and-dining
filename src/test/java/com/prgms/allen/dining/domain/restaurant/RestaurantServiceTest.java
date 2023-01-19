@@ -126,21 +126,6 @@ class RestaurantServiceTest {
 		assertThat(actualRestaurantList).hasSize(expectRestaurantSimpleRes.getSize());
 	}
 
-	private Member createOwner(String nickName) {
-		return new Member(
-			nickName,
-			"익명",
-			"01011112222",
-			"qwer1234!",
-			MemberType.OWNER);
-	}
-
-	private void restaurantSaveAll(RestaurantCreateReq createReq, List<Member> members) {
-		for (Member member : members) {
-			restaurantService.save(createReq, member.getId());
-		}
-	}
-
 	@Test
 	@DisplayName("구매자는 검색한 단어가 포함된 이름을 가진 레스토랑들을 페이징 조회할 수 있다")
 	void getRestaurantsContaining() {
@@ -160,5 +145,21 @@ class RestaurantServiceTest {
 		//Then
 		assertThat(actualRestaurants).hasSize(expectRestaurants.size());
 	}
+
+	private Member createOwner(String nickName) {
+		return new Member(
+			nickName,
+			"익명",
+			"01011112222",
+			"qwer1234!",
+			MemberType.OWNER);
+	}
+
+	private void restaurantSaveAll(RestaurantCreateReq createReq, List<Member> members) {
+		for (Member member : members) {
+			restaurantService.save(createReq, member.getId());
+		}
+	}
+
 
 }
