@@ -24,7 +24,6 @@ import com.prgms.allen.dining.domain.common.entity.BaseEntity;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
-import com.prgms.allen.dining.global.error.exception.IllegalReservationStateException;
 import com.prgms.allen.dining.global.util.TimeUtils;
 
 @Entity
@@ -151,7 +150,13 @@ public class Reservation extends BaseEntity {
 		this.status = CONFIRMED;
 	}
 
-	private void validUpdatableReservationState(Long ownerId, ReservationStatus expectedStatus) {
+	public void cancel(Long ownerId) {
+		validUpdatableReservationState(ownerId, PENDING, CONFIRMED);
+		assertVisitDateTimeAfter(TimeUtils.getCurrentSeoulDateTime());
+		this.status = CANCELLED;
+	}
+
+	private void validUpdatableReservationState(Long ownerId, ReservationStatus... validStatuses) {
 		assertMatchesOwner(ownerId);
 		assertReservationStatus(validStatuses);
 	}

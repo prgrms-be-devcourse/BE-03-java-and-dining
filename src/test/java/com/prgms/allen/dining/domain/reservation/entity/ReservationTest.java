@@ -188,4 +188,70 @@ class ReservationTest {
 			lateReservation.confirm(owner.getId())
 		);
 	}
+
+	@Test
+	@DisplayName("확정 대기 또는 확정 상태의 예약을 취소 상태로 변경할 수 있다.")
+	void cancel_reservation() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
+		Reservation reservation = reservationRepository.save(
+			DummyGenerator.createReservation(customer, restaurant, ReservationStatus.PENDING, customerInput)
+		);
+
+		// when
+		reservation.cancel(owner.getId());
+
+		// then
+		assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.CANCELLED);
+	}
+
+	@Test
+	@DisplayName("확정 대기 또는 확정 상태가 아닌 예약을 취소 상태로 변경 시 예외가 발생한다.")
+	void should_throw_exception_when_cancel_reservation_has_invalid_status() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
+
+		ReservationStatus invalidStatus = ReservationStatus.NO_SHOW;
+		Reservation reservation = reservationRepository.save(
+			DummyGenerator.createReservation(customer, restaurant, invalidStatus, customerInput)
+		);
+
+		// when & then
+		assertThrows(IllegalReservationStateException.class, () ->
+			reservation.cancel(owner.getId())
+		);
+	}
+
+	@Test
+	@DisplayName("방문 시간 이후에 예약을 취소 시 예외가 발생한다.")
+	void should_throw_exception_when_cancel_reservation_if_currentDateTime_is_after_visitDateTime() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+
+		ReservationCustomerInput fakeCustomerInput = new FakeReservationCustomerInput(
+			LocalDate.now()
+				.minusDays(1),
+			LocalTime.now()
+				.minusHours(1)
+				.truncatedTo(ChronoUnit.HOURS),
+			2
+		);
+
+		Reservation reservation = reservationRepository.save(
+			DummyGenerator.createReservation(customer, restaurant, ReservationStatus.PENDING, fakeCustomerInput)
+		);
+
+		// when & then
+		assertThrows(IllegalReservationStateException.class, () ->
+			reservation.confirm(owner.getId())
+		);
+	}
 }
