@@ -165,7 +165,7 @@ public class Reservation extends BaseEntity {
 	private void assertReservationStatus(ReservationStatus validStatus) {
 		if (this.status != validStatus) {
 			throw new IllegalReservationStateException(MessageFormat.format(
-				"ReservationStatus should be {0} but was {1}.", validStatus, this.status
+				"ReservationStatus should be {0} but was {1}", validStatus, this.status
 			));
 		}
 	}
@@ -174,9 +174,9 @@ public class Reservation extends BaseEntity {
 		LocalDateTime currentDateTime = TimeUtils.getCurrentSeoulDateTime();
 		if (!this.customerInput.isVisitDateTimeBefore(currentDateTime)) {
 			throw new IllegalReservationStateException(MessageFormat.format(
-				"currentDateTime={0} does not precede visitDateTime={1}.",
-				currentDateTime,
-				this.customerInput.getVisitDateTime()
+				"visitDateTime={0} should precede currentDateTime={1}",
+				this.customerInput.getVisitDateTime(),
+				currentDateTime
 			));
 		}
 	}
