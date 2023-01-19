@@ -2,12 +2,16 @@ package com.prgms.allen.dining.domain.restaurant;
 
 import java.text.MessageFormat;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.global.error.ErrorCode;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
@@ -25,10 +29,16 @@ public class RestaurantService {
 		this.memberService = memberService;
 	}
 
+	public Restaurant findById(Long restaurantId) {
+		return restaurantRepository.findById(restaurantId)
+			.orElseThrow(() -> new NotFoundResourceException(
+				MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
+			));
+	}
+
 	public void validateRestaurantExists(long restaurantId) {
 		if (!restaurantRepository.existsById(restaurantId)) {
 			throw new NotFoundResourceException(
-				ErrorCode.NOT_FOUND_RESOURCE,
 				MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
 			);
 		}
@@ -51,5 +61,13 @@ public class RestaurantService {
 		if (restaurantRepository.existsRestaurantByOwnerId(ownerId)) {
 			throw new RestaurantDuplicateCreationException(ErrorCode.DUPLICATE_ERROR);
 		}
+	}
+
+	public Page<RestaurantSimpleRes> getRestaurantList(Pageable pageable) {
+
+		return new PageImpl<>(restaurantRepository.findAll(pageable)
+			.stream()
+			.map(RestaurantSimpleRes::new)
+			.toList());
 	}
 }

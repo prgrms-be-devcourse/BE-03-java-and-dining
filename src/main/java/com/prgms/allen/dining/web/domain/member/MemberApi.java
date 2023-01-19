@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.prgms.allen.dining.domain.member.MemberService;
-import com.prgms.allen.dining.domain.member.dto.MemberSignupRequest;
+import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
 
 @RestController
 @RequestMapping("/api/members")
@@ -24,9 +24,9 @@ public class MemberApi {
 
 	@PostMapping("/signup")
 	public ResponseEntity<Void> signup(
-		@Valid @RequestBody MemberSignupRequest memberSignupRequest
+		@Valid @RequestBody MemberSignupReq memberSignupReq
 	) {
-		memberService.signup(memberSignupRequest);
+		memberService.signup(memberSignupReq);
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.build();
 	}
