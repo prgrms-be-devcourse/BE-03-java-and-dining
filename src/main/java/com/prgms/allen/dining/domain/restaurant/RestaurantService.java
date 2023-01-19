@@ -64,4 +64,13 @@ public class RestaurantService {
 			.map(RestaurantSimpleRes::new)
 			.toList());
 	}
+
+	public Page<RestaurantSimpleRes> getRestaurantsContains(Pageable pageable, String restaurantName) {
+
+		return new PageImpl<>(restaurantRepository.findAllByNameContains(pageable, restaurantName)
+			.stream()
+			.map(RestaurantSimpleRes::new)
+			.toList());
+	}
+
 }
