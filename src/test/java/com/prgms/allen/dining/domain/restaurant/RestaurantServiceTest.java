@@ -10,6 +10,9 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.prgms.allen.dining.domain.member.FakeMemberRepository;
 import com.prgms.allen.dining.domain.member.MemberRepository;
@@ -19,7 +22,9 @@ import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
+import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
 class RestaurantServiceTest {
@@ -66,7 +71,6 @@ class RestaurantServiceTest {
 	@Test
 	@DisplayName("점주는 식당을 등록할 수 있다.")
 	public void testSave() {
-		System.out.println(savedOwner.getId());
 
 		// when
 		restaurantService.save(restaurantCreateReq, savedOwner.getId());
@@ -78,7 +82,6 @@ class RestaurantServiceTest {
 	@Test
 	@DisplayName("점주가 식당을 2개이상 생성하려할 경우 RestaurantDuplicateCreationException 을 던진다.")
 	public void failSave() {
-		System.out.println(savedOwner.getId());
 
 		final RestaurantCreateReq restaurantCreateReq2 = new RestaurantCreateReq(
 			FoodType.KOREAN,
@@ -98,4 +101,44 @@ class RestaurantServiceTest {
 		assertThatThrownBy(() -> restaurantService.save(restaurantCreateReq2, savedOwner.getId()))
 			.isInstanceOf(RestaurantDuplicateCreationException.class);
 	}
+
+	@Test
+	@DisplayName("구매자는 레스토랑의 목록을 페이징 조회할 수 있다")
+	public void getRestaurantList() {
+
+		//Given
+		final List<Member> members = List.of(
+			createOwner("nickName1"),
+			createOwner("nickName2"),
+			createOwner("nickName3"),
+			createOwner("nickName4"),
+			createOwner("nickName5")
+		);
+
+		restaurantSaveAll(restaurantCreateReq, memberRepository.saveAll(members));
+		final Pageable pageable = PageRequest.of(0, 2);
+		final Page<Restaurant> expectRestaurantSimpleRes = restaurantRepository.findAll(pageable);
+
+		//When
+		final Page<RestaurantSimpleRes> actualRestaurantList = restaurantService.getRestaurantList(pageable);
+
+		//Then
+		assertThat(actualRestaurantList).hasSize(expectRestaurantSimpleRes.getSize());
+	}
+
+	private Member createOwner(String nickName) {
+		return new Member(
+			nickName,
+			"익명",
+			"01011112222",
+			"qwer1234!",
+			MemberType.OWNER);
+	}
+
+	private void restaurantSaveAll(RestaurantCreateReq createReq, List<Member> members) {
+		for (Member member : members) {
+			restaurantService.save(createReq, member.getId());
+		}
+	}
+
 }

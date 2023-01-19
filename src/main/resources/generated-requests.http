@@ -80,3 +80,6 @@ PATCH http://localhost:8080/owner/api/reservations/4/confirm?ownerId=2
 ### [점주 - 예약] 예약을 취소하는 API
 PATCH http://localhost:8080/owner/api/reservations/4/cancel/?ownerId=2
 
+
+### 레스토랑 목록 paging조회
+GET http://localhost:8080/customer/api/restaurants?page=0&size=3
