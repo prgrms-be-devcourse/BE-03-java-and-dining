@@ -22,6 +22,13 @@ public class GlobalExceptionHandler {
 		return newResponseEntity(response);
 	}
 
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e) {
+		log.info("IllegalStateException occurred.", e);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
+		return newResponseEntity(response);
+	}
+
 	@ExceptionHandler(NotFoundResourceException.class)
 	public ResponseEntity<ErrorResponse> handleNotFoundResourceException(NotFoundResourceException e) {
 		log.info("NotFoundResourceException occurred.", e);
@@ -32,13 +39,6 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 		log.info("MethodArgumentNotValidException occurred.", e);
-		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
-		return newResponseEntity(response);
-	}
-
-	@ExceptionHandler(IllegalStateException.class)
-	public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e) {
-		log.info("IllegalStateException occurred.", e);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
 		return newResponseEntity(response);
 	}
