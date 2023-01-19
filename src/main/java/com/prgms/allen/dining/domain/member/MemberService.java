@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.global.error.ErrorCode;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
@@ -30,7 +29,6 @@ public class MemberService {
 	public Member findOwnerById(long ownerId) {
 		return memberRepository.findByIdAndMemberType(ownerId, MemberType.OWNER)
 			.orElseThrow(() -> new NotFoundResourceException(
-				ErrorCode.NOT_FOUND_RESOURCE,
 				MessageFormat.format("Cannot find Restaurant entity for owner id = {0}", ownerId)
 			));
 	}
@@ -38,7 +36,6 @@ public class MemberService {
 	public Member findCustomerById(Long customerId) {
 		return memberRepository.findByIdAndMemberType(customerId, MemberType.CUSTOMER)
 			.orElseThrow(() -> new NotFoundResourceException(
-				ErrorCode.NOT_FOUND_RESOURCE,
 				MessageFormat.format("Cannot find Restaurant entity for customer id = {0}", customerId)
 			));
 	}

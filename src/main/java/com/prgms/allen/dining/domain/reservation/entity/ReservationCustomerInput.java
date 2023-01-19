@@ -57,9 +57,17 @@ public class ReservationCustomerInput {
 		this.customerMemo = customerMemo;
 	}
 
+	public ReservationCustomerInput(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
+		this(
+			LocalDateTime.of(visitDate, visitTime),
+			visitorCount,
+			customerMemo
+		);
+	}
+
 	private void validate(LocalDateTime visitDateTime, int visitorCount, String customerMemo) {
 		validateVisitBoundary(visitDateTime);
-		validateHour(visitDateTime.toLocalTime());
+		validateTimeFormat(visitDateTime.toLocalTime());
 		validateVisitorCount(visitorCount);
 		validateMemo(customerMemo);
 	}
@@ -80,29 +88,37 @@ public class ReservationCustomerInput {
 		LocalDate visitDate = visitDateTime.toLocalDate();
 		LocalDate nowDate = now.toLocalDate();
 		Assert.state(
-			visitDate.isBefore(nowDate.plusDays(DAYS_TO_ADD)),
-			"Field visitDate must be within 30 days."
+			visitDate.isBefore(nowDate.plusDays(MAX_RESERVE_PERIOD)),
+			String.format("Field visitDate must be within %d days.", MAX_RESERVE_PERIOD)
 		);
 	}
 
-	private void validateHour(LocalTime visitTime) {
+	private void validateTimeFormat(LocalTime visitTime) {
 		Assert.notNull(visitTime, "Field visitTime must not be null");
 		Assert.state(
 			visitTime.getMinute() == MINUTE_FORMAT && visitTime.getSecond() == SECOND_FORMAT,
-			"Field visitTime's minute and second must be zero."
+			String.format(
+				"Field visitTime's minute must be %d and second must be %d.",
+				MINUTE_FORMAT,
+				SECOND_FORMAT
+			)
 		);
 	}
 
 	private void validateVisitorCount(int visitorCount) {
 		Assert.state(
 			visitorCount >= MIN_VISITOR_COUNT && visitorCount <= MAX_VISITOR_COUNT,
-			"Field visitorCount must be between 2 and 8"
+			String.format("Field visitorCount must be between %d and %d",
+				MIN_VISITOR_COUNT,
+				MAX_VISITOR_COUNT
+			)
 		);
 	}
 
 	private void validateMemo(String memo) {
 		if (StringUtils.hasLength(memo)) {
-			Assert.state(memo.length() <= MAX_MEMO_LENGTH, "Memo length must be under 300.");
+			Assert.state(memo.length() <= MAX_MEMO_LENGTH, 			String.format("Memo length must be under %d.", MAX_MEMO_LENGTH)
+			);
 		}
 	}
 

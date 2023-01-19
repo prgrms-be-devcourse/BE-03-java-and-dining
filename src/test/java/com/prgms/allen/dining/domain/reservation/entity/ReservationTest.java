@@ -160,5 +160,7 @@ class ReservationTest {
 		assertThrows(IllegalReservationStateException.class, () ->
 			lateReservation.confirm(owner.getId())
 		);
+		assertThat(status)
+			.isEqualTo(ReservationStatus.CONFIRMED);
 	}
 }

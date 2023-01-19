@@ -15,6 +15,10 @@ public class NotFoundResourceException extends IllegalArgumentException {
 		this.errorCode = errorCode;
 	}
 
+	public NotFoundResourceException(String message) {
+		this(ErrorCode.NOT_FOUND_RESOURCE, message);
+	}
+
 	public ErrorCode getErrorCode() {
 		return errorCode;
 	}
