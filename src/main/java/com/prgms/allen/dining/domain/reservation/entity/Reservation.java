@@ -146,13 +146,13 @@ public class Reservation extends BaseEntity {
 
 	public void confirm(Long ownerId) {
 		validUpdatableReservationState(ownerId, PENDING);
+		assertVisitDateTimeAfter(TimeUtils.getCurrentSeoulDateTime());
 		this.status = CONFIRMED;
 	}
 
 	private void validUpdatableReservationState(Long ownerId, ReservationStatus expectedStatus) {
 		assertMatchesOwner(ownerId);
 		assertReservationStatus(validStatuses);
-		assertCurrentDateTimePrecedesVisitDateTime();
 	}
 
 	private void assertMatchesOwner(Long ownerId) {
@@ -173,12 +173,11 @@ public class Reservation extends BaseEntity {
 		}
 	}
 
-	private void assertCurrentDateTimePrecedesVisitDateTime() {
-		LocalDateTime currentDateTime = TimeUtils.getCurrentSeoulDateTime();
-		if (!this.customerInput.isVisitDateTimeAfter(currentDateTime)) {
+	private void assertVisitDateTimeAfter(LocalDateTime dateTime) {
+		if (!this.customerInput.isVisitDateTimeAfter(dateTime)) {
 			throw new IllegalReservationStateException(MessageFormat.format(
-				"currentDateTime={0} should precede visitDateTime={0}",
-				currentDateTime,
+				"dateTime={0} should precede visitDateTime={1}",
+				dateTime,
 				this.customerInput.getVisitDateTime()
 			));
 		}
