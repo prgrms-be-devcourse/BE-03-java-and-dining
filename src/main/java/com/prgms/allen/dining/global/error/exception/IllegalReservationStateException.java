@@ -7,7 +7,7 @@ public class IllegalReservationStateException extends IllegalStateException {
 	private final ErrorCode errorCode;
 
 	public IllegalReservationStateException(String message) {
-		this(ErrorCode.INVALID_OPERATION_REQUEST, message);
+		this(ErrorCode.ILLEGAL_MODIFICATION, message);
 	}
 
 	public IllegalReservationStateException(ErrorCode errorCode, String message) {
