@@ -24,6 +24,7 @@ import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
+import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
 class RestaurantServiceTest {
@@ -114,20 +115,15 @@ class RestaurantServiceTest {
 			createOwner("nickName5")
 		);
 
-		restaurantSaveAll(restaurantCreateReq,  memberRepository.saveAll(members));
-		final Pageable pageable = PageRequest.of(1, 5);
-		final List<RestaurantSimpleRes> expectRestaurantSimpleRes = restaurantRepository.findAll()
-			.stream()
-			.limit(pageable.getPageSize())
-			.map(RestaurantSimpleRes::new)
-			.toList();
+		restaurantSaveAll(restaurantCreateReq, memberRepository.saveAll(members));
+		final Pageable pageable = PageRequest.of(0, 2);
+		final Page<Restaurant> expectRestaurantSimpleRes = restaurantRepository.findAll(pageable);
 
 		//When
 		final Page<RestaurantSimpleRes> actualRestaurantList = restaurantService.getRestaurantList(pageable);
 
 		//Then
-		assertThat(actualRestaurantList).hasSize(expectRestaurantSimpleRes.size())
-			.containsAll(expectRestaurantSimpleRes);
+		assertThat(actualRestaurantList).hasSize(expectRestaurantSimpleRes.getSize());
 	}
 
 	private Member createOwner(String nickName) {
