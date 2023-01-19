@@ -1,14 +1,17 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.data.domain.Page;
@@ -20,9 +23,11 @@ import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleRes;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
@@ -41,15 +46,9 @@ class ReservationServiceTest {
 	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
 	private final ReservationService reservationService = new ReservationService(
 		reservationRepository,
-		restaurantService
+		restaurantService,
+		memberService
 	);
-
-	@AfterEach
-	void tearDown() {
-		reservationRepository.deleteAll();
-		memberRepository.deleteAll();
-		restaurantRepository.deleteAll();
-	}
 
 	@ParameterizedTest
 	@CsvSource({"PENDING", "CONFIRMED", "VISITED", "CANCELLED", "NO_SHOW"})
@@ -67,23 +66,23 @@ class ReservationServiceTest {
 		List<Reservation> reservations = createReservations(status, savedRestaurant, consumer);
 		List<Reservation> savedReservations = reservationRepository.saveAll(reservations);
 
-		PageImpl<ReservationSimpleResponse> expect = new PageImpl<>(
+		PageImpl<ReservationSimpleRes> expect = new PageImpl<>(
 			savedReservations
 				.stream()
-				.map(ReservationSimpleResponse::new)
+				.map(ReservationSimpleRes::new)
 				.toList());
 
 		long restaurantId = savedRestaurant.getId();
 
 		// when
-		Page<ReservationSimpleResponse> actual = reservationService.getRestaurantReservations(
+		Page<ReservationSimpleRes> actual = reservationService.getRestaurantReservations(
 			restaurantId,
 			ReservationStatus.valueOf(status),
 			PageRequest.of(0, 5)
 		);
 
 		// then
-		Assertions.assertThat(actual)
+		assertThat(actual)
 			.isEqualTo(expect);
 	}
 
@@ -104,10 +103,12 @@ class ReservationServiceTest {
 	}
 
 	private Reservation createReservation(String status, Member consumer, Restaurant savedRestaurant) {
-		ReservationDetail detail = new ReservationDetail(
-			LocalDate.of(2023, 1, 16),
-			LocalTime.of(16, 59), 2,
-			"단무지는 빼주세요"
+		ReservationCustomerInput detail = new ReservationCustomerInput(
+			LocalDate.now(),
+			LocalTime.now()
+				.plusHours(1)
+				.truncatedTo(ChronoUnit.HOURS),
+			2, "단무지는 빼주세요"
 		);
 
 		return new Reservation(
@@ -116,6 +117,36 @@ class ReservationServiceTest {
 			ReservationStatus.valueOf(status),
 			detail
 		);
+	}
+
+	@Test
+	@DisplayName("고객은 식당의 예약을 요청할 수 있다.")
+	void create_reservation() {
+		// given
+		Member owner = memberRepository.save(createOwner());
+		Member customer = memberRepository.save(createConsumer());
+
+		Restaurant restaurant = restaurantRepository.save(createRestaurant(owner));
+
+		ReservationCustomerInputCreateReq customerInput = new ReservationCustomerInputCreateReq(
+			LocalDateTime.now()
+				.plus(2, ChronoUnit.HOURS)
+				.truncatedTo(ChronoUnit.HOURS),
+			2,
+			"맛있게 해주세요"
+		);
+		ReservationCreateReq reservationCreateReq = new ReservationCreateReq(
+			restaurant.getId(),
+			customerInput
+		);
+
+		// when
+		reservationService.reserve(customer.getId(), reservationCreateReq);
+
+		// then
+		long actualCount = reservationRepository.count();
+		assertThat(actualCount).isEqualTo(1);
+
 	}
 
 	private Restaurant createRestaurant(Member owner) {
