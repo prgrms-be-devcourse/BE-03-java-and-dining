@@ -34,4 +34,12 @@ public class MemberService {
 				MessageFormat.format("Cannot find Restaurant entity for owner id = {0}", ownerId)
 			));
 	}
+
+	public Member findCustomerById(long customerId) {
+		return memberRepository.findByIdAndMemberType(customerId, MemberType.CUSTOMER)
+			.orElseThrow(() -> new NotFoundResourceException(
+				ErrorCode.NOT_FOUND_RESOURCE,
+				MessageFormat.format("Cannot find Restaurant entity for customer id = {0}", customerId)
+			));
+	}
 }

@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 
 import com.prgms.allen.dining.domain.member.FakeMemberRepository;
 import com.prgms.allen.dining.domain.member.MemberRepository;
+import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
@@ -40,11 +41,11 @@ class ReservationServiceTest {
 	private final ReservationRepository reservationRepository = new FakeReservationRepository();
 	private final RestaurantRepository restaurantRepository = new FakeRestaurantRepository();
 	private final MemberRepository memberRepository = new FakeMemberRepository();
-	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository);
+	private final MemberService memberService = new MemberService(memberRepository);
+	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
 	private final ReservationService reservationService = new ReservationService(
 		reservationRepository,
-		restaurantRepository,
-		memberRepository,
+		memberService,
 		restaurantService
 	);
 

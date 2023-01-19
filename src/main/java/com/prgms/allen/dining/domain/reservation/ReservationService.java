@@ -8,13 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.prgms.allen.dining.domain.member.MemberRepository;
+import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
-import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
@@ -23,16 +22,16 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 public class ReservationService {
 
 	private final ReservationRepository reservationRepository;
-	private final RestaurantRepository restaurantRepository;
-	private final MemberRepository memberRepository;
+	private final MemberService memberService;
 	private final RestaurantService restaurantService;
 
-	public ReservationService(ReservationRepository reservationRepository, RestaurantRepository restaurantRepository,
-		MemberRepository memberRepository,
-		RestaurantService restaurantService) {
+	public ReservationService(
+		ReservationRepository reservationRepository,
+		MemberService memberService,
+		RestaurantService restaurantService
+	) {
 		this.reservationRepository = reservationRepository;
-		this.restaurantRepository = restaurantRepository;
-		this.memberRepository = memberRepository;
+		this.memberService = memberService;
 		this.restaurantService = restaurantService;
 	}
 
@@ -43,8 +42,7 @@ public class ReservationService {
 		ReservationStatus status,
 		Pageable pageable
 	) {
-		restaurantService.validateRestaurantExists(restaurantId);
-		final Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow();
+		final Restaurant restaurant = restaurantService.findRestaurantById(restaurantId);
 
 		return new PageImpl<>(
 			reservationRepository.findAllByRestaurantAndStatus(restaurant, status, pageable)
@@ -61,7 +59,7 @@ public class ReservationService {
 	) {
 		final List<ReservationStatus> statuses = status.getStatuses();
 
-		final Member customer = memberRepository.findById(customerId).orElseThrow();
+		final Member customer = memberService.findCustomerById(customerId);
 
 		return new PageImpl<>(reservationRepository.findAllByCustomerAndStatusIn(customer, statuses, pageable)
 			.stream()

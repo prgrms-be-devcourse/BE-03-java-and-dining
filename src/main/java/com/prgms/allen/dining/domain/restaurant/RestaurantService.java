@@ -25,15 +25,6 @@ public class RestaurantService {
 		this.memberService = memberService;
 	}
 
-	public void validateRestaurantExists(long restaurantId) {
-		if (!restaurantRepository.existsById(restaurantId)) {
-			throw new NotFoundResourceException(
-				ErrorCode.NOT_FOUND_RESOURCE,
-				MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
-			);
-		}
-	}
-
 	@Transactional
 	public long save(RestaurantCreateReq restaurantCreateReq, Long ownerId) {
 
@@ -51,5 +42,13 @@ public class RestaurantService {
 		if (restaurantRepository.existsRestaurantByOwnerId(ownerId)) {
 			throw new RestaurantDuplicateCreationException(ErrorCode.DUPLICATE_ERROR);
 		}
+	}
+
+	public Restaurant findRestaurantById(long restaurantId) {
+		return restaurantRepository.findById(restaurantId)
+			.orElseThrow(() -> new NotFoundResourceException(
+				ErrorCode.NOT_FOUND_RESOURCE,
+				MessageFormat.format("Cannot find Restaurant entity for restaurantId = {0}", restaurantId)
+			));
 	}
 }
