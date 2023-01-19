@@ -162,30 +162,30 @@ class ReservationTest {
 		);
 	}
 
-	// 	@Test
-	// 	@DisplayName("확정 대기 중인 예약을 방문시간 이후에 확정 시 예외가 발생한다.")
-	// 	void should_throw_exception_when_visitDateTime_does_not_precede_currentDateTIme() {
-	// 		// given
-	// 		Member owner = memberRepository.save(DummyGenerator.OWNER);
-	// 		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
-	// 		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
-	//
-	// 		LocalTime invalidVisitTime = LocalTime.now() // 21:00
-	// 			.plusHours(1)
-	// 			.truncatedTo(ChronoUnit.HOURS);
-	// 		ReservationCustomerInput customerInput = new ReservationCustomerInput(
-	// 			LocalDate.now(),
-	// 			invalidVisitTime,
-	// 			2
-	// 		);
-	//
-	// 		Reservation lateReservation = reservationRepository.save(
-	// 			DummyGenerator.createReservation(customer, restaurant, ReservationStatus.PENDING, customerInput)
-	// 		);
-	//
-	// 		// when & then
-	// 		assertThrows(IllegalReservationStateException.class, () ->
-	// 			lateReservation.confirm(owner.getId())
-	// 		);
-	// 	}
+	@Test
+	@DisplayName("확정 대기 중인 예약을 방문시간 이후에 확정 시 예외가 발생한다.")
+	void should_throw_exception_when_visitDateTime_does_not_precede_currentDateTIme() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+
+		ReservationCustomerInput fakeCustomerInput = new FakeReservationCustomerInput(
+			LocalDate.now()
+				.minusDays(1),
+			LocalTime.now()
+				.minusHours(1)
+				.truncatedTo(ChronoUnit.HOURS),
+			2
+		);
+
+		Reservation lateReservation = reservationRepository.save(
+			DummyGenerator.createReservation(customer, restaurant, ReservationStatus.PENDING, fakeCustomerInput)
+		);
+
+		// when & then
+		assertThrows(IllegalReservationStateException.class, () ->
+			lateReservation.confirm(owner.getId())
+		);
+	}
 }
