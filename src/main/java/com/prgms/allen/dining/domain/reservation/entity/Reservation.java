@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
+import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus.*;
+
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 
@@ -72,9 +74,9 @@ public class Reservation extends BaseEntity {
 		this.customer = customer;
 		this.restaurant = restaurant;
 		if (customerInput.checkVisitingToday()) {
-			this.status = ReservationStatus.CONFIRMED;
+			this.status = CONFIRMED;
 		} else {
-			this.status = ReservationStatus.PENDING;
+			this.status = PENDING;
 		}
 		this.customerInput = customerInput;
 	}
@@ -142,13 +144,13 @@ public class Reservation extends BaseEntity {
 	}
 
 	public void confirm(Long ownerId) {
-		validUpdatableReservationState(ownerId, ReservationStatus.PENDING);
-		this.status = ReservationStatus.CONFIRMED;
+		validUpdatableReservationState(ownerId, PENDING);
+		this.status = CONFIRMED;
 	}
 
 	private void validUpdatableReservationState(Long ownerId, ReservationStatus expectedStatus) {
 		assertMatchesOwner(ownerId);
-		assertReservationStatus(expectedStatus);
+		assertReservationStatus(validStatuses);
 		assertCurrentDateTimePrecedesVisitDateTime();
 	}
 
