@@ -4,14 +4,14 @@ import java.time.LocalDateTime;
 
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 
-public record ReservationSimpleResponseForCustomer(
+public record ReservationSimpleResForCustomer(
 	String restaurantName,
 	String address,
 	LocalDateTime visitDateTime,
 	int visitorCount
 ) {
 
-	public ReservationSimpleResponseForCustomer(Reservation reservation) {
+	public ReservationSimpleResForCustomer(Reservation reservation) {
 		this(
 			reservation.getRestaurantName(),
 			reservation.getRestaurantAddress(),
