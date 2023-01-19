@@ -1,11 +1,12 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,7 +74,8 @@ class ReservationTest {
 
 		// then
 		ReservationStatus status = reservation.getStatus();
-		Assertions.assertThat(status).isEqualTo(ReservationStatus.PENDING);
+		assertThat(status)
+			.isEqualTo(ReservationStatus.PENDING);
 	}
 
 	@Test
@@ -97,6 +99,7 @@ class ReservationTest {
 
 		// then
 		ReservationStatus status = reservation.getStatus();
-		Assertions.assertThat(status).isEqualTo(ReservationStatus.CONFIRMED);
+		assertThat(status)
+			.isEqualTo(ReservationStatus.CONFIRMED);
 	}
 }

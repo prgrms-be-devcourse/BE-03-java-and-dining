@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -8,8 +10,6 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,13 +50,6 @@ class ReservationServiceTest {
 		memberService
 	);
 
-	@AfterEach
-	void tearDown() {
-		reservationRepository.deleteAll();
-		memberRepository.deleteAll();
-		restaurantRepository.deleteAll();
-	}
-
 	@ParameterizedTest
 	@CsvSource({"PENDING", "CONFIRMED", "VISITED", "CANCELLED", "NO_SHOW"})
 	@DisplayName("식당의 특정 상태의 예약들을 조회할 수 있다.")
@@ -89,7 +82,7 @@ class ReservationServiceTest {
 		);
 
 		// then
-		Assertions.assertThat(actual)
+		assertThat(actual)
 			.isEqualTo(expect);
 	}
 
@@ -152,7 +145,7 @@ class ReservationServiceTest {
 
 		// then
 		long actualCount = reservationRepository.count();
-		Assertions.assertThat(actualCount).isEqualTo(1);
+		assertThat(actualCount).isEqualTo(1);
 
 	}
 
