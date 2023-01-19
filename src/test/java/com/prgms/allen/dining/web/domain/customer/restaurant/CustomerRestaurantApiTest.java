@@ -6,9 +6,11 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.text.MessageFormat;
 import java.time.LocalTime;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +42,8 @@ class CustomerRestaurantApiTest {
 	@Autowired
 	private RestaurantService restaurantService;
 
-	@Test
-	@DisplayName("구매자는 레스토랑의 목록을 페이징 조회할 수 있다")
-	void getRestaurants() throws Exception {
-
+	@BeforeEach
+	void setUp() {
 		final List<Member> members = List.of(
 			createOwner("nickName1"),
 			createOwner("nickName2"),
@@ -53,8 +53,17 @@ class CustomerRestaurantApiTest {
 		);
 
 		restaurantSaveAll(restaurantCreateReq(), memberRepository.saveAll(members));
+	}
 
-		mockMvc.perform(get("/customer/api/restaurants?page=0&size=4"))
+	@Test
+	@DisplayName("구매자는 레스토랑의 목록을 페이징 조회할 수 있다")
+	void getRestaurants() throws Exception {
+
+		final int page = 0;
+		final int size = 4;
+
+		mockMvc.perform(get(MessageFormat.format(
+				"/customer/api/restaurants?page={0}&size={1}", page, size)))
 			.andExpect(status().isOk())
 			.andDo(print())
 			.andDo(document("customer-get-restaurant-list",
@@ -62,6 +71,27 @@ class CustomerRestaurantApiTest {
 					parameterWithName("page").description("pageable page"),
 					parameterWithName("size").description("pageable size")
 				)));
+	}
+
+	@Test
+	@DisplayName("구매자는 검색한 단어가 포함된 이름을 가진 레스토랑들을 페이징 조회할 수 있다")
+	void getRestaurantsContains() throws Exception {
+
+		final String name = "유명";
+		final int page = 0;
+		final int size = 2;
+
+		mockMvc.perform(get(MessageFormat.format(
+				"/customer/api/restaurants/search?page={0}&size={1}&restaurantName={2}", page, size, name)))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("customer-get-restaurant-list-containing-name",
+				requestParameters(
+					parameterWithName("page").description("pageable page"),
+					parameterWithName("size").description("pageable size"),
+					parameterWithName("restaurantName").description("search keyword(restaurant name)")
+				)));
+
 	}
 
 	private Member createOwner(String nickName) {
