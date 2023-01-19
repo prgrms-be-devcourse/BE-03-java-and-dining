@@ -14,9 +14,9 @@ import org.springframework.util.Assert;
 @Embeddable
 public class ReservationCustomerInput {
 
-	private static final int MIN_VISITOR_COUNT = 2; // TODO: 예외 코드에 상수 사용할수 있다면 싹다 사용
+	private static final int MIN_VISITOR_COUNT = 2;
 	private static final int MAX_VISITOR_COUNT = 8;
-	private static final long MAX_RESERVE_PERIOD = 30L; // TODO: 정책에 맞게 수정 & 테스트 코드도 실패할테니 수정
+	private static final long MAX_RESERVE_PERIOD = 30L;
 	private static final int MINUTE_FORMAT = 0;
 	private static final int SECOND_FORMAT = 0;
 	private static final int MAX_MEMO_LENGTH = 300;
@@ -75,7 +75,7 @@ public class ReservationCustomerInput {
 		LocalDate nowDate = now.toLocalDate();
 		Assert.state(
 			visitDate.isBefore(nowDate.plusDays(MAX_RESERVE_PERIOD)),
-			"Field visitDate must be within 30 days."
+			String.format("Field visitDate must be within %d days.", MAX_RESERVE_PERIOD)
 		);
 	}
 
@@ -83,20 +83,30 @@ public class ReservationCustomerInput {
 		Assert.notNull(visitTime, "Field visitTime must not be null");
 		Assert.state(
 			visitTime.getMinute() == MINUTE_FORMAT && visitTime.getSecond() == SECOND_FORMAT,
-			"Field visitTime's minute and second must be zero."
+			String.format(
+				"Field visitTime's minute must be %d and second must be %d.",
+				MINUTE_FORMAT,
+				SECOND_FORMAT
+			)
 		);
 	}
 
 	private void validateVisitorCount(int visitorCount) {
 		Assert.state(
 			visitorCount >= MIN_VISITOR_COUNT && visitorCount <= MAX_VISITOR_COUNT,
-			"Field visitorCount must be between 2 and 8"
+			String.format("Field visitorCount must be between %d and %d",
+				MIN_VISITOR_COUNT,
+				MAX_VISITOR_COUNT
+			)
 		);
 	}
 
 	private void validateMemo(String memo) {
 		Assert.notNull(memo, "Memo must not be null");
-		Assert.state(memo.length() <= MAX_MEMO_LENGTH, "Memo length must be under 300.");
+		Assert.state(
+			memo.length() <= MAX_MEMO_LENGTH,
+			String.format("Memo length must be under %d.", MAX_MEMO_LENGTH)
+		);
 	}
 
 	public LocalDate getVisitDate() {
