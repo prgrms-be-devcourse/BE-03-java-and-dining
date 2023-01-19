@@ -36,6 +36,13 @@ public class GlobalExceptionHandler {
 		return newResponseEntity(response);
 	}
 
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e) {
+		log.info("IllegalStateExceptionException occurred.", e);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
+		return newResponseEntity(response);
+	}
+
 	@ExceptionHandler(RestaurantDuplicateCreationException.class)
 	public ResponseEntity<ErrorResponse> handleRestaurantDuplicateCreationException(
 		RestaurantDuplicateCreationException e) {
