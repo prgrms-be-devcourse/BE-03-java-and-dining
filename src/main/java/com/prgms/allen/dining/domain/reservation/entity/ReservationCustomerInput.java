@@ -14,9 +14,9 @@ import org.springframework.util.Assert;
 @Embeddable
 public class ReservationCustomerInput {
 
-	private static final int MIN_VISITOR_COUNT = 2;
+	private static final int MIN_VISITOR_COUNT = 2; // TODO: 예외 코드에 상수 사용할수 있다면 싹다 사용
 	private static final int MAX_VISITOR_COUNT = 8;
-	private static final long DAYS_TO_ADD = 31L;
+	private static final long DAYS_TO_ADD = 31L; // TODO: 정책에 맞게 수정 & 테스트 코드도 실패할테니 수정
 	private static final int MINUTE_FORMAT = 0;
 	private static final int SECOND_FORMAT = 0;
 	private static final int MAX_MEMO_LENGTH = 300;
@@ -37,13 +37,6 @@ public class ReservationCustomerInput {
 	protected ReservationCustomerInput() {
 	}
 
-	public ReservationCustomerInput(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
-		this.visitDate = visitDate;
-		this.visitTime = visitTime;
-		this.visitorCount = visitorCount;
-		this.customerMemo = customerMemo;
-	}
-
 	public ReservationCustomerInput(LocalDateTime visitDateTime, int visitorCount, String customerMemo) {
 		validate(visitDateTime, visitorCount, customerMemo);
 
@@ -54,9 +47,17 @@ public class ReservationCustomerInput {
 		this.customerMemo = customerMemo;
 	}
 
+	public ReservationCustomerInput(LocalDate visitDate, LocalTime visitTime, int visitorCount, String customerMemo) {
+		this(
+			LocalDateTime.of(visitDate, visitTime),
+			visitorCount,
+			customerMemo
+		);
+	}
+
 	private void validate(LocalDateTime visitDateTime, int visitorCount, String customerMemo) {
 		validateVisitBoundary(visitDateTime);
-		validateHour(visitDateTime.toLocalTime());
+		validateTimeFormat(visitDateTime.toLocalTime());
 		validateVisitorCount(visitorCount);
 		validateMemo(customerMemo);
 	}
@@ -78,7 +79,7 @@ public class ReservationCustomerInput {
 		);
 	}
 
-	private void validateHour(LocalTime visitTime) {
+	private void validateTimeFormat(LocalTime visitTime) {
 		Assert.notNull(visitTime, "Field visitTime must not be null");
 		Assert.state(
 			visitTime.getMinute() == MINUTE_FORMAT && visitTime.getSecond() == SECOND_FORMAT,
