@@ -19,8 +19,8 @@ import com.prgms.allen.dining.domain.member.FakeMemberRepository;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponseForCustomer;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponseForOwner;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
@@ -67,16 +67,16 @@ class ReservationServiceTest {
 		List<Reservation> reservations = createReservations(status, savedRestaurant, customer);
 		List<Reservation> savedReservations = reservationRepository.saveAll(reservations);
 
-		PageImpl<ReservationSimpleResponseForOwner> expect = new PageImpl<>(
+		PageImpl<ReservationSimpleResForOwner> expect = new PageImpl<>(
 			savedReservations
 				.stream()
-				.map(ReservationSimpleResponseForOwner::new)
+				.map(ReservationSimpleResForOwner::new)
 				.toList());
 
 		long restaurantId = savedRestaurant.getId();
 
 		// when
-		Page<ReservationSimpleResponseForOwner> actual = reservationService.getRestaurantReservations(
+		Page<ReservationSimpleResForOwner> actual = reservationService.getRestaurantReservations(
 			restaurantId,
 			ReservationStatus.valueOf(status),
 			PageRequest.of(0, 5)

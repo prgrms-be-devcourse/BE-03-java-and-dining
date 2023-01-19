@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.prgms.allen.dining.domain.reservation.ReservationService;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 
 @RestController
@@ -23,7 +23,7 @@ public class OwnerReservationApi {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<ReservationSimpleResponse>> getOwnerReservations(
+	public ResponseEntity<Page<ReservationSimpleResForOwner>> getOwnerReservations(
 		@RequestParam ReservationStatus reservationStatus,
 		@RequestParam Long restaurantId,
 		Pageable pageable

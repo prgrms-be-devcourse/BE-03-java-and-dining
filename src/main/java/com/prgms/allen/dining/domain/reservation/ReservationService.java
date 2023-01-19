@@ -1,8 +1,6 @@
 package com.prgms.allen.dining.domain.reservation;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -10,8 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponseForCustomer;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponseForOwner;
+import com.prgms.allen.dining.domain.member.MemberRepository;
+import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -35,17 +35,20 @@ public class ReservationService {
 		this.restaurantService = restaurantService;
 	}
 
-	public Page<ReservationSimpleResponseForOwner> getRestaurantReservations(
+	// TODO: Owner 정보 추가하기
+	public Page<ReservationSimpleResForOwner> getRestaurantReservations(
+		//ownerId
 		long restaurantId,
 		ReservationStatus status,
 		Pageable pageable
 	) {
 		restaurantService.validateRestaurantExists(restaurantId);
+		final Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow();
 
 		return new PageImpl<>(
-			reservationRepository.findAllByRestaurantIdAndStatus(restaurantId, status, pageable)
+			reservationRepository.findAllByRestaurantAndStatus(restaurant, status, pageable)
 				.stream()
-				.map(ReservationSimpleResponseForOwner::new)
+				.map(ReservationSimpleResForOwner::new)
 				.toList()
 		);
 	}
