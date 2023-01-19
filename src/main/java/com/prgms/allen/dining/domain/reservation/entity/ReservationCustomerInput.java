@@ -10,6 +10,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 @Embeddable
 public class ReservationCustomerInput {
@@ -98,8 +99,9 @@ public class ReservationCustomerInput {
 	}
 
 	private void validateMemo(String memo) {
-		Assert.notNull(memo, "Memo must not be null");
-		Assert.state(memo.length() <= MAX_MEMO_LENGTH, "Memo length must be under 300.");
+		if (StringUtils.hasLength(memo)) {
+			Assert.state(memo.length() <= MAX_MEMO_LENGTH, "Memo length must be under 300.");
+		}
 	}
 
 	public LocalDate getVisitDate() {
