@@ -14,12 +14,10 @@ import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleRes;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResponse;
-import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
-import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
 @Transactional(readOnly = true)
@@ -68,7 +66,7 @@ public class ReservationService {
 		return new PageImpl<>(
 			reservationRepository.findAllByRestaurantIdAndStatus(restaurantId, status, pageable)
 				.stream()
-				.map(ReservationSimpleResponse::new)
+				.map(ReservationSimpleRes::new)
 				.toList()
 		);
 	}

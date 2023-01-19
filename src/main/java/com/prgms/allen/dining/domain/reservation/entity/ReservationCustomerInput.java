@@ -137,5 +137,6 @@ public class ReservationCustomerInput {
 			", visitTime=" + visitTime +
 			", visitorCount=" + visitorCount +
 			", customerMemo='" + customerMemo + '\'' +
+			'}';
 	}
 }
