@@ -1,6 +1,5 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -15,11 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.springframework.util.Assert;
+
 import com.prgms.allen.dining.domain.common.entity.BaseEntity;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
-import com.prgms.allen.dining.global.error.exception.IllegalReservationStateException;
-import com.prgms.allen.dining.global.util.TimeUtils;
 
 @Entity
 public class Reservation extends BaseEntity {
@@ -60,6 +59,37 @@ public class Reservation extends BaseEntity {
 	public Reservation(Member customer, Restaurant restaurant, ReservationStatus status,
 		ReservationCustomerInput customerInput) {
 		this(null, customer, restaurant, status, customerInput);
+	}
+
+	public Reservation(Member customer, Restaurant restaurant, ReservationCustomerInput customerInput) {
+		validation(customer, restaurant, customerInput);
+
+		this.customer = customer;
+		this.restaurant = restaurant;
+		if (customerInput.checkVisitingToday()) {
+			this.status = ReservationStatus.CONFIRMED;
+		} else {
+			this.status = ReservationStatus.PENDING;
+		}
+		this.customerInput = customerInput;
+	}
+
+	private void validation(Member customer, Restaurant restaurant, ReservationCustomerInput customerInput) {
+		validateCustomer(customer);
+		validateRestaurant(restaurant);
+		validateReservationDetail(customerInput);
+	}
+
+	private void validateCustomer(Member customer) {
+		Assert.notNull(customer, "Customer must not be null.");
+	}
+
+	private void validateRestaurant(Restaurant restaurant) {
+		Assert.notNull(restaurant, "Restaurant must not be null.");
+	}
+
+	private void validateReservationDetail(ReservationCustomerInput customerInput) {
+		Assert.notNull(customerInput, "ReservationDetail must not be null.");
 	}
 
 	public Long getId() {

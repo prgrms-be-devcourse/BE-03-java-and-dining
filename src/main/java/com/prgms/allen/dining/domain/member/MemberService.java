@@ -5,7 +5,7 @@ import java.text.MessageFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.prgms.allen.dining.domain.member.dto.MemberSignupRequest;
+import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.global.error.ErrorCode;
@@ -22,7 +22,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void signup(MemberSignupRequest signupRequest) {
+	public void signup(MemberSignupReq signupRequest) {
 		final Member newMember = signupRequest.toEntity();
 		memberRepository.save(newMember);
 	}
@@ -32,6 +32,14 @@ public class MemberService {
 			.orElseThrow(() -> new NotFoundResourceException(
 				ErrorCode.NOT_FOUND_RESOURCE,
 				MessageFormat.format("Cannot find Restaurant entity for owner id = {0}", ownerId)
+			));
+	}
+
+	public Member findCustomerById(Long customerId) {
+		return memberRepository.findByIdAndMemberType(customerId, MemberType.CUSTOMER)
+			.orElseThrow(() -> new NotFoundResourceException(
+				ErrorCode.NOT_FOUND_RESOURCE,
+				MessageFormat.format("Cannot find Restaurant entity for customer id = {0}", customerId)
 			));
 	}
 }
