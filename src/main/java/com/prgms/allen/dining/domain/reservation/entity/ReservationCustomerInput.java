@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -69,7 +70,11 @@ public class ReservationCustomerInput {
 		LocalDateTime now = LocalDateTime.now();
 		Assert.state(
 			visitDateTime.isAfter(now.truncatedTo(ChronoUnit.HOURS)),
-			"Field visitTime must be after the next hour based on the current date time."
+			MessageFormat.format(
+				"visitDateTime={0} must be after the next hour based on the currentDateTime={1}.",
+				visitDateTime,
+				now
+			)
 		);
 
 		LocalDate visitDate = visitDateTime.toLocalDate();
