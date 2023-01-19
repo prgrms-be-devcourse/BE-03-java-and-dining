@@ -32,4 +32,16 @@ public class ReservationStatusUpdateService {
 
 		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
 	}
+
+	public void cancel(Long reservationId, Long ownerId) {
+		Reservation findReservation = reservationService.findById(reservationId);
+
+		try {
+			findReservation.cancel(ownerId);
+		} catch (IllegalReservationStateException e) {
+			throw new IllegalModificationException(e.getMessage());
+		}
+
+		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
+	}
 }
