@@ -64,7 +64,7 @@ public class ReservationCustomerInput {
 		validateMemo(customerMemo);
 	}
 
-	private void validateVisitBoundary(LocalDateTime visitDateTime) {
+	protected void validateVisitBoundary(LocalDateTime visitDateTime) {
 		Assert.notNull(visitDateTime, "Field visitDateTime must not be null");
 
 		LocalDateTime now = LocalDateTime.now();
@@ -109,7 +109,9 @@ public class ReservationCustomerInput {
 
 	private void validateMemo(String memo) {
 		if (StringUtils.hasLength(memo)) {
-			Assert.state(memo.length() <= MAX_MEMO_LENGTH, 			String.format("Memo length must be under %d.", MAX_MEMO_LENGTH)
+			Assert.state(
+				memo.length() <= MAX_MEMO_LENGTH,
+				String.format("Memo length must be under %d.", MAX_MEMO_LENGTH)
 			);
 		}
 	}
