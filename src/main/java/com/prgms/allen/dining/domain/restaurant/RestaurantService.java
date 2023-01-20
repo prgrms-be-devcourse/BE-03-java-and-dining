@@ -2,12 +2,16 @@ package com.prgms.allen.dining.domain.restaurant;
 
 import java.text.MessageFormat;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.global.error.ErrorCode;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
@@ -57,5 +61,13 @@ public class RestaurantService {
 		if (restaurantRepository.existsRestaurantByOwnerId(ownerId)) {
 			throw new RestaurantDuplicateCreationException(ErrorCode.DUPLICATE_ERROR);
 		}
+	}
+
+	public Page<RestaurantSimpleRes> getRestaurantList(Pageable pageable) {
+
+		return new PageImpl<>(restaurantRepository.findAll(pageable)
+			.stream()
+			.map(RestaurantSimpleRes::new)
+			.toList());
 	}
 }

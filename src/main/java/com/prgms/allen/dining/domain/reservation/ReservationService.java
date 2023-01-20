@@ -1,8 +1,10 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -87,5 +89,19 @@ public class ReservationService {
 			.toList();
 
 		return new ReservationAvailableTimesRes(availableTimes);
+	}
+
+	public boolean isAvailableReserve(
+		Restaurant restaurant,
+		LocalDateTime requestTime,
+		int numberOfPeople
+	) {
+
+		Optional<Integer> totalCount = reservationRepository.countTotalVisitorCount(restaurant,
+			requestTime.toLocalDate(),
+			requestTime.toLocalTime(),
+			TAKEN_STATUS_LIST);
+
+		return restaurant.isAvailable(totalCount.get(), numberOfPeople);
 	}
 }

@@ -1,6 +1,7 @@
 package com.prgms.allen.dining.domain.reservation;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.springframework.data.repository.query.FluentQuery;
 import com.prgms.allen.dining.domain.reservation.dto.VisitorCountsPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public class FakeReservationRepository implements ReservationRepository {
 
@@ -37,6 +39,14 @@ public class FakeReservationRepository implements ReservationRepository {
 
 	@Override
 	public List<VisitorCountsPerVisitTimeProj> findVisitorCountsPerVisitTime(LocalDate date,
+		List<ReservationStatus> statuses) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Optional<Integer> countTotalVisitorCount(Restaurant restaurant,
+		LocalDate visitDate,
+		LocalTime visitTime,
 		List<ReservationStatus> statuses) {
 		throw new UnsupportedOperationException();
 	}
