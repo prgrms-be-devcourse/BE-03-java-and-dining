@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
+import com.prgms.allen.dining.domain.reservation.dto.VisitorCountsPerVisitTimeDto;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 
@@ -31,6 +33,12 @@ public class FakeReservationRepository implements ReservationRepository {
 				.limit(pageable.getPageSize())
 				.toList()
 		);
+	}
+
+	@Override
+	public List<VisitorCountsPerVisitTimeDto> findVisitorCountsPerVisitTime(LocalDate date,
+		List<ReservationStatus> statuses) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

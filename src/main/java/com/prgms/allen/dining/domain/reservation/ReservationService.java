@@ -1,5 +1,9 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -8,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleRes;
+import com.prgms.allen.dining.domain.reservation.dto.VisitorCountsPerVisitTimeDto;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -19,6 +25,9 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 @Service
 @Transactional(readOnly = true)
 public class ReservationService {
+
+	private static final List<ReservationStatus> TAKEN_STATUS_LIST =
+		List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING);
 
 	private final ReservationRepository reservationRepository;
 	private final RestaurantService restaurantService;
@@ -66,5 +75,17 @@ public class ReservationService {
 				.map(ReservationSimpleRes::new)
 				.toList()
 		);
+	}
+
+	public ReservationAvailableTimesRes getAvailableTimes(Long restaurantId, LocalDate requestDate, int visitorCount) {
+		Restaurant res = restaurantService.findById(restaurantId);
+		List<VisitorCountsPerVisitTimeDto> visitorCountsPerVisitTime = reservationRepository.findVisitorCountsPerVisitTime(
+			requestDate, TAKEN_STATUS_LIST);
+		List<LocalTime> availableTimes = visitorCountsPerVisitTime.stream()
+			.filter(v -> res.getCapacity() - v.totalVisitorCount() >= visitorCount)
+			.map(VisitorCountsPerVisitTimeDto::visitTime)
+			.toList();
+
+		return new ReservationAvailableTimesRes(availableTimes);
 	}
 }
