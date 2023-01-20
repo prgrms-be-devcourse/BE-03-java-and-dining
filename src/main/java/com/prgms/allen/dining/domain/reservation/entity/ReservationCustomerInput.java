@@ -144,10 +144,6 @@ public class ReservationCustomerInput {
 		return getVisitDateTime().isAfter(target);
 	}
 
-	public boolean isVisitDateTimeBefore(LocalDateTime target) {
-		return getVisitDateTime().isBefore(target);
-	}
-
 	@Override
 	public String toString() {
 		return "ReservationDetail{" +
