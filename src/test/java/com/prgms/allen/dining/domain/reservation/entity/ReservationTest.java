@@ -190,7 +190,7 @@ class ReservationTest {
 	}
 
 	@Test
-	@DisplayName("확정 대기 또는 확정 상태의 예약을 취소 상태로 변경할 수 있다.")
+	@DisplayName("점주는 확정 대기 또는 확정 상태의 예약을 취소할 수 있다.")
 	void cancel_reservation() {
 		// given
 		Member owner = memberRepository.save(DummyGenerator.OWNER);
@@ -209,7 +209,7 @@ class ReservationTest {
 	}
 
 	@Test
-	@DisplayName("확정 대기 또는 확정 상태가 아닌 예약을 취소 상태로 변경 시 예외가 발생한다.")
+	@DisplayName("점주가 확정 대기 또는 확정 상태가 아닌 예약을 취소 상태로 변경 시 예외가 발생한다.")
 	void should_throw_exception_when_cancel_reservation_has_invalid_status() {
 		// given
 		Member owner = memberRepository.save(DummyGenerator.OWNER);
@@ -229,7 +229,7 @@ class ReservationTest {
 	}
 
 	@Test
-	@DisplayName("방문 시간 이후에 예약을 취소 시 예외가 발생한다.")
+	@DisplayName("점주가 방문 시간 이후에 예약을 취소 시 예외가 발생한다.")
 	void should_throw_exception_when_cancel_reservation_if_currentDateTime_is_after_visitDateTime() {
 		// given
 		Member owner = memberRepository.save(DummyGenerator.OWNER);
