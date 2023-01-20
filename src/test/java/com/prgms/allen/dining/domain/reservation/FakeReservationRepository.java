@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import com.prgms.allen.dining.domain.reservation.dto.VisitorCountsPerVisitTimeDto;
+import com.prgms.allen.dining.domain.reservation.dto.VisitorCountsPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 
@@ -36,7 +36,7 @@ public class FakeReservationRepository implements ReservationRepository {
 	}
 
 	@Override
-	public List<VisitorCountsPerVisitTimeDto> findVisitorCountsPerVisitTime(LocalDate date,
+	public List<VisitorCountsPerVisitTimeProj> findVisitorCountsPerVisitTime(LocalDate date,
 		List<ReservationStatus> statuses) {
 		throw new UnsupportedOperationException();
 	}

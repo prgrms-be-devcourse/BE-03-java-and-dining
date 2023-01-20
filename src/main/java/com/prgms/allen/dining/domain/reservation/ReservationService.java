@@ -15,7 +15,7 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleRes;
-import com.prgms.allen.dining.domain.reservation.dto.VisitorCountsPerVisitTimeDto;
+import com.prgms.allen.dining.domain.reservation.dto.VisitorCountsPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -79,11 +79,11 @@ public class ReservationService {
 
 	public ReservationAvailableTimesRes getAvailableTimes(Long restaurantId, LocalDate requestDate, int visitorCount) {
 		Restaurant res = restaurantService.findById(restaurantId);
-		List<VisitorCountsPerVisitTimeDto> visitorCountsPerVisitTime = reservationRepository.findVisitorCountsPerVisitTime(
+		List<VisitorCountsPerVisitTimeProj> visitorCountsPerVisitTime = reservationRepository.findVisitorCountsPerVisitTime(
 			requestDate, TAKEN_STATUS_LIST);
 		List<LocalTime> availableTimes = visitorCountsPerVisitTime.stream()
 			.filter(v -> res.getCapacity() - v.totalVisitorCount() >= visitorCount)
-			.map(VisitorCountsPerVisitTimeDto::visitTime)
+			.map(VisitorCountsPerVisitTimeProj::visitTime)
 			.toList();
 
 		return new ReservationAvailableTimesRes(availableTimes);

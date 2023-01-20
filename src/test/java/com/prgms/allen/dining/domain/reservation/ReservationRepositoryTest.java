@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.domain.reservation.dto.VisitorCountsPerVisitTimeDto;
+import com.prgms.allen.dining.domain.reservation.dto.VisitorCountsPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -90,7 +90,7 @@ class ReservationRepositoryTest {
 						new ReservationCustomerInput(
 							LocalDate.now().plusDays(1L),
 							LocalTime.now().plusHours(i).truncatedTo(ChronoUnit.HOURS),
-							j, "으앙" // 1시간 뒤 : 3 4 5 / 2시간 뒤 : 4 5 6
+							j, "예약 메모" // 1시간 뒤 : 3 4 5 / 2시간 뒤 : 4 5 6
 						)
 					)
 				);
@@ -107,7 +107,7 @@ class ReservationRepositoryTest {
 		LocalDate visitDate = LocalDate.now().plusDays(1L);
 
 		// when
-		List<VisitorCountsPerVisitTimeDto> visitorCountsPerVisitTime = reservationRepository.findVisitorCountsPerVisitTime(
+		List<VisitorCountsPerVisitTimeProj> visitorCountsPerVisitTime = reservationRepository.findVisitorCountsPerVisitTime(
 			visitDate, List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED));
 
 		// then
