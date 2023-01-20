@@ -170,6 +170,10 @@ public class Restaurant {
 		return this.menu.subList(0, 4);
 	}
 
+	public boolean isAvailable(int totalCount, int requestCount) {
+		return this.capacity - totalCount >= requestCount;
+	}
+
 	public void validate(Member owner, String name, int capacity, String phone, LocalTime openTime,
 		LocalTime lastOrderTime, String location) {
 		validateOwnerType(owner);
