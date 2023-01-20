@@ -14,6 +14,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +115,50 @@ class CustomerReservationApiTest {
 						fieldWithPath("sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬 안됐는지 여부"),
 						fieldWithPath("sort.empty").type(JsonFieldType.BOOLEAN).description("데이터가 비었는지 여부"),
 						fieldWithPath("empty").type(JsonFieldType.BOOLEAN).description("데이터가 비었는지 여부")
+					)
+				)
+			);
+	}
+
+	@Test
+	@DisplayName("고객의 예약 상세 조회")
+	public void getReservationDetail() throws Exception {
+		// given
+		owner = createOwner();
+		customer = createCustomer();
+		restaurant = createRestaurant(owner);
+		List<Reservation> reservations = createReservations(ReservationStatus.PENDING, restaurant, customer);
+		Reservation firstReservation = reservations.get(0);
+
+		// when & then
+		mockMvc.perform(get("/customer/api/reservations/{reservationId}", firstReservation.getId())
+				.param("customerId", customer.getId().toString())
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(
+				document("reservation-getAllByCustomer",
+					pathParameters(
+						parameterWithName("reservationId").description("조회할 상태")
+					),
+					requestParameters(
+						parameterWithName("customerId").description("조회하는 구매자 아이디")
+					),
+					responseFields(
+						fieldWithPath("reservationInfoRes").type(JsonFieldType.OBJECT).description("예약 정보"),
+						fieldWithPath("reservationInfoRes.customerName").type(JsonFieldType.STRING)
+							.description("예약자 이름"),
+						fieldWithPath("reservationInfoRes.phone").type(JsonFieldType.STRING).description("예약자 핸드폰 번호"),
+						fieldWithPath("reservationInfoRes.visitDateTime").type(JsonFieldType.STRING)
+							.description("예약한 날짜"),
+						fieldWithPath("reservationInfoRes.visitorCount").type(JsonFieldType.NUMBER)
+							.description("예약한 시간"),
+						fieldWithPath("reservationInfoRes.memo").type(JsonFieldType.STRING).description("예약 메모"),
+
+						fieldWithPath("restaurantInfoRes").type(JsonFieldType.OBJECT).description("정보"),
+						fieldWithPath("restaurantInfoRes.name").type(JsonFieldType.STRING).description("식당 이름"),
+						fieldWithPath("restaurantInfoRes.location").type(JsonFieldType.STRING).description("식당 위치"),
+						fieldWithPath("restaurantInfoRes.phone").type(JsonFieldType.STRING).description("식당 전화번호")
 					)
 				)
 			);
