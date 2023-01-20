@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
@@ -130,6 +132,31 @@ class ReservationServiceTest {
 		// then
 		assertThat(actual)
 			.isEqualTo(expect);
+	}
+
+	@Test
+	@DisplayName("식당의 예약 상세 조회")
+	public void getReservationDetail() {
+		// given
+		Member owner = memberRepository.save(createOwner());
+		Member customer = memberRepository.save(createCustomer());
+
+		Restaurant restaurant = createRestaurant(owner);
+		Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+
+		Reservation reservation = createReservation("PENDING", customer, savedRestaurant);
+		Reservation savedReservation = reservationRepository.save(reservation);
+
+		ReservationDetailRes expect = new ReservationDetailRes(savedReservation);
+
+		// when
+		ReservationDetailRes actual = reservationService.getReservationDetail(savedReservation.getId(),
+			customer.getId());
+
+		// then
+		assertThat(actual)
+			.isEqualTo(expect);
+
 	}
 
 	private List<Reservation> createReservations(String status, Restaurant restaurant, Member consumer) {

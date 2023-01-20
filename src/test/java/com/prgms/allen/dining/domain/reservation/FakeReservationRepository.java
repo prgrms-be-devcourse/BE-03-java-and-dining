@@ -49,6 +49,14 @@ public class FakeReservationRepository implements ReservationRepository {
 	}
 
 	@Override
+	public Optional<Reservation> findByIdAndCustomer(Long reservationId, Member customer) {
+		return reservations.stream()
+			.filter(reservation -> Objects.equals(reservation.getId(), reservationId))
+			.filter(reservation -> Objects.equals(reservation.getCustomer().getId(), customer.getId()))
+			.findFirst();
+	}
+
+	@Override
 	public List<Reservation> findAll() {
 		throw new UnsupportedOperationException();
 	}
@@ -114,7 +122,9 @@ public class FakeReservationRepository implements ReservationRepository {
 
 	@Override
 	public Optional<Reservation> findById(Long aLong) {
-		throw new UnsupportedOperationException();
+		return reservations.stream()
+			.filter(reservation -> Objects.equals(reservation.getId(), aLong))
+			.findFirst();
 	}
 
 	@Override

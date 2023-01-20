@@ -1,6 +1,7 @@
 package com.prgms.allen.dining.domain.reservation;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,5 +24,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 		Member customer,
 		List<ReservationStatus> statuses,
 		Pageable pageable
+	);
+
+	Optional<Reservation> findByIdAndCustomer(
+		Long reservationId,
+		Member customer
 	);
 }
