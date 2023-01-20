@@ -3,6 +3,7 @@ package com.prgms.allen.dining.domain.reservation.entity;
 import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus.*;
 
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -24,7 +25,6 @@ import com.prgms.allen.dining.domain.common.entity.BaseEntity;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
-import com.prgms.allen.dining.global.util.TimeUtils;
 
 @Entity
 public class Reservation extends BaseEntity {
@@ -146,14 +146,14 @@ public class Reservation extends BaseEntity {
 
 	public void confirm(Long ownerId) {
 		validUpdatableReservationState(ownerId, PENDING);
-		assertVisitDateTimeAfter(TimeUtils.getCurrentSeoulDateTime());
-		this.status = CONFIRMED;
+		customerInput.assertVisitDateAfter(LocalDate.now());
+		status = CONFIRMED;
 	}
 
 	public void cancel(Long ownerId) {
 		validUpdatableReservationState(ownerId, PENDING, CONFIRMED);
-		assertVisitDateTimeAfter(TimeUtils.getCurrentSeoulDateTime());
-		this.status = CANCELLED;
+		customerInput.assertVisitDateAfter(LocalDate.now());
+		status = CANCELLED;
 	}
 
 	private void validUpdatableReservationState(Long ownerId, ReservationStatus... validStatuses) {
@@ -175,16 +175,6 @@ public class Reservation extends BaseEntity {
 		if (!Arrays.asList(validStatuses).contains(this.status)) {
 			throw new IllegalReservationStateException(MessageFormat.format(
 				"ReservationStatus should be {0} but was {1}", Arrays.toString(validStatuses), this.status
-			));
-		}
-	}
-
-	private void assertVisitDateTimeAfter(LocalDateTime dateTime) {
-		if (!this.customerInput.isVisitDateTimeAfter(dateTime)) {
-			throw new IllegalReservationStateException(MessageFormat.format(
-				"dateTime={0} should precede visitDateTime={1}",
-				dateTime,
-				this.customerInput.getVisitDateTime()
 			));
 		}
 	}
