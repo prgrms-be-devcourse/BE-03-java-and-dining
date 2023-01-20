@@ -49,4 +49,8 @@ public class ReservationDetail {
 	public LocalDateTime getVisitDateTime() {
 		return LocalDateTime.of(visitDate, visitTime);
 	}
+
+	public String getCustomerMemo() {
+		return customerMemo;
+	}
 }
