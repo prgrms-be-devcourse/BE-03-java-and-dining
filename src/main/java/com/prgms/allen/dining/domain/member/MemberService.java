@@ -31,7 +31,7 @@ public class MemberService {
 		return memberRepository.findByIdAndMemberType(ownerId, MemberType.OWNER)
 			.orElseThrow(() -> new NotFoundResourceException(
 				ErrorCode.NOT_FOUND_RESOURCE,
-				MessageFormat.format("Cannot find Restaurant entity for owner id = {0}", ownerId)
+				MessageFormat.format("Cannot find Owner entity for owner id = {0}", ownerId)
 			));
 	}
 
@@ -39,7 +39,7 @@ public class MemberService {
 		return memberRepository.findByIdAndMemberType(customerId, MemberType.CUSTOMER)
 			.orElseThrow(() -> new NotFoundResourceException(
 				ErrorCode.NOT_FOUND_RESOURCE,
-				MessageFormat.format("Cannot find Restaurant entity for customer id = {0}", customerId)
+				MessageFormat.format("Cannot find Customer entity for customer id = {0}", customerId)
 			));
 	}
 }
