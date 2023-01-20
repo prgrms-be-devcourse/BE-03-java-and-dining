@@ -1,0 +1,2 @@
+###
+GET http://localhost:8080/owner/api/restaurants/2?ownerId=1
