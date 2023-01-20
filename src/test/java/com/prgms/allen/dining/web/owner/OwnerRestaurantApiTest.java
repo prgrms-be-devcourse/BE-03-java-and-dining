@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.prgms.allen.dining.domain.member.MemberRepository;
-import com.prgms.allen.dining.domain.member.dto.MemberSignupRequest;
+import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayCreateReq;
@@ -83,15 +83,15 @@ class OwnerRestaurantApiTest {
 
 	private Member createOwner() {
 		String nickName = "이세상에제일가는짱구";
-		MemberSignupRequest memberSignupRequest =
-			new MemberSignupRequest(
+		MemberSignupReq memberSignupReq =
+			new MemberSignupReq(
 				nickName,
 				"짱구",
 				"01011112222",
 				"1q2w3e4r!",
 				MemberType.OWNER);
 
-		memberRepository.save(memberSignupRequest.toEntity());
+		memberRepository.save(memberSignupReq.toEntity());
 		return memberRepository.findAll()
 			.stream()
 			.filter(member -> nickName.equals(member.getNickname()))

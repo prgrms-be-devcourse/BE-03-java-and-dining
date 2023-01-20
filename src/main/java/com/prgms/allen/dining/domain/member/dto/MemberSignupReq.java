@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 
-public record MemberSignupRequest(
+public record MemberSignupReq(
 
 	@NotBlank
 	String nickname,
