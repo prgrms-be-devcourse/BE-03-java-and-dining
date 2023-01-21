@@ -3,3 +3,6 @@ GET http://localhost:8080/customer/api/restaurants?page=0&size=3
 
 ### 레스토랑 명으로 N건 조회 API
 GET http://localhost:8080/customer/api/restaurants/search?page=0&size=5&restaurantName=짱구
+
+### 레스토랑 메뉴 조회 API
+GET http://localhost:8080/customer/api/restaurants/2/menu
