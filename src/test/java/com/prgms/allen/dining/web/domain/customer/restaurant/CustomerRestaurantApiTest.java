@@ -2,11 +2,10 @@ package com.prgms.allen.dining.web.domain.customer.restaurant;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 
 import java.math.BigInteger;
 import java.time.DayOfWeek;
@@ -24,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
-import com.prgms.allen.dining.domain.member.dto.MemberSignupRequest;
+import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
@@ -109,8 +108,8 @@ class CustomerRestaurantApiTest {
 
 	private Member createOwner() {
 		String nickName = "이세상에제일가는짱구";
-		MemberSignupRequest memberSignupRequest =
-			new MemberSignupRequest(
+		MemberSignupReq memberSignupRequest =
+			new MemberSignupReq(
 				nickName,
 				"짱구",
 				"01011112222",

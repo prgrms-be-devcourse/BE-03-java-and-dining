@@ -25,7 +25,6 @@ import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
-import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
@@ -86,13 +85,24 @@ class RestaurantServiceTest {
 	@DisplayName("점주가 식당을 2개이상 생성하려할 경우 RestaurantDuplicateCreationException 을 던진다.")
 	public void failSave() {
 		// given
-		RestaurantCreateReq restaurantCreateReq = createRestaurantCreateReq();
-		RestaurantCreateReq restaurantCreateReq2 = createRestaurantCreateReq();
+		final RestaurantCreateReq restaurantCreateReq2 = new RestaurantCreateReq(
+			FoodType.KOREAN,
+			"유명 레스토랑인척하는레스토랑",
+			30,
+			LocalTime.of(11, 0),
+			LocalTime.of(21, 0),
+			"서울특별시 강남구 어딘가로 123 무슨빌딩 1층",
+			"우리는 유명한 한식당입니다.",
+			"0211112222",
+			menuList,
+			closingDayList
+		);
 
 		restaurantService.save(restaurantCreateReq, savedOwner.getId());
 
 		assertThatThrownBy(() -> restaurantService.save(restaurantCreateReq2, savedOwner.getId()))
 			.isInstanceOf(RestaurantDuplicateCreationException.class);
+
 	}
 
 	@Test
@@ -128,25 +138,6 @@ class RestaurantServiceTest {
 			closingDays
 		);
 		return restaurantRepository.save(restaurant);
-	}
-
-		final RestaurantCreateReq restaurantCreateReq2 = new RestaurantCreateReq(
-			FoodType.KOREAN,
-			"유명 레스토랑인척하는레스토랑",
-			30,
-			LocalTime.of(11, 0),
-			LocalTime.of(21, 0),
-			"서울특별시 강남구 어딘가로 123 무슨빌딩 1층",
-			"우리는 유명한 한식당입니다.",
-			"0211112222",
-			menuList,
-			closingDayList
-		);
-
-		restaurantService.save(restaurantCreateReq, savedOwner.getId());
-
-		assertThatThrownBy(() -> restaurantService.save(restaurantCreateReq2, savedOwner.getId()))
-			.isInstanceOf(RestaurantDuplicateCreationException.class);
 	}
 
 	@Test
