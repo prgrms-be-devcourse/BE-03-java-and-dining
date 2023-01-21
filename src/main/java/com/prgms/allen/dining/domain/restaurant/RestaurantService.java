@@ -11,7 +11,6 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
-import com.prgms.allen.dining.domain.restaurant.dto.RestaurantDetailResForCustomer;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantDetailResForOwner;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
@@ -64,21 +63,15 @@ public class RestaurantService {
 			});
 	}
 
-	public RestaurantDetailResForCustomer getRestaurant(Long restaurantId) {
-		final Restaurant restaurant = findRestaurantById(restaurantId);
-
-		return new RestaurantDetailResForCustomer(restaurant,
-			toMenuSimpleResList(restaurant.getMinorMenu()),
-			toClosingDayResList(restaurant.getClosingDays())
-		);
-	}
-
 	public RestaurantDetailResForOwner getRestaurant(Long restaurantId, Long ownerId) {
 		Member owner = memberService.findOwnerById(ownerId);
 
 		Restaurant restaurant = restaurantRepository.findByIdAndOwner(restaurantId, owner)
 			.orElseThrow(() -> {
-				throw new IllegalArgumentException("No Authorization");
+				throw new NotFoundResourceException(
+					ErrorCode.NOT_FOUND_RESOURCE,
+					MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}, owner id = {1}",
+						restaurantId, ownerId));
 			});
 
 		return new RestaurantDetailResForOwner(restaurant,
