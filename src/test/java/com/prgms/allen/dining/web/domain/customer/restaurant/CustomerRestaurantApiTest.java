@@ -2,6 +2,7 @@ package com.prgms.allen.dining.web.domain.customer.restaurant;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -22,11 +23,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
+import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
+import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
+import com.prgms.allen.dining.domain.restaurant.entity.Menu;
+import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc
@@ -43,12 +49,31 @@ class CustomerRestaurantApiTest {
 	@Autowired
 	private RestaurantRepository restaurantRepository;
 
+	@Autowired
+	private RestaurantService restaurantService;
+
 	@Test
 	@DisplayName("고객은 하나의 식당의 상세 정보를 조회할 수 있다.")
 	void testGetMyRestaurant() throws Exception {
 
 		Member owner = createOwner();
-		Restaurant restaurant = createRestaurant(owner);
+		List<ClosingDay> closingDays = List.of(new ClosingDay(DayOfWeek.MONDAY));
+		List<Menu> menu = List.of(new Menu("맛있는 밥", BigInteger.valueOf(10000), "맛있어용"));
+
+		Restaurant restaurant = new Restaurant(
+			owner,
+			FoodType.WESTERN,
+			"유명한 레스토랑",
+			30,
+			LocalTime.of(12, 0),
+			LocalTime.of(20, 0),
+			"서울특별시 어딘구 어딘가로 222",
+			"BTS가 다녀간 유명한 레스토랑",
+			"023334444",
+			menu,
+			closingDays
+		);
+		restaurant = restaurantRepository.save(restaurant);
 
 		mockMvc.perform(
 				get("/customer/api/restaurants/{restaurantId}", restaurant.getId()))
@@ -75,8 +100,8 @@ class CustomerRestaurantApiTest {
 
 	private Member createOwner() {
 		String nickName = "이세상에제일가는짱구";
-		MemberSignupRequest memberSignupRequest =
-			new MemberSignupRequest(
+		MemberSignupReq memberSignupRequest =
+			new MemberSignupReq(
 				nickName,
 				"짱구",
 				"01011112222",
@@ -84,26 +109,6 @@ class CustomerRestaurantApiTest {
 				MemberType.OWNER);
 
 		return memberRepository.save(memberSignupRequest.toEntity());
-	}
-
-	private Restaurant createRestaurant(Member owner) {
-		List<ClosingDay> closingDays = List.of(new ClosingDay(DayOfWeek.MONDAY));
-		List<Menu> menu = List.of(new Menu("맛있는 밥", BigInteger.valueOf(10000), "맛있어용"));
-
-		Restaurant restaurant = new Restaurant(
-			owner,
-			FoodType.WESTERN,
-			"유명한 레스토랑",
-			30,
-			LocalTime.of(12, 0),
-			LocalTime.of(20, 0),
-			"서울특별시 어딘구 어딘가로 222",
-			"BTS가 다녀간 유명한 레스토랑",
-			"023334444",
-			menu,
-			closingDays
-		);
-		return restaurantRepository.save(restaurant);
 	}
 
 	@Test
