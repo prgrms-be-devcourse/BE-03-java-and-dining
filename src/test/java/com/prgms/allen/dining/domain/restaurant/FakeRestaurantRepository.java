@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
+import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public class FakeRestaurantRepository implements RestaurantRepository {
@@ -32,11 +33,12 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public Page<Restaurant> findAll(Pageable pageable) {
 
-		int lastIndex = (pageable.getPageNumber() + 1) * pageable.getPageSize() - 1;
-		int firstIndex = lastIndex - (pageable.getPageSize() - 1);
+		List<Restaurant> restaurantList = restaurants.stream()
+			.skip(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.toList();
 
-		List<Restaurant> answer = restaurants.subList(firstIndex, lastIndex);
-		return new PageImpl<>(answer);
+		return new PageImpl<>(restaurantList);
 	}
 
 	@Override
@@ -46,17 +48,30 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 			.filter(restaurant -> restaurant.getName().contains(restaurantName))
 			.toList();
 
-		List<Restaurant> answer = new ArrayList<>();
-		int lastIndex = (pageable.getPageNumber() + 1) * pageable.getPageSize() - 1;
-		int firstIndex = lastIndex - (pageable.getPageSize() - 1);
+		List<Restaurant> answer = filteredRestaurants.stream()
+			.skip(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.toList();
 
-		for (int i = 0; i < pageable.getPageSize(); i++) {
-			if (firstIndex + i < filteredRestaurants.size()) {
-				answer.add(filteredRestaurants.get(firstIndex + i));
-			}
-		}
 		return new PageImpl<>(answer);
 
+	}
+
+	@Override
+	public List<Menu> getMenus(Pageable pageable, Long id) {
+
+		List<Menu> menus = restaurants.stream()
+			.filter(restaurant -> id.equals(restaurant.getId()))
+			.findAny()
+			.map(restaurant -> restaurant.getMenu())
+			.get();
+
+		List<Menu> answer = menus.stream()
+			.skip(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.toList();
+
+		return answer;
 	}
 
 	@Override

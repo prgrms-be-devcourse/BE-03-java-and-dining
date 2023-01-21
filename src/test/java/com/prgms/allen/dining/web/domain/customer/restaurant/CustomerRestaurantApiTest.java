@@ -6,8 +6,10 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,9 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
+import com.prgms.allen.dining.domain.restaurant.entity.Menu;
+import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc
@@ -41,6 +46,9 @@ class CustomerRestaurantApiTest {
 
 	@Autowired
 	private RestaurantService restaurantService;
+
+	@Autowired
+	private RestaurantRepository restaurantRepository;
 
 	@BeforeEach
 	void setUp() {
@@ -91,7 +99,20 @@ class CustomerRestaurantApiTest {
 					parameterWithName("size").description("pageable size"),
 					parameterWithName("restaurantName").description("search keyword(restaurant name)")
 				)));
+	}
 
+	@Test
+	@DisplayName("구매자는 특정 레스토랑의 메뉴 리스트를 조회할 수 있다")
+	void getMenus() throws Exception {
+		Member owner = memberRepository.save(createOwner("주인장"));
+		Restaurant savedRestaurant = restaurantRepository.save(createRestaurant(owner));
+		long restaurantId = savedRestaurant.getId();
+
+		mockMvc.perform(get(MessageFormat.format(
+				"/customer/api/restaurants/{0}/menu", restaurantId)))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("customer-get-menus"));
 	}
 
 	private Member createOwner(String nickName) {
@@ -102,6 +123,32 @@ class CustomerRestaurantApiTest {
 			"01011112222",
 			"qwer1234!",
 			MemberType.OWNER);
+	}
+
+	private Restaurant createRestaurant(Member member) {
+		return new Restaurant(
+			member,
+			FoodType.KOREAN,
+			"돼지국밥 맛난집",
+			40,
+			LocalTime.of(8, 0),
+			LocalTime.of(20, 0),
+			"경기도 어딘가",
+			"",
+			"01011112222",
+			createMenuList(),
+			Collections.emptyList()
+		);
+	}
+
+	private List<Menu> createMenuList() {
+		Menu menu1 = new Menu("라면", BigInteger.valueOf(1500), "너구리 한마리 몰고가세용~");
+		Menu menu2 = new Menu("감자칩", BigInteger.valueOf(1500), "감자칩의 근본 포카칩");
+		Menu menu3 = new Menu("계란찜", BigInteger.valueOf(1500), "닭발과 최강 조합");
+		Menu menu4 = new Menu("짜장면", BigInteger.valueOf(1500), "오늘은 내가 요리사~");
+		Menu menu5 = new Menu("파스타", BigInteger.valueOf(1500), "봉골레 파스타 하나!");
+
+		return List.of(menu1, menu2, menu3, menu4, menu5);
 	}
 
 	private void restaurantSaveAll(RestaurantCreateReq createReq, List<Member> members) {
