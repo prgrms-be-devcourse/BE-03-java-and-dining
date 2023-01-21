@@ -11,6 +11,7 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantDetailResForCustomer;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantDetailResForOwner;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
@@ -61,6 +62,15 @@ public class RestaurantService {
 					MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
 				);
 			});
+	}
+
+	public RestaurantDetailResForCustomer getRestaurant(Long restaurantId) {
+		Restaurant restaurant = findRestaurantById(restaurantId);
+
+		return new RestaurantDetailResForCustomer(restaurant,
+			toMenuSimpleResList(restaurant.getMenu()),
+			toClosingDayResList(restaurant.getClosingDays())
+		);
 	}
 
 	public RestaurantDetailResForOwner getRestaurant(Long restaurantId, Long ownerId) {
