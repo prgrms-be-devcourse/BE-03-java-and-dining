@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
@@ -31,7 +32,12 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public Page<Restaurant> findAll(Pageable pageable) {
-		throw new UnsupportedOperationException();
+
+		int lastIndex = (pageable.getPageNumber() + 1) * pageable.getPageSize() - 1;
+		int firstIndex = lastIndex - (pageable.getPageSize() - 1);
+
+		List<Restaurant> answer = restaurants.subList(firstIndex, lastIndex);
+		return new PageImpl<>(answer);
 	}
 
 	@Override

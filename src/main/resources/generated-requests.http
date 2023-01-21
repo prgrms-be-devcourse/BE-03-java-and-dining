@@ -1,0 +1,2 @@
+### 레스토랑 목록 paging조회
+GET http://localhost:8080/customer/api/restaurants?page=0&size=3
