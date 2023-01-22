@@ -1,15 +1,14 @@
 package com.prgms.allen.dining.domain.reservation;
 
-import java.text.MessageFormat;
 import static java.util.stream.Collectors.*;
 
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
@@ -22,7 +21,6 @@ import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleRes;
 import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
@@ -31,6 +29,7 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
+import com.prgms.allen.dining.global.error.exception.ReserveFailException;
 
 @Service
 @Transactional(readOnly = true)
@@ -54,32 +53,34 @@ public class ReservationService {
 	}
 
 	@Transactional
-	public ReservationCreateRes reserve(Long customerId, ReservationCreateReq createRequest) {
+	public Long reserve(Long customerId, ReservationCreateReq createRequest) {
 		Member customer = memberService.findCustomerById(customerId);
 		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId());
 
-		ReservationCustomerInput reservationCustomerInput = createRequest
+		ReservationCustomerInput customerInput = createRequest
 			.reservationCustomerInput()
 			.toEntity();
 
 		boolean isReserved = isAvailableReserve(
 			restaurant,
-			reservationCustomerInput.getVisitDateTime(),
-			reservationCustomerInput.getVisitorCount()
+			customerInput.getVisitDateTime(),
+			customerInput.getVisitorCount()
 		);
 
-		Reservation newReservation = new Reservation(
-			customer,
-			restaurant,
-			reservationCustomerInput
-		);
+		if (!isReserved) {
+			throw new ReserveFailException(
+				String.format(
+					"Reservation for restaurant ID %d on %s failed. Requested visitor count is %d",
+					restaurant.getId(),
+					customerInput.getVisitDateTime(),
+					customerInput.getVisitorCount()
+				)
+			);
+		}
 
+		Reservation newReservation = new Reservation(customer, restaurant, customerInput);
 		reservationRepository.save(newReservation);
-
-		return new ReservationCreateRes(
-			isReserved,
-			newReservation.getId()
-		);
+		return newReservation.getId();
 	}
 
 	private boolean isAvailableReserve(

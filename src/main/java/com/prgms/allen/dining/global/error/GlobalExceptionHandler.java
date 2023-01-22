@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.prgms.allen.dining.global.error.exception.IllegalModificationException;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
+import com.prgms.allen.dining.global.error.exception.ReserveFailException;
 import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
 @RestControllerAdvice
@@ -41,6 +42,13 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 		log.info("MethodArgumentNotValidException occurred.", e);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
+		return newResponseEntity(response);
+	}
+
+	@ExceptionHandler(ReserveFailException.class)
+	public ResponseEntity<ErrorResponse> handleReserveFailException(ReserveFailException e) {
+		log.info("ReserveFailException occurred.", e);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_OPERATION_REQUEST);
 		return newResponseEntity(response);
 	}
 

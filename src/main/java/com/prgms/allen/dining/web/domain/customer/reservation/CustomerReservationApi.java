@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.web.domain.customer.reservation;
 
+import java.net.URI;
 import java.time.LocalDate;
 
 import javax.validation.Valid;
@@ -12,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.prgms.allen.dining.domain.reservation.ReservationService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateRes;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
@@ -29,14 +30,18 @@ public class CustomerReservationApi {
 	}
 
 	@PostMapping
-	public ResponseEntity<ReservationCreateRes> reserve(
+	public ResponseEntity<Void> reserve(
 		@RequestParam Long customerId,
 		@RequestBody @Valid ReservationCreateReq createRequest
 	) {
-		final ReservationCreateRes reservationCreateRes = reservationService.reserve(customerId, createRequest);
+		final Long reservationId = reservationService.reserve(customerId, createRequest);
 
-		return ResponseEntity.ok()
-			.body(reservationCreateRes);
+		final URI location = UriComponentsBuilder.fromPath("/customer/api/me/reservations/{reservationId}")
+			.buildAndExpand(reservationId)
+			.toUri();
+
+		return ResponseEntity.created(location)
+			.build();
 	}
 
 	@GetMapping("/available-times")
