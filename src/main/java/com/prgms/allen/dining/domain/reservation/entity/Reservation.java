@@ -29,6 +29,8 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 @Entity
 public class Reservation extends BaseEntity {
 
+	private static final int MAX_STATUS_UPDATE_EXPIRATION_PERIOD = 30;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "reservation_id")
@@ -154,6 +156,20 @@ public class Reservation extends BaseEntity {
 		validUpdatableReservationState(ownerId, PENDING, CONFIRMED);
 		customerInput.assertVisitDateAfter(LocalDate.now());
 		status = CANCELLED;
+	}
+
+	public void visit(Long ownerId) {
+		validUpdatableReservationState(ownerId, CONFIRMED);
+		customerInput.assertVisitDateTimeBefore(LocalDateTime.now());
+		customerInput.assertVisitDateWithin(LocalDate.now(), MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
+		status = VISITED;
+	}
+
+	public void noShow(Long ownerId) {
+		validUpdatableReservationState(ownerId, CONFIRMED);
+		customerInput.assertVisitDateTimeBefore(LocalDateTime.now());
+		customerInput.assertVisitDateWithin(LocalDate.now(), MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
+		status = NO_SHOW;
 	}
 
 	private void validUpdatableReservationState(Long ownerId, ReservationStatus... validStatuses) {
