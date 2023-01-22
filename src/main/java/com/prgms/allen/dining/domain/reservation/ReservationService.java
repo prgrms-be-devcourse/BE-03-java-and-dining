@@ -1,7 +1,7 @@
 package com.prgms.allen.dining.domain.reservation;
 
-import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +17,7 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleRes;
-import com.prgms.allen.dining.domain.reservation.dto.VisitorCountsPerVisitTimeProj;
+import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -28,7 +28,7 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 @Transactional(readOnly = true)
 public class ReservationService {
 
-	private static final List<ReservationStatus> TAKEN_STATUS_LIST =
+	private static final List<ReservationStatus> BEFORE_VISIT_STATUSES =
 		List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING);
 
 	private final ReservationRepository reservationRepository;
@@ -80,12 +80,19 @@ public class ReservationService {
 	}
 
 	public ReservationAvailableTimesRes getAvailableTimes(Long restaurantId, LocalDate requestDate, int visitorCount) {
-		Restaurant res = restaurantService.findById(restaurantId);
-		List<VisitorCountsPerVisitTimeProj> visitorCountsPerVisitTime = reservationRepository.findVisitorCountsPerVisitTime(
-			requestDate, TAKEN_STATUS_LIST);
-		List<LocalTime> availableTimes = visitorCountsPerVisitTime.stream()
-			.filter(v -> res.getCapacity() - v.totalVisitorCount() >= visitorCount)
-			.map(VisitorCountsPerVisitTimeProj::visitTime)
+		Restaurant restaurant = restaurantService.findById(restaurantId);
+
+		List<VisitorCountPerVisitTimeProj> visitorCountPerVisitTime = reservationRepository.findVisitorCountPerVisitTime(
+			requestDate, BEFORE_VISIT_STATUSES);
+
+		List<LocalTime> availableTimes = visitorCountPerVisitTime.stream()
+			.filter(countPerTime ->
+				restaurant.isAvailable(
+					countPerTime.totalVisitorCount().intValue(),
+					visitorCount
+				)
+			)
+			.map(VisitorCountPerVisitTimeProj::visitTime)
 			.toList();
 
 		return new ReservationAvailableTimesRes(availableTimes);
@@ -100,7 +107,7 @@ public class ReservationService {
 		Optional<Integer> totalCount = reservationRepository.countTotalVisitorCount(restaurant,
 			requestTime.toLocalDate(),
 			requestTime.toLocalTime(),
-			TAKEN_STATUS_LIST);
+			BEFORE_VISIT_STATUSES);
 
 		return restaurant.isAvailable(totalCount.get(), numberOfPeople);
 	}

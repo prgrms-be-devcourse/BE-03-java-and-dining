@@ -2,8 +2,8 @@ package com.prgms.allen.dining.domain.reservation.dto;
 
 import java.time.LocalTime;
 
-public record VisitorCountsPerVisitTimeProj(
+public record VisitorCountPerVisitTimeProj(
 	LocalTime visitTime,
-	long totalVisitorCount
+	Long totalVisitorCount
 ) {
 }
