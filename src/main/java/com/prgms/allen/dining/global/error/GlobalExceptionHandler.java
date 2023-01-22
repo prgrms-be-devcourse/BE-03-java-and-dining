@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e) {
 		log.info("IllegalStateException occurred.", e);
-		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_REQUEST);
 		return newResponseEntity(response);
 	}
 
