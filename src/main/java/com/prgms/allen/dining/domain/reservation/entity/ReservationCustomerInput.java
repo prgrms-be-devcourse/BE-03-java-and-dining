@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 
 import javax.persistence.Column;
@@ -79,11 +80,20 @@ public class ReservationCustomerInput {
 			)
 		);
 
+		LocalDate currentDate = now.toLocalDate();
 		LocalDate visitDate = visitDateTime.toLocalDate();
-		LocalDate nowDate = now.toLocalDate();
+
+		int daysBetweenCurrentDateAndVisitDate = Period.between(currentDate, visitDate)
+			.getDays() + 1;
+
 		Assert.state(
-			visitDate.isBefore(nowDate.plusDays(MAX_RESERVE_PERIOD)),
-			String.format("Field visitDate must be within %d days.", MAX_RESERVE_PERIOD)
+			daysBetweenCurrentDateAndVisitDate <= MAX_RESERVE_PERIOD,
+			MessageFormat.format(
+				"Period between currentDate={0} and visitDate={1} should be within {2} days.",
+				currentDate,
+				visitDate,
+				MAX_RESERVE_PERIOD
+			)
 		);
 	}
 
