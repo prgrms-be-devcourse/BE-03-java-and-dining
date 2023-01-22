@@ -62,4 +62,24 @@ public class OwnerReservationApi {
 		return ResponseEntity.ok()
 			.build();
 	}
+
+	@PatchMapping("/{reservationId}/visit")
+	public ResponseEntity<Void> visit(
+		@PathVariable Long reservationId,
+		@RequestParam Long ownerId
+	) {
+		reservationStatusUpdateService.visit(reservationId, ownerId);
+		return ResponseEntity.ok()
+			.build();
+	}
+
+	@PatchMapping("/{reservationId}/no-show")
+	public ResponseEntity<Void> noShow(
+		@PathVariable Long reservationId,
+		@RequestParam Long ownerId
+	) {
+		reservationStatusUpdateService.noShow(reservationId, ownerId);
+		return ResponseEntity.ok()
+			.build();
+	}
 }
