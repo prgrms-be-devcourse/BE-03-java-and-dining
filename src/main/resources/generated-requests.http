@@ -11,7 +11,6 @@ Content-Type: application/json
 }
 
 
-
 ### [회원 - 회원 가입] 점주 회원 가입 API
 POST http://localhost:8080/api/members/signup
 Content-Type: application/json
@@ -25,21 +24,6 @@ Content-Type: application/json
 }
 
 
-### [고객 - 예약] 예약을 요청하는 API
-POST http://localhost:8080/customer/api/reservations?customerId=1
-Content-Type: application/json
-
-{
-  "restaurantId": 3,
-  "reservationCustomerInput": {
-    "visitDateTime": "2023-01-20T16:00:00",
-    "visitorCount": 2,
-    "memo": "단무지는 빼주세요~"
-  }
-}
-
-
-
 ### [점주 - 식당] 식당 등록 API
 POST http://localhost:8080/owner/api/restaurants?ownerId=2
 Content-Type: application/json
@@ -47,7 +31,7 @@ Content-Type: application/json
 {
   "foodType": "KOREAN",
   "name": "유명 레스토랑",
-  "capacity": 30,
+  "capacity": 6,
   "openTime": "11:00",
   "lastOrderTime": "21:00",
   "location": "서울특별시 강남구 어딘가로 123 무슨빌딩 1층",
@@ -70,6 +54,24 @@ Content-Type: application/json
       "dayOfWeek": "MONDAY"
     }
   ]
+}
+
+
+### [예약] 날짜와 인원수를 통해 식당의 예약가능 시간들을 조회하는 API
+GET http://localhost:8080/customer/api/reservations/available-times?restaurantId=3&date=2023-01-22&visitorCount=2
+
+
+### [고객 - 예약] 예약을 요청하는 API
+POST http://localhost:8080/customer/api/reservations?customerId=1
+Content-Type: application/json
+
+{
+  "restaurantId": 3,
+  "reservationCustomerInput": {
+    "visitDateTime": "2023-01-20T16:00:00",
+    "visitorCount": 4,
+    "memo": "단무지는 빼주세요~"
+  }
 }
 
 
