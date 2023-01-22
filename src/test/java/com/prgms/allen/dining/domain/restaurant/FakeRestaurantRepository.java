@@ -61,9 +61,9 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	public List<Menu> getMenus(Pageable pageable, Long id) {
 
 		List<Menu> menus = restaurants.stream()
-			.filter(restaurant -> id.equals(restaurant.getId()))
+			.filter(restaurant -> restaurant.getId().equals(id))
 			.findAny()
-			.map(restaurant -> restaurant.getMenu())
+			.map(Restaurant::getMenu)
 			.get();
 
 		List<Menu> answer = menus.stream()
@@ -232,8 +232,7 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public boolean existsRestaurantByOwnerId(Long ownerId) {
 		return restaurants.stream().anyMatch(restaurant ->
-			ownerId.equals(
-				restaurant.getOwner()
-					.getId()));
+			restaurant.getOwner()
+				.getId().equals(ownerId));
 	}
 }

@@ -184,7 +184,7 @@ public class FakeMemberRepository implements MemberRepository {
 	@Override
 	public Optional<Member> findByIdAndMemberType(Long id, MemberType memberType) {
 		return members.stream()
-			.filter(member -> id.equals(member.getId()))
+			.filter(member -> member.getId().equals(id))
 			.filter(member -> memberType.equals(member.getMemberType()))
 			.findAny();
 	}

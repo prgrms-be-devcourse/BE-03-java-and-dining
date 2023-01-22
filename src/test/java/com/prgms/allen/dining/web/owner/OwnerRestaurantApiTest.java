@@ -94,7 +94,7 @@ class OwnerRestaurantApiTest {
 		memberRepository.save(memberSignupReq.toEntity());
 		return memberRepository.findAll()
 			.stream()
-			.filter(member -> nickName.equals(member.getNickname()))
+			.filter(member -> member.getNickname().equals(nickName))
 			.findAny()
 			.get();
 	}
