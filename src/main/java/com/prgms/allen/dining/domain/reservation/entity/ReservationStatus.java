@@ -2,10 +2,10 @@ package com.prgms.allen.dining.domain.reservation.entity;
 
 public enum ReservationStatus {
 
-	PENDING("예약 대기"),
-	CONFIRMED("예약 확정"),
-	VISIT("방문 완료"),
-	CANCEL("취소"),
+	PENDING("확정 대기"),
+	CONFIRMED("확정"),
+	VISITED("방문 완료"),
+	CANCELLED("취소"),
 	NO_SHOW("노쇼");
 
 	private final String value;

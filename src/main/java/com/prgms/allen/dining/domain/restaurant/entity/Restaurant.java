@@ -1,8 +1,13 @@
 package com.prgms.allen.dining.domain.restaurant.entity;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -13,7 +18,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 
-import com.prgms.allen.dining.domain.customer.entity.Customer;
+import org.springframework.util.Assert;
+
+import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 
 @Entity
 public class Restaurant {
@@ -24,8 +32,8 @@ public class Restaurant {
 	private Long id;
 
 	@OneToOne
-	@JoinColumn(name = "customer_id")
-	private Customer owner;
+	@JoinColumn(name = "owner_id")
+	private Member owner;
 
 	@Enumerated(value = EnumType.STRING)
 	@Column(name = "food_type", nullable = false)
@@ -53,6 +61,155 @@ public class Restaurant {
 	@Column(name = "phone", length = 11, nullable = false)
 	private String phone;
 
+	@ElementCollection
+	@CollectionTable(name = "Menu", joinColumns = @JoinColumn(name = "restaurant_id"))
+	private List<Menu> menu = new ArrayList<>();
+
+	@ElementCollection
+	@CollectionTable(name = "ClosingDay", joinColumns = @JoinColumn(name = "restaurant_id"))
+	private List<ClosingDay> closingDays = new ArrayList<>();
+
 	protected Restaurant() {
+	}
+
+	public Restaurant(Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+		LocalTime lastOrderTime, String location, String description, String phone) {
+		validate(owner, name, capacity, phone, openTime, lastOrderTime, location);
+		this.owner = owner;
+		this.foodType = foodType;
+		this.name = name;
+		this.capacity = capacity;
+		this.openTime = openTime;
+		this.lastOrderTime = lastOrderTime;
+		this.location = location;
+		this.description = description;
+		this.phone = phone;
+	}
+
+	public Restaurant(Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+		LocalTime lastOrderTime, String location, String description, String phone, List<Menu> menuList,
+		List<ClosingDay> closingDays) {
+		this(null, owner, foodType, name, capacity, openTime, lastOrderTime, location, description, phone,
+			menuList, closingDays);
+	}
+
+	public Restaurant(Long id, Member owner, FoodType foodType, String name, int capacity, LocalTime openTime,
+		LocalTime lastOrderTime, String location, String description, String phone, List<Menu> menuList,
+		List<ClosingDay> closingDays) {
+		validate(owner, name, capacity, phone, openTime, lastOrderTime, location);
+		this.id = id;
+		this.owner = owner;
+		this.foodType = foodType;
+		this.name = name;
+		this.capacity = capacity;
+		this.openTime = openTime;
+		this.lastOrderTime = lastOrderTime;
+		this.location = location;
+		this.description = description;
+		this.phone = phone;
+		this.menu = menuList;
+		this.closingDays = closingDays;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public Member getOwner() {
+		return owner;
+	}
+
+	public FoodType getFoodType() {
+		return foodType;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public LocalTime getOpenTime() {
+		return openTime;
+	}
+
+	public LocalTime getLastOrderTime() {
+		return lastOrderTime;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public List<Menu> getMenu() {
+		return List.copyOf(menu);
+	}
+
+	public List<ClosingDay> getClosingDays() {
+		return List.copyOf(closingDays);
+	}
+
+	public boolean isNotOwner(Long requestOwnerId) {
+		return !requestOwnerId.equals(owner.getId());
+	}
+
+	public List<Menu> getMinorMenu() {
+		if (menu.size() < 5) {
+			return this.getMenu();
+		}
+		return this.menu.subList(0, 4);
+	}
+
+	public boolean isAvailable(int totalCount, int requestCount) {
+		return this.capacity - totalCount >= requestCount;
+	}
+
+	public void validate(Member owner, String name, int capacity, String phone, LocalTime openTime,
+		LocalTime lastOrderTime, String location) {
+		validateOwnerType(owner);
+		validateName(name);
+		validateCapacity(capacity);
+		validatePhone(phone);
+		validateTimes(openTime, lastOrderTime);
+		validateLocation(location);
+	}
+
+	private void validateOwnerType(Member owner) {
+		Assert.notNull(owner, "Owner must not be empty");
+		Assert.isTrue(MemberType.OWNER.equals(owner.getMemberType()), "No Authorization");
+	}
+
+	private void validateName(String name) {
+		Assert.isTrue(name.length() >= 1, "Length of name must over than 0");
+		Assert.isTrue(name.length() <= 30, "Length of name must less than 31");
+	}
+
+	private void validateCapacity(int capacity) {
+		Assert.isTrue(capacity >= 2, "Capacity must over than 2");
+	}
+
+	private void validatePhone(String phone) {
+		Assert.hasLength(phone, "Phone must be not empty.");
+		Assert.isTrue(phone.length() >= 9 && phone.length() <= 11, "Name must be between 2 and 5.");
+		Assert.isTrue(Pattern.matches("^[0-9]+$", phone), "Phone is invalid format");
+	}
+
+	private void validateTimes(LocalTime openTime, LocalTime lastOrderTime) {
+		Assert.notNull(openTime, "openTime must not be empty");
+		Assert.notNull(lastOrderTime, "lastOrderTime must not by empty");
+	}
+
+	private void validateLocation(String location) {
+		Assert.hasLength(location, "Location must be not empty.");
 	}
 }
