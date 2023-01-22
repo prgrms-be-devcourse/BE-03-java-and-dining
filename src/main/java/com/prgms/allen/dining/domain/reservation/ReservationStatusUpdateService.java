@@ -44,4 +44,16 @@ public class ReservationStatusUpdateService {
 
 		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
 	}
+
+	public void visit(Long reservationId, Long ownerId) {
+		Reservation findReservation = reservationService.findById(reservationId);
+		findReservation.visit(ownerId);
+		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
+	}
+
+	public void noShow(Long reservationId, Long ownerId) {
+		Reservation findReservation = reservationService.findById(reservationId);
+		findReservation.noShow(ownerId);
+		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
+	}
 }
