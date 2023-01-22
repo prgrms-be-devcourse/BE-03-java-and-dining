@@ -49,7 +49,16 @@ public class FakeReservationRepository implements ReservationRepository {
 		LocalDate visitDate,
 		LocalTime visitTime,
 		List<ReservationStatus> statuses) {
-		throw new UnsupportedOperationException();
+		return reservations.stream()
+			.filter(reservation -> restaurant.getId().equals(reservation.getRestaurantId()))
+			.filter(reservation -> reservation.getVisitDateTime()
+				.toLocalDate()
+				.equals(visitDate))
+			.filter(reservation -> reservation.getVisitDateTime()
+				.toLocalTime()
+				.equals(visitTime))
+			.map(Reservation::getVisitorCount)
+			.reduce(Integer::sum);
 	}
 
 	@Override
