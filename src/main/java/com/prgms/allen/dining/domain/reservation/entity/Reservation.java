@@ -23,7 +23,6 @@ import org.springframework.util.Assert;
 
 import com.prgms.allen.dining.domain.common.entity.BaseEntity;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Entity
@@ -178,20 +177,22 @@ public class Reservation extends BaseEntity {
 	}
 
 	private void assertMatchesOwner(Long ownerId) {
-		if (!getRestaurantOwner().matchesId(ownerId)) {
-			throw new IllegalReservationStateException(MessageFormat.format(
+		Assert.state(
+			getRestaurantOwner().matchesId(ownerId),
+			MessageFormat.format(
 				"Owner does not match. Parameter ownerId={0} but actual ownerId={1}",
 				ownerId,
 				getRestaurantOwner().getId()
-			));
-		}
+			)
+		);
 	}
 
 	private void assertReservationStatus(ReservationStatus... validStatuses) {
-		if (!Arrays.asList(validStatuses).contains(this.status)) {
-			throw new IllegalReservationStateException(MessageFormat.format(
+		Assert.state(
+			Arrays.asList(validStatuses).contains(status),
+			MessageFormat.format(
 				"ReservationStatus should be {0} but was {1}", Arrays.toString(validStatuses), this.status
-			));
-		}
+			)
+		);
 	}
 }

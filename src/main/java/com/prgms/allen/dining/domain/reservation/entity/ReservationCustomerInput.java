@@ -14,8 +14,6 @@ import javax.persistence.Lob;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
-
 @Embeddable
 public class ReservationCustomerInput {
 
@@ -153,11 +151,12 @@ public class ReservationCustomerInput {
 	}
 
 	public void assertVisitDateAfter(LocalDate date) {
-		if (!visitDate.isAfter(date)) {
-			throw new IllegalReservationStateException(MessageFormat.format(
+		Assert.state(
+			visitDate.isAfter(date),
+			MessageFormat.format(
 				"visitDate={0} should be after date={1}", visitDate, date
-			));
-		}
+			)
+		);
 	}
 
 	public void assertVisitDateTimeBefore(LocalDateTime dateTime) {
