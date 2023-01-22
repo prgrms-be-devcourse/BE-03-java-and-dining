@@ -156,6 +156,11 @@ public class Restaurant {
 		return this.menu.subList(0, 4);
 	}
 
+	public int getRunningTime() {
+		return lastOrderTime.minusHours(openTime.getHour())
+			.getHour();
+	}
+
 	public boolean isAvailable(int totalCount, int requestCount) {
 		return this.capacity - totalCount >= requestCount;
 	}
