@@ -59,7 +59,7 @@ public class Member {
 		validateName(name);
 		validatePhone(phone);
 		validatePassword(password);
-		valdiateMemberType(memberType);
+		validateMemberType(memberType);
 	}
 
 	private void validateNickname(String nickname) {
@@ -87,7 +87,7 @@ public class Member {
 			"Password is invalid format.");
 	}
 
-	private void valdiateMemberType(MemberType memberType) {
+	private void validateMemberType(MemberType memberType) {
 		Assert.notNull(memberType, "customerType must be not null.");
 	}
 
@@ -113,5 +113,9 @@ public class Member {
 
 	public MemberType getMemberType() {
 		return memberType;
+	}
+
+	public boolean matchesId(Long id) {
+		return this.id.equals(id);
 	}
 }

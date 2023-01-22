@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import java.text.MessageFormat;
 import static java.util.stream.Collectors.*;
 
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
@@ -28,6 +30,7 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
 @Transactional(readOnly = true)
@@ -107,6 +110,15 @@ public class ReservationService {
 				.map(ReservationSimpleRes::new)
 				.toList()
 		);
+	}
+
+	public Reservation findById(Long id) {
+		return reservationRepository.findById(id)
+			.orElseThrow(() ->
+				new NotFoundResourceException(MessageFormat.format(
+					"Cannot find Reservation for reservationId={0}", id
+				))
+			);
 	}
 
 	public ReservationAvailableTimesRes getAvailableTimes(Long restaurantId, LocalDate requestDate, int visitorCount) {
