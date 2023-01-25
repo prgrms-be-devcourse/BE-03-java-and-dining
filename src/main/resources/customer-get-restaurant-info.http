@@ -1,2 +1,0 @@
-### 고객이 식당의 상세정보를 조회
-GET http://localhost:8080/customer/api/restaurants/2
