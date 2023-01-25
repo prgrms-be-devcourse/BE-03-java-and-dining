@@ -160,6 +160,12 @@ public class Restaurant {
 		return List.copyOf(closingDays);
 	}
 
+	public List<DayOfWeek> getAllClosingDayOfWeek() {
+		return this.closingDays.stream()
+			.map(ClosingDay::getDayOfWeek)
+			.toList();
+	}
+
 	public List<Menu> getMinorMenu() {
 		if (menu.size() < 5) {
 			return this.getMenu();
