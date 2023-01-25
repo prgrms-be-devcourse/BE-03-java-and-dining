@@ -13,7 +13,13 @@ spring:
   output:
     ansi:
       enabled: always
+  h2:
+    console:
+      enabled: true
 
 logging:
   level:
-    org.hibernate.SQL: debug
+    org:
+      hibernate:
+        SQL: debug
+        type.descriptor.sql.BasicBinder: TRACE
