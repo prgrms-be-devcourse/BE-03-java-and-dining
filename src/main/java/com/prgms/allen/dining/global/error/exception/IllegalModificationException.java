@@ -2,15 +2,15 @@ package com.prgms.allen.dining.global.error.exception;
 
 import com.prgms.allen.dining.global.error.ErrorCode;
 
-public class NotFoundResourceException extends IllegalArgumentException {
+public class IllegalModificationException extends IllegalStateException {
 
 	private final ErrorCode errorCode;
 
-	public NotFoundResourceException(String message) {
-		this(ErrorCode.NOT_FOUND_RESOURCE, message);
+	public IllegalModificationException(String message) {
+		this(ErrorCode.ILLEGAL_MODIFICATION, message);
 	}
 
-	public NotFoundResourceException(ErrorCode errorCode, String message) {
+	public IllegalModificationException(ErrorCode errorCode, String message) {
 		super(message);
 		this.errorCode = errorCode;
 	}

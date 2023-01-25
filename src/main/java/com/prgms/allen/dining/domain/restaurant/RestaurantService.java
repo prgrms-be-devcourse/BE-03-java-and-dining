@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.restaurant.dto.MenuDetailRes;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantAvailableDatesRes;
@@ -69,10 +70,10 @@ public class RestaurantService {
 	}
 
 	public RestaurantDetailResForCustomer getRestaurant(Long restaurantId) {
-		final Restaurant restaurant = findById(restaurantId);
+		Restaurant restaurant = findById(restaurantId);
 
 		return new RestaurantDetailResForCustomer(restaurant,
-			toMenuSimpleResList(restaurant.getMinorMenu()),
+			toMenuSimpleResList(restaurant.getMenu()),
 			toClosingDayResList(restaurant.getClosingDays())
 		);
 	}
@@ -82,7 +83,10 @@ public class RestaurantService {
 
 		Restaurant restaurant = restaurantRepository.findByIdAndOwner(restaurantId, owner)
 			.orElseThrow(() -> {
-				throw new IllegalArgumentException("No Authorization");
+				throw new NotFoundResourceException(
+					MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}, owner id = {1}",
+						restaurantId, ownerId)
+				);
 			});
 
 		return new RestaurantDetailResForOwner(restaurant,
@@ -102,6 +106,22 @@ public class RestaurantService {
 		return new PageImpl<>(restaurantRepository.findAll(pageable)
 			.stream()
 			.map(RestaurantSimpleRes::new)
+			.toList());
+	}
+
+	public Page<RestaurantSimpleRes> getRestaurantsContains(Pageable pageable, String restaurantName) {
+
+		return new PageImpl<>(restaurantRepository.findAllByNameContains(pageable, restaurantName)
+			.stream()
+			.map(RestaurantSimpleRes::new)
+			.toList());
+	}
+
+	public Page<MenuDetailRes> getMenus(Pageable pageable, Long id) {
+
+		return new PageImpl<>(restaurantRepository.getMenus(pageable, id)
+			.stream()
+			.map(MenuDetailRes::new)
 			.toList());
 	}
 

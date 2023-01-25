@@ -54,13 +54,13 @@ class OwnerRestaurantApiTest {
 	private RestaurantRepository restaurantRepository;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
+	private static Member owner;
 
 	@Test
 	@DisplayName("점주는 식당을 하나 등록할 수 있다.")
 	void testSave() throws Exception {
 
-		Member owner = createOwner();
-
+		owner = createOwner();
 		mockMvc.perform(post("/owner/api/restaurants?ownerId=" + owner.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.registerModule(new JavaTimeModule())
@@ -136,7 +136,7 @@ class OwnerRestaurantApiTest {
 		memberRepository.save(memberSignupReq.toEntity());
 		return memberRepository.findAll()
 			.stream()
-			.filter(member -> nickName.equals(member.getNickname()))
+			.filter(member -> member.getNickname().equals(nickName))
 			.findAny()
 			.get();
 	}

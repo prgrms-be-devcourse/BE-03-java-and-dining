@@ -8,10 +8,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.math.BigInteger;
+import java.text.MessageFormat;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
@@ -47,17 +52,46 @@ class CustomerRestaurantApiTest {
 	private MemberRepository memberRepository;
 
 	@Autowired
-	private RestaurantRepository restaurantRepository;
+	private RestaurantService restaurantService;
 
 	@Autowired
-	private RestaurantService restaurantService;
+	private RestaurantRepository restaurantRepository;
+
+	@BeforeEach
+	void setUp() {
+		final List<Member> members = List.of(
+			createOwner("nickName1"),
+			createOwner("nickName2"),
+			createOwner("nickName3"),
+			createOwner("nickName4"),
+			createOwner("nickName5")
+		);
+
+		restaurantSaveAll(restaurantCreateReq(), memberRepository.saveAll(members));
+	}
 
 	@Test
 	@DisplayName("고객은 하나의 식당의 상세 정보를 조회할 수 있다.")
 	void testGetMyRestaurant() throws Exception {
 
-		Member owner = createOwner();
-		Restaurant restaurant = createRestaurant(owner);
+		Member owner = createOwner("nickname123");
+		List<ClosingDay> closingDays = List.of(new ClosingDay(DayOfWeek.MONDAY));
+		List<Menu> menu = List.of(new Menu("맛있는 밥", BigInteger.valueOf(10000), "맛있어용"));
+
+		Restaurant restaurant = new Restaurant(
+			owner,
+			FoodType.WESTERN,
+			"유명한 레스토랑",
+			30,
+			LocalTime.of(12, 0),
+			LocalTime.of(20, 0),
+			"서울특별시 어딘구 어딘가로 222",
+			"BTS가 다녀간 유명한 레스토랑",
+			"023334444",
+			menu,
+			closingDays
+		);
+		restaurant = restaurantRepository.save(restaurant);
 
 		mockMvc.perform(
 				get("/customer/api/restaurants/{restaurantId}", restaurant.getId()))
@@ -86,57 +120,90 @@ class CustomerRestaurantApiTest {
 	@DisplayName("구매자는 레스토랑의 목록을 페이징 조회할 수 있다")
 	void getRestaurants() throws Exception {
 
-		final List<Member> members = List.of(
-			createOwner("nickName1"),
-			createOwner("nickName2"),
-			createOwner("nickName3"),
-			createOwner("nickName4"),
-			createOwner("nickName5")
-		);
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("page", "0");
+		params.add("size", "3");
 
-		restaurantSaveAll(restaurantCreateReq(), memberRepository.saveAll(members));
-
-		mockMvc.perform(get("/customer/api/restaurants?page=0&size=4"))
+		mockMvc.perform(get("/customer/api/restaurants")
+				.queryParams(params))
 			.andExpect(status().isOk())
 			.andDo(print())
 			.andDo(document("customer-get-restaurant-list",
 				requestParameters(
 					parameterWithName("page").description("pageable page"),
 					parameterWithName("size").description("pageable size")
+				),
+				responseFields(
+					fieldWithPath("content[].foodType").description("food type"),
+					fieldWithPath("content[].restaurantName").description("restaurant Name"),
+					fieldWithPath("content[].location").description("restaurant location"),
+					fieldWithPath("pageable").description("pageable"),
+					fieldWithPath("totalElements").description("totalElements"),
+					fieldWithPath("first").description("first"),
+					fieldWithPath("last").description("last"),
+					fieldWithPath("totalPages").description("totalPages"),
+					fieldWithPath("numberOfElements").description("numberOfElements"),
+					fieldWithPath("size").description("size"),
+					fieldWithPath("number").description("number"),
+					fieldWithPath("sort").description("sort"),
+					fieldWithPath("sort.sorted").description("sort sorted"),
+					fieldWithPath("sort.unsorted").description("sort unsorted"),
+					fieldWithPath("sort.empty").description("sort empty"),
+					fieldWithPath("empty").description("empty")
 				)));
 	}
 
-	private Member createOwner() {
-		String nickName = "이세상에제일가는짱구";
-		MemberSignupReq memberSignupRequest =
-			new MemberSignupReq(
-				nickName,
-				"짱구",
-				"01011112222",
-				"1q2w3e4r!",
-				MemberType.OWNER);
+	@Test
+	@DisplayName("구매자는 검색한 단어가 포함된 이름을 가진 레스토랑들을 페이징 조회할 수 있다")
+	void getRestaurantsContains() throws Exception {
 
-		return memberRepository.save(memberSignupRequest.toEntity());
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("restaurantName", "유명");
+		params.add("page", "0");
+		params.add("size", "2");
+
+		mockMvc.perform(get("/customer/api/restaurants/search")
+				.queryParams(params))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("customer-get-restaurant-list-containing-name",
+				requestParameters(
+					parameterWithName("page").description("pageable page"),
+					parameterWithName("size").description("pageable size"),
+					parameterWithName("restaurantName").description("search keyword(restaurant name)")
+				),
+				responseFields(
+					fieldWithPath("content[].foodType").description("food type"),
+					fieldWithPath("content[].restaurantName").description("restaurant Name"),
+					fieldWithPath("content[].location").description("restaurant location"),
+					fieldWithPath("pageable").description("pageable"),
+					fieldWithPath("totalElements").description("totalElements"),
+					fieldWithPath("first").description("first"),
+					fieldWithPath("last").description("last"),
+					fieldWithPath("totalPages").description("totalPages"),
+					fieldWithPath("numberOfElements").description("numberOfElements"),
+					fieldWithPath("size").description("size"),
+					fieldWithPath("number").description("number"),
+					fieldWithPath("sort").description("sort"),
+					fieldWithPath("sort.sorted").description("sort sorted"),
+					fieldWithPath("sort.unsorted").description("sort unsorted"),
+					fieldWithPath("sort.empty").description("sort empty"),
+					fieldWithPath("empty").description("empty")
+				)));
 	}
 
-	private Restaurant createRestaurant(Member owner) {
-		List<ClosingDay> closingDays = List.of(new ClosingDay(DayOfWeek.MONDAY));
-		List<Menu> menu = List.of(new Menu("맛있는 밥", BigInteger.valueOf(10000), "맛있어용"));
+	@Test
+	@DisplayName("구매자는 특정 레스토랑의 메뉴 리스트를 조회할 수 있다")
+	void getMenus() throws Exception {
+		Member owner = memberRepository.save(createOwner("주인장"));
+		Restaurant savedRestaurant = restaurantRepository.save(createRestaurant(owner));
+		long restaurantId = savedRestaurant.getId();
 
-		Restaurant restaurant = new Restaurant(
-			owner,
-			FoodType.WESTERN,
-			"유명한 레스토랑",
-			30,
-			LocalTime.of(12, 0),
-			LocalTime.of(20, 0),
-			"서울특별시 어딘구 어딘가로 222",
-			"BTS가 다녀간 유명한 레스토랑",
-			"023334444",
-			menu,
-			closingDays
-		);
-		return restaurantRepository.save(restaurant);
+		mockMvc.perform(get(MessageFormat.format(
+				"/customer/api/restaurants/{0}/menu", restaurantId)))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("customer-get-menus"));
 	}
 
 	private Member createOwner(String nickName) {
@@ -147,6 +214,32 @@ class CustomerRestaurantApiTest {
 			"01011112222",
 			"qwer1234!",
 			MemberType.OWNER);
+	}
+
+	private Restaurant createRestaurant(Member member) {
+		return new Restaurant(
+			member,
+			FoodType.KOREAN,
+			"돼지국밥 맛난집",
+			40,
+			LocalTime.of(8, 0),
+			LocalTime.of(20, 0),
+			"경기도 어딘가",
+			"",
+			"01011112222",
+			createMenuList(),
+			Collections.emptyList()
+		);
+	}
+
+	private List<Menu> createMenuList() {
+		Menu menu1 = new Menu("라면", BigInteger.valueOf(1500), "너구리 한마리 몰고가세용~");
+		Menu menu2 = new Menu("감자칩", BigInteger.valueOf(1500), "감자칩의 근본 포카칩");
+		Menu menu3 = new Menu("계란찜", BigInteger.valueOf(1500), "닭발과 최강 조합");
+		Menu menu4 = new Menu("짜장면", BigInteger.valueOf(1500), "오늘은 내가 요리사~");
+		Menu menu5 = new Menu("파스타", BigInteger.valueOf(1500), "봉골레 파스타 하나!");
+
+		return List.of(menu1, menu2, menu3, menu4, menu5);
 	}
 
 	private void restaurantSaveAll(RestaurantCreateReq createReq, List<Member> members) {

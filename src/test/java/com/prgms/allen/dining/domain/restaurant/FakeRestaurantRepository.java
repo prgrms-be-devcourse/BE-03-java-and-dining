@@ -1,6 +1,7 @@
 package com.prgms.allen.dining.domain.restaurant;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public class FakeRestaurantRepository implements RestaurantRepository {
@@ -33,11 +35,37 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public Page<Restaurant> findAll(Pageable pageable) {
 
-		int lastIndex = (pageable.getPageNumber() + 1) * pageable.getPageSize() - 1;
-		int firstIndex = lastIndex - (pageable.getPageSize() - 1);
+		List<Restaurant> answer = restaurants.stream()
+			.skip(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.toList();
 
-		List<Restaurant> answer = restaurants.subList(firstIndex, lastIndex);
 		return new PageImpl<>(answer);
+	}
+
+	@Override
+	public Page<Restaurant> findAllByNameContains(Pageable pageable, String restaurantName) {
+
+		List<Restaurant> answer = restaurants.stream()
+			.filter(restaurant -> restaurant.getName().contains(restaurantName))
+			.skip(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.toList();
+
+		return new PageImpl<>(answer);
+
+	}
+
+	@Override
+	public List<Menu> getMenus(Pageable pageable, Long id) {
+
+		return restaurants.stream()
+			.filter(restaurant -> restaurant.getId().equals(id))
+			.map(Restaurant::getMenu)
+			.flatMap(Collection::stream)
+			.skip(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.toList();
 	}
 
 	@Override
@@ -197,10 +225,9 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public boolean existsRestaurantByOwnerId(Long ownerId) {
-		return restaurants.stream().anyMatch(restaurant ->
-			ownerId.equals(
-				restaurant.getOwner()
-					.getId()));
+		return restaurants.stream().anyMatch(restaurant -> restaurant.getOwner()
+				.getId()
+				.equals(ownerId));
 	}
 
 	@Override

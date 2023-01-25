@@ -1,8 +1,100 @@
+### [회원 - 회원 가입] 고객 회원 가입 API
+POST http://localhost:8080/api/members/signup
+Content-Type: application/json
+
+{
+  "nickname": "iAmCustomer",
+  "name": "나고객",
+  "phone": "01012345678",
+  "password": "password123!",
+  "memberType": "CUSTOMER"
+}
+
+
+
+### [회원 - 회원 가입] 점주 회원 가입 API
+POST http://localhost:8080/api/members/signup
+Content-Type: application/json
+
+{
+  "nickname": "iAmOwner",
+  "name": "나점주",
+  "phone": "01012345678",
+  "password": "password123!",
+  "memberType": "OWNER"
+}
+
+
+### [고객 - 예약] 예약을 요청하는 API
+POST http://localhost:8080/customer/api/reservations?customerId=1
+Content-Type: application/json
+
+{
+  "restaurantId": 3,
+  "reservationCustomerInput": {
+    "visitDateTime": "2023-01-20T16:00:00",
+    "visitorCount": 2,
+    "memo": "단무지는 빼주세요~"
+  }
+}
+
+
+
+### [점주 - 식당] 식당 등록 API
+POST http://localhost:8080/owner/api/restaurants?ownerId=2
+Content-Type: application/json
+
+{
+  "foodType": "KOREAN",
+  "name": "유명 레스토랑",
+  "capacity": 30,
+  "openTime": "11:00",
+  "lastOrderTime": "21:00",
+  "location": "서울특별시 강남구 어딘가로 123 무슨빌딩 1층",
+  "description": "우리는 유명한 한식당입니다.",
+  "phone": "0211112222",
+  "menuList": [
+    {
+      "name": "맛있는 밥",
+      "price": 10000,
+      "description": "맛있어용"
+    },
+    {
+      "name": "맛있는 국",
+      "price": 20000,
+      "description": "맛있어용"
+    }
+  ],
+  "closingDays": [
+    {
+      "dayOfWeek": "MONDAY"
+    }
+  ]
+}
+
+
+### [점주 - 예약] 예약을 확정하는 API
+PATCH http://localhost:8080/owner/api/reservations/4/confirm?ownerId=2
+
+
+### [점주 - 예약] 예약을 취소하는 API
+PATCH http://localhost:8080/owner/api/reservations/4/cancel/?ownerId=2
+
+
 ### 레스토랑 목록 paging조회
 GET http://localhost:8080/customer/api/restaurants?page=0&size=3
+
 
 ### 고객이 식당의 상세정보를 조회
 GET http://localhost:8080/customer/api/restaurants/2
 
-### 점주의 식당 상세 정보 조회
+
+### 점주의 식당 상세정보 조회
 GET http://localhost:8080/owner/api/restaurants/2?ownerId=1
+
+
+### 레스토랑 명으로 N건 조회 API
+GET http://localhost:8080/customer/api/restaurants/search?page=0&size=5&restaurantName=짱구
+
+### 레스토랑 메뉴 조회 API
+GET http://localhost:8080/customer/api/restaurants/2/menu
