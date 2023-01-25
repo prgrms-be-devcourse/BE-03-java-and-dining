@@ -89,3 +89,6 @@ GET http://localhost:8080/customer/api/reservations?status=PLANNED&customerId=1
 
 ### 구매자의 예약을 상세 조회하는 API
 GET http://localhost:8080/customer/api/reservations/4?customerId=1
+
+### 레스토랑 명으로 N건 조회 API
+GET http://localhost:8080/customer/api/restaurants/search?page=0&size=5&restaurantName=짱구
