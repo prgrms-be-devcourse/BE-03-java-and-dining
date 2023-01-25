@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
+import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
@@ -227,5 +228,13 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 		return restaurants.stream().anyMatch(restaurant -> restaurant.getOwner()
 				.getId()
 				.equals(ownerId));
+	}
+
+	@Override
+	public Optional<Restaurant> findByIdAndOwner(Long id, Member owner) {
+		return restaurants.stream()
+			.filter(restaurant -> restaurant.getId().equals(id))
+			.filter(restaurant -> restaurant.getOwner().equals(owner))
+			.findAny();
 	}
 }

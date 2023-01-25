@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigInteger;
 import java.text.MessageFormat;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -31,6 +33,7 @@ import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
+import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
@@ -64,6 +67,52 @@ class CustomerRestaurantApiTest {
 		);
 
 		restaurantSaveAll(restaurantCreateReq(), memberRepository.saveAll(members));
+	}
+
+	@Test
+	@DisplayName("고객은 하나의 식당의 상세 정보를 조회할 수 있다.")
+	void testGetMyRestaurant() throws Exception {
+
+		Member owner = createOwner("nickname123");
+		List<ClosingDay> closingDays = List.of(new ClosingDay(DayOfWeek.MONDAY));
+		List<Menu> menu = List.of(new Menu("맛있는 밥", BigInteger.valueOf(10000), "맛있어용"));
+
+		Restaurant restaurant = new Restaurant(
+			owner,
+			FoodType.WESTERN,
+			"유명한 레스토랑",
+			30,
+			LocalTime.of(12, 0),
+			LocalTime.of(20, 0),
+			"서울특별시 어딘구 어딘가로 222",
+			"BTS가 다녀간 유명한 레스토랑",
+			"023334444",
+			menu,
+			closingDays
+		);
+		restaurant = restaurantRepository.save(restaurant);
+
+		mockMvc.perform(
+				get("/customer/api/restaurants/{restaurantId}", restaurant.getId()))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("customer-get-one-restaurant",
+				responseFields(
+					fieldWithPath("foodType").type(JsonFieldType.STRING).description("food type"),
+					fieldWithPath("name").type(JsonFieldType.STRING).description("restaurant name"),
+					fieldWithPath("openTime").type(JsonFieldType.STRING).description("restaurant open time"),
+					fieldWithPath("lastOrderTime").type(JsonFieldType.STRING).description("restaurant last order time"),
+					fieldWithPath("location").type(JsonFieldType.STRING).description("restaurant location"),
+					fieldWithPath("description").type(JsonFieldType.STRING).description("restaurant description"),
+					fieldWithPath("phone").type(JsonFieldType.STRING).description("restaurant phone"),
+					fieldWithPath("menuList").type(JsonFieldType.ARRAY).optional().description("menu list"),
+					fieldWithPath("menuList[].name").type(JsonFieldType.STRING).optional().description("menu name"),
+					fieldWithPath("menuList[].price").type(JsonFieldType.NUMBER).optional().description("menu price"),
+					fieldWithPath("closingDays").type(JsonFieldType.ARRAY).optional().description("closing days"),
+					fieldWithPath("closingDays[].dayOfWeek").optional().type(JsonFieldType.STRING)
+						.description("closing day of week")
+				))
+			);
 	}
 
 	@Test

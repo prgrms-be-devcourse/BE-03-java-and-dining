@@ -159,10 +159,6 @@ public class Restaurant {
 		return List.copyOf(closingDays);
 	}
 
-	public boolean isNotOwner(Long requestOwnerId) {
-		return !owner.getId().equals(requestOwnerId);
-	}
-
 	public List<Menu> getMinorMenu() {
 		if (menu.size() < 5) {
 			return this.getMenu();
