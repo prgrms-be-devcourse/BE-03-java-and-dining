@@ -133,7 +133,12 @@ class OwnerRestaurantApiTest {
 				"1q2w3e4r!",
 				MemberType.OWNER);
 
-		return memberRepository.save(memberSignupReq.toEntity());
+		memberRepository.save(memberSignupReq.toEntity());
+		return memberRepository.findAll()
+			.stream()
+			.filter(member -> member.getNickname().equals(nickName))
+			.findAny()
+			.get();
 	}
 
 	private RestaurantCreateReq restaurantCreateResource() {

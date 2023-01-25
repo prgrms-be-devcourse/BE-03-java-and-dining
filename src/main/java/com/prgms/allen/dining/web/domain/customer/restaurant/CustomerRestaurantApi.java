@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
+import com.prgms.allen.dining.domain.restaurant.dto.MenuDetailRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantDetailResForCustomer;
 
@@ -44,5 +45,14 @@ public class CustomerRestaurantApi {
 	public ResponseEntity<RestaurantDetailResForCustomer> getOne(@PathVariable Long restaurantId) {
 		RestaurantDetailResForCustomer restaurantDetailResForCustomer = restaurantService.getRestaurant(restaurantId);
 		return ResponseEntity.ok(restaurantDetailResForCustomer);
+	}
+
+	@GetMapping("/{restaurantId}/menu")
+	public ResponseEntity<Page<MenuDetailRes>> getMenu(Pageable pageable,
+		@PathVariable Long restaurantId) {
+
+		Page<MenuDetailRes> menus = restaurantService.getMenus(pageable, restaurantId);
+
+		return ResponseEntity.ok(menus);
 	}
 }

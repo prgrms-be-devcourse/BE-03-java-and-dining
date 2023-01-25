@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.restaurant.dto.MenuDetailRes;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
@@ -109,6 +110,14 @@ public class RestaurantService {
 		return new PageImpl<>(restaurantRepository.findAllByNameContains(pageable, restaurantName)
 			.stream()
 			.map(RestaurantSimpleRes::new)
+			.toList());
+	}
+
+	public Page<MenuDetailRes> getMenus(Pageable pageable, Long id) {
+
+		return new PageImpl<>(restaurantRepository.getMenus(pageable, id)
+			.stream()
+			.map(MenuDetailRes::new)
 			.toList());
 	}
 
