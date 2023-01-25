@@ -34,12 +34,12 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public Page<Restaurant> findAll(Pageable pageable) {
 
-		List<Restaurant> restaurantList = restaurants.stream()
+		List<Restaurant> answer = restaurants.stream()
 			.skip(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.toList();
 
-		return new PageImpl<>(restaurantList);
+		return new PageImpl<>(answer);
 	}
 
 	@Override
@@ -224,8 +224,8 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public boolean existsRestaurantByOwnerId(Long ownerId) {
-		return restaurants.stream().anyMatch(restaurant ->
-			restaurant.getOwner()
-				.getId().equals(ownerId));
+		return restaurants.stream().anyMatch(restaurant -> restaurant.getOwner()
+				.getId()
+				.equals(ownerId));
 	}
 }

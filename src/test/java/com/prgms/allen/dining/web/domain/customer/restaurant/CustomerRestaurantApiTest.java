@@ -2,6 +2,7 @@ package com.prgms.allen.dining.web.domain.customer.restaurant;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -21,6 +22,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
@@ -67,17 +70,36 @@ class CustomerRestaurantApiTest {
 	@DisplayName("구매자는 레스토랑의 목록을 페이징 조회할 수 있다")
 	void getRestaurants() throws Exception {
 
-		final int page = 0;
-		final int size = 4;
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("page", "0");
+		params.add("size", "3");
 
-		mockMvc.perform(get(MessageFormat.format(
-				"/customer/api/restaurants?page={0}&size={1}", page, size)))
+		mockMvc.perform(get("/customer/api/restaurants")
+				.queryParams(params))
 			.andExpect(status().isOk())
 			.andDo(print())
 			.andDo(document("customer-get-restaurant-list",
 				requestParameters(
 					parameterWithName("page").description("pageable page"),
 					parameterWithName("size").description("pageable size")
+				),
+				responseFields(
+					fieldWithPath("content[].foodType").description("food type"),
+					fieldWithPath("content[].restaurantName").description("restaurant Name"),
+					fieldWithPath("content[].location").description("restaurant location"),
+					fieldWithPath("pageable").description("pageable"),
+					fieldWithPath("totalElements").description("totalElements"),
+					fieldWithPath("first").description("first"),
+					fieldWithPath("last").description("last"),
+					fieldWithPath("totalPages").description("totalPages"),
+					fieldWithPath("numberOfElements").description("numberOfElements"),
+					fieldWithPath("size").description("size"),
+					fieldWithPath("number").description("number"),
+					fieldWithPath("sort").description("sort"),
+					fieldWithPath("sort.sorted").description("sort sorted"),
+					fieldWithPath("sort.unsorted").description("sort unsorted"),
+					fieldWithPath("sort.empty").description("sort empty"),
+					fieldWithPath("empty").description("empty")
 				)));
 	}
 
@@ -85,12 +107,13 @@ class CustomerRestaurantApiTest {
 	@DisplayName("구매자는 검색한 단어가 포함된 이름을 가진 레스토랑들을 페이징 조회할 수 있다")
 	void getRestaurantsContains() throws Exception {
 
-		final String name = "유명";
-		final int page = 0;
-		final int size = 2;
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("restaurantName", "유명");
+		params.add("page", "0");
+		params.add("size", "2");
 
-		mockMvc.perform(get(MessageFormat.format(
-				"/customer/api/restaurants/search?page={0}&size={1}&restaurantName={2}", page, size, name)))
+		mockMvc.perform(get("/customer/api/restaurants/search")
+				.queryParams(params))
 			.andExpect(status().isOk())
 			.andDo(print())
 			.andDo(document("customer-get-restaurant-list-containing-name",
@@ -98,6 +121,24 @@ class CustomerRestaurantApiTest {
 					parameterWithName("page").description("pageable page"),
 					parameterWithName("size").description("pageable size"),
 					parameterWithName("restaurantName").description("search keyword(restaurant name)")
+				),
+				responseFields(
+					fieldWithPath("content[].foodType").description("food type"),
+					fieldWithPath("content[].restaurantName").description("restaurant Name"),
+					fieldWithPath("content[].location").description("restaurant location"),
+					fieldWithPath("pageable").description("pageable"),
+					fieldWithPath("totalElements").description("totalElements"),
+					fieldWithPath("first").description("first"),
+					fieldWithPath("last").description("last"),
+					fieldWithPath("totalPages").description("totalPages"),
+					fieldWithPath("numberOfElements").description("numberOfElements"),
+					fieldWithPath("size").description("size"),
+					fieldWithPath("number").description("number"),
+					fieldWithPath("sort").description("sort"),
+					fieldWithPath("sort.sorted").description("sort sorted"),
+					fieldWithPath("sort.unsorted").description("sort unsorted"),
+					fieldWithPath("sort.empty").description("sort empty"),
+					fieldWithPath("empty").description("empty")
 				)));
 	}
 
