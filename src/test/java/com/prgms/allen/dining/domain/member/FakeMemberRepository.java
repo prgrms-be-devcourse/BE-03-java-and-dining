@@ -17,6 +17,7 @@ import com.prgms.allen.dining.domain.member.entity.MemberType;
 public class FakeMemberRepository implements MemberRepository {
 
 	private final List<Member> members = new ArrayList<>();
+	private Long id = 0L;
 
 	@Override
 	public List<Member> findAll() {
@@ -70,16 +71,16 @@ public class FakeMemberRepository implements MemberRepository {
 
 	@Override
 	public <S extends Member> S save(S entity) {
-		Member member = new Member(
-			count() + 1,
+		Member newMember = new Member(
+			++id,
 			entity.getNickname(),
 			entity.getName(),
 			entity.getPhone(),
 			entity.getPassword(),
 			entity.getMemberType()
 		);
-		members.add(member);
-		return (S)member;
+		members.add(newMember);
+		return (S)newMember;
 	}
 
 	@Override
