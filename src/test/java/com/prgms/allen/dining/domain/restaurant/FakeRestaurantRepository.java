@@ -32,10 +32,11 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public Page<Restaurant> findAll(Pageable pageable) {
 
-		int lastIndex = (pageable.getPageNumber() + 1) * pageable.getPageSize() - 1;
-		int firstIndex = lastIndex - (pageable.getPageSize() - 1);
+		List<Restaurant> answer = restaurants.stream()
+			.skip(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.toList();
 
-		List<Restaurant> answer = restaurants.subList(firstIndex, lastIndex);
 		return new PageImpl<>(answer);
 	}
 
@@ -46,15 +47,11 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 			.filter(restaurant -> restaurant.getName().contains(restaurantName))
 			.toList();
 
-		List<Restaurant> answer = new ArrayList<>();
-		int lastIndex = (pageable.getPageNumber() + 1) * pageable.getPageSize() - 1;
-		int firstIndex = lastIndex - (pageable.getPageSize() - 1);
+		List<Restaurant> answer = filteredRestaurants.stream()
+			.skip(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.toList();
 
-		for (int i = 0; i < pageable.getPageSize(); i++) {
-			if (firstIndex + i < filteredRestaurants.size()) {
-				answer.add(filteredRestaurants.get(firstIndex + i));
-			}
-		}
 		return new PageImpl<>(answer);
 
 	}
