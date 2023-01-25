@@ -83,3 +83,6 @@ PATCH http://localhost:8080/owner/api/reservations/4/cancel/?ownerId=2
 
 ### 레스토랑 목록 paging조회
 GET http://localhost:8080/customer/api/restaurants?page=0&size=3
+
+### 레스토랑 명으로 N건 조회 API
+GET http://localhost:8080/customer/api/restaurants/search?page=0&size=5&restaurantName=짱구
