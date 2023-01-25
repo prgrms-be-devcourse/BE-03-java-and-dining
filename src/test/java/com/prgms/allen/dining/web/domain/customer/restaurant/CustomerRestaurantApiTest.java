@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigInteger;
 import java.text.MessageFormat;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
