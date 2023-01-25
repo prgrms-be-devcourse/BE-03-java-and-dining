@@ -21,6 +21,7 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
@@ -162,6 +163,25 @@ class RestaurantServiceTest {
 
 		//Then
 		assertThat(actualRestaurantList).hasSize(expectRestaurantSimpleRes.getSize());
+	}
+
+	@Test
+	@DisplayName("휴무일을 제외한 이용가능한 날짜 목록을 받을 수 있다.")
+	public void testGetAvailableDates() {
+		// given
+		Restaurant restaurant = createRestaurant();
+
+		// when
+		RestaurantAvailableDatesRes restaurantAvailableDatesRes =
+			restaurantService.getAvailableReserveDates(restaurant.getId());
+
+		// then
+		assertThat(restaurantAvailableDatesRes.canReserveDates()
+			.stream()
+			.noneMatch(localDate ->
+				restaurant.getAllClosingDayOfWeek()
+					.contains(localDate.getDayOfWeek())))
+			.isTrue();
 	}
 
 	private Member createOwner(String nickName) {

@@ -1,6 +1,7 @@
 package com.prgms.allen.dining.domain.restaurant;
 
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -13,10 +14,11 @@ import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuSimpleRes;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
-import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantDetailResForCustomer;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantDetailResForOwner;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
@@ -27,6 +29,8 @@ import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreation
 @Service
 @Transactional(readOnly = true)
 public class RestaurantService {
+
+	private static final long MAX_RESERVE_PERIOD = 30L;
 
 	private final RestaurantRepository restaurantRepository;
 	private final MemberService memberService;
@@ -111,5 +115,19 @@ public class RestaurantService {
 		return closingDayList.stream()
 			.map(ClosingDayRes::new)
 			.toList();
+	}
+
+	public RestaurantAvailableDatesRes getAvailableReserveDates(Long restaurantId) {
+		Restaurant restaurant = findById(restaurantId);
+
+		LocalDate start = LocalDate.now();
+		LocalDate end = start.plusDays(MAX_RESERVE_PERIOD);
+
+		List<LocalDate> canReverseDates = start.datesUntil(end)
+			.filter(localDate -> !restaurant.getAllClosingDayOfWeek()
+				.contains(localDate.getDayOfWeek()))
+			.toList();
+
+		return new RestaurantAvailableDatesRes(canReverseDates);
 	}
 }
