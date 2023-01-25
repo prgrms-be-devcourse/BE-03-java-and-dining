@@ -29,8 +29,8 @@ public class CustomerRestaurantApi {
 		return ResponseEntity.ok(restaurants);
 	}
 
-	@GetMapping("/search")
-	public ResponseEntity<Page<RestaurantSimpleRes>> getRestaurantsContaining(Pageable pageable,
+	@GetMapping(path = "/search", params = "restaurantName")
+	public ResponseEntity<Page<RestaurantSimpleRes>> getRestaurantsContainsName(Pageable pageable,
 		@RequestParam String restaurantName) {
 
 		Page<RestaurantSimpleRes> restaurants = restaurantService.getRestaurantsContains(pageable, restaurantName);
@@ -39,3 +39,4 @@ public class CustomerRestaurantApi {
 	}
 
 }
+
