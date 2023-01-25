@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
 @Transactional(readOnly = true)
@@ -73,6 +75,15 @@ public class ReservationService {
 				.map(ReservationSimpleRes::new)
 				.toList()
 		);
+	}
+
+	public Reservation findById(Long id) {
+		return reservationRepository.findById(id)
+			.orElseThrow(() ->
+				new NotFoundResourceException(MessageFormat.format(
+					"Cannot find Reservation for reservationId={0}", id
+				))
+			);
 	}
 
 	public boolean isAvailableReserve(
