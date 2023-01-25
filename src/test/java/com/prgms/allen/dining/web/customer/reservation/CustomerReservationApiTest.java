@@ -7,10 +7,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.math.BigInteger;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -29,17 +25,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
-import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
-import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
-import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.generator.DummyGenerator;
 
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc
@@ -50,6 +43,7 @@ class CustomerReservationApiTest {
 	private static Member owner;
 	private static Member customer;
 	private static Restaurant restaurant;
+	private static ReservationCustomerInput customerInput;
 	private static String page;
 	private static String size;
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -69,10 +63,17 @@ class CustomerReservationApiTest {
 		// given
 		VisitStatus visitStatus = VisitStatus.valueOf(status);
 		List<ReservationStatus> statuses = visitStatus.getStatuses();
-		owner = createOwner();
-		customer = createCustomer();
-		restaurant = createRestaurant(owner);
-		createReservations(statuses.get(0), restaurant, customer);
+		owner = memberRepository.save(DummyGenerator.OWNER);
+		customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		customerInput = DummyGenerator.CUSTOMER_INPUT;
+		statuses.forEach(reservationStatus -> reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			reservationStatus,
+			customerInput
+		)));
+
 		page = "0";
 		size = "5";
 
@@ -124,14 +125,19 @@ class CustomerReservationApiTest {
 	@DisplayName("고객의 예약 상세 조회")
 	public void getReservationDetail() throws Exception {
 		// given
-		owner = createOwner();
-		customer = createCustomer();
-		restaurant = createRestaurant(owner);
-		List<Reservation> reservations = createReservations(ReservationStatus.PENDING, restaurant, customer);
-		Reservation firstReservation = reservations.get(0);
+		owner = memberRepository.save(DummyGenerator.OWNER);
+		customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		customerInput = DummyGenerator.CUSTOMER_INPUT;
+		Reservation reservation = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.PENDING,
+			customerInput
+		));
 
 		// when & then
-		mockMvc.perform(get("/customer/api/reservations/{reservationId}", firstReservation.getId())
+		mockMvc.perform(get("/customer/api/reservations/{reservationId}", reservation.getId())
 				.param("customerId", customer.getId().toString())
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
@@ -153,7 +159,9 @@ class CustomerReservationApiTest {
 							.description("예약한 날짜"),
 						fieldWithPath("reservationInfoRes.visitorCount").type(JsonFieldType.NUMBER)
 							.description("예약한 시간"),
-						fieldWithPath("reservationInfoRes.memo").type(JsonFieldType.STRING).description("예약 메모"),
+						fieldWithPath("reservationInfoRes.memo").type(JsonFieldType.STRING)
+							.optional()
+							.description("예약 메모"),
 
 						fieldWithPath("restaurantInfoRes").type(JsonFieldType.OBJECT).description("정보"),
 						fieldWithPath("restaurantInfoRes.name").type(JsonFieldType.STRING).description("식당 이름"),
@@ -164,70 +172,4 @@ class CustomerReservationApiTest {
 			);
 	}
 
-	private Member createCustomer() {
-		return memberRepository.save(new Member(
-			"customer",
-			"구매자",
-			"01012341234",
-			"qwer1234!",
-			MemberType.CUSTOMER
-		));
-	}
-
-	private Member createOwner() {
-		return memberRepository.save(new Member(
-			"owner",
-			"오너",
-			"01012341234",
-			"qwer1234!",
-			MemberType.OWNER
-		));
-	}
-
-	private List<Reservation> createReservations(ReservationStatus status, Restaurant restaurant, Member consumer) {
-		Reservation reservation1 = createReservation(
-			status,
-			consumer,
-			restaurant
-		);
-
-		Reservation reservation2 = createReservation(
-			status,
-			consumer,
-			restaurant
-		);
-
-		return List.of(reservation1, reservation2);
-	}
-
-	private Reservation createReservation(ReservationStatus status, Member consumer, Restaurant savedRestaurant) {
-		ReservationDetail detail = new ReservationDetail(
-			LocalDate.of(2023, 1, 16),
-			LocalTime.of(16, 59), 2,
-			"단무지는 빼주세요"
-		);
-
-		return reservationRepository.save(new Reservation(
-			consumer,
-			savedRestaurant,
-			status,
-			detail
-		));
-	}
-
-	private Restaurant createRestaurant(Member owner) {
-		return restaurantRepository.save(new Restaurant(
-			owner,
-			FoodType.KOREAN,
-			"장충동국밥",
-			100,
-			LocalTime.of(9, 0),
-			LocalTime.of(23, 0),
-			"서울특별시 서초구 어디길11 2층",
-			"실망시키지 않는 맛집",
-			"021234123",
-			List.of(new Menu("메뉴이름", BigInteger.valueOf(10000), "메모")),
-			List.of(new ClosingDay(DayOfWeek.MONDAY))
-		));
-	}
 }

@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,6 +24,7 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 public class FakeReservationRepository implements ReservationRepository {
 
 	private final List<Reservation> reservations = new ArrayList<>();
+	private Long id = 0L;
 
 	@Override
 	public Page<Reservation> findAllByRestaurantAndStatus(Restaurant restaurant, ReservationStatus status,
@@ -54,6 +57,14 @@ public class FakeReservationRepository implements ReservationRepository {
 			.filter(reservation -> Objects.equals(reservation.getId(), reservationId))
 			.filter(reservation -> Objects.equals(reservation.getCustomer().getId(), customer.getId()))
 			.findFirst();
+	}
+
+	@Override
+	public Optional<Integer> countTotalVisitorCount(Restaurant restaurant,
+		LocalDate visitDate,
+		LocalTime visitTime,
+		List<ReservationStatus> statuses) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -108,8 +119,13 @@ public class FakeReservationRepository implements ReservationRepository {
 
 	@Override
 	public <S extends Reservation> S save(S entity) {
-		Reservation newReservation = new Reservation(count(), entity.getCustomer(), entity.getRestaurant(),
-			entity.getStatus(), entity.getDetail());
+		Reservation newReservation = new Reservation(
+			++id,
+			entity.getCustomer(),
+			entity.getRestaurant(),
+			entity.getStatus(),
+			entity.getCustomerInput()
+		);
 		reservations.add(newReservation);
 		return (S)newReservation;
 	}

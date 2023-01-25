@@ -9,7 +9,7 @@ public record ReservationDetailRes(
 
 	public ReservationDetailRes(Reservation reservation) {
 		this(
-			new ReservationInfoRes(reservation.getCustomer(), reservation.getDetail()),
+			new ReservationInfoRes(reservation.getCustomer(), reservation.getCustomerInput()),
 			new RestaurantInfoRes(reservation.getRestaurant())
 		);
 	}

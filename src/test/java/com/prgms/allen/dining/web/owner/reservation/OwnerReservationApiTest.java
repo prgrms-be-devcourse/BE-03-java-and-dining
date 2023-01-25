@@ -9,8 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigInteger;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +32,7 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
@@ -152,17 +153,19 @@ class OwnerReservationApiTest {
 	}
 
 	private Reservation createReservation(ReservationStatus status, Member consumer, Restaurant savedRestaurant) {
-		ReservationDetail detail = new ReservationDetail(
-			LocalDate.of(2023, 1, 16),
-			LocalTime.of(16, 59), 2,
-			"단무지는 빼주세요"
+		ReservationCustomerInput customerInput = new ReservationCustomerInput(
+			LocalDateTime.now()
+				.plus(2, ChronoUnit.HOURS)
+				.truncatedTo(ChronoUnit.HOURS),
+			2,
+			"맛있게 해주세요"
 		);
 
 		return reservationRepository.save(new Reservation(
 			consumer,
 			savedRestaurant,
 			status,
-			detail
+			customerInput
 		));
 	}
 

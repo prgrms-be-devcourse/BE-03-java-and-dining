@@ -10,7 +10,6 @@ public record ReservationSimpleResForOwner(
 	LocalDateTime visitDateTime,
 	int visitorCount
 ) {
-
 	public ReservationSimpleResForOwner(Reservation reservation) {
 		this(
 			reservation.getCustomerName(),

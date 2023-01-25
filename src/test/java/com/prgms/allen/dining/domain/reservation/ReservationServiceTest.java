@@ -2,14 +2,10 @@ package com.prgms.allen.dining.domain.reservation;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.math.BigInteger;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Collection;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,21 +18,20 @@ import com.prgms.allen.dining.domain.member.FakeMemberRepository;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationDetail;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
-import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
-import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
-import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.generator.DummyGenerator;
 
 class ReservationServiceTest {
 
@@ -47,44 +42,44 @@ class ReservationServiceTest {
 	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
 	private final ReservationService reservationService = new ReservationService(
 		reservationRepository,
-		memberService,
-		restaurantService
+		restaurantService,
+		memberService
 	);
-
-	@AfterEach
-	void tearDown() {
-		reservationRepository.deleteAll();
-		memberRepository.deleteAll();
-		restaurantRepository.deleteAll();
-	}
 
 	@ParameterizedTest
 	@CsvSource({"PENDING", "CONFIRMED", "VISITED", "CANCELLED", "NO_SHOW"})
 	@DisplayName("식당의 특정 상태의 예약들을 조회할 수 있다.")
 	public void getReservationsTest(String status) {
 		// given
-		Member owner = createOwner();
-		Member customer = createCustomer();
-		memberRepository.save(owner);
-		memberRepository.save(customer);
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
 
-		Restaurant restaurant = createRestaurant(owner);
-		Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+		Reservation reservation1 = DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.valueOf(status),
+			customerInput
+		);
+		Reservation reservation2 = DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.valueOf(status),
+			customerInput
+		);
 
-		List<Reservation> reservations = createReservations(status, savedRestaurant, customer);
-		List<Reservation> savedReservations = reservationRepository.saveAll(reservations);
+		List<Reservation> savedReservations = reservationRepository.saveAll(List.of(reservation1, reservation2));
 
 		PageImpl<ReservationSimpleResForOwner> expect = new PageImpl<>(
-			savedReservations
-				.stream()
+			savedReservations.stream()
 				.map(ReservationSimpleResForOwner::new)
-				.toList());
-
-		long restaurantId = savedRestaurant.getId();
+				.toList()
+		);
 
 		// when
 		Page<ReservationSimpleResForOwner> actual = reservationService.getRestaurantReservations(
-			restaurantId,
+			restaurant.getId(),
 			ReservationStatus.valueOf(status),
 			PageRequest.of(0, 5)
 		);
@@ -99,24 +94,25 @@ class ReservationServiceTest {
 	@DisplayName("구매자는 자신이 예약한 정보들을 상태별로 볼 수 있다.")
 	public void getRestaurantReservationsTest(String status) {
 		// given
-		Member owner = memberRepository.save(createOwner());
-		Member customer = memberRepository.save(createCustomer());
-
-		Restaurant restaurant = createRestaurant(owner);
-		Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
 
 		VisitStatus visitStatus = VisitStatus.valueOf(status);
 		List<ReservationStatus> reservationStatuses = visitStatus.getStatuses();
+		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
 
 		List<Reservation> reservations = reservationStatuses.stream()
-			.map(reservationStatus -> createReservations(reservationStatus.name(), savedRestaurant, customer))
-			.flatMap(Collection::stream)
+			.map(reservationStatus -> reservationRepository.save(DummyGenerator.createReservation(
+				customer,
+				restaurant,
+				reservationStatus,
+				customerInput
+			)))
 			.toList();
 
-		List<Reservation> savedReservations = reservationRepository.saveAll(reservations);
-
 		PageImpl<ReservationSimpleResForCustomer> expect = new PageImpl<>(
-			savedReservations
+			reservations
 				.stream()
 				.map(ReservationSimpleResForCustomer::new)
 				.toList());
@@ -134,23 +130,27 @@ class ReservationServiceTest {
 			.isEqualTo(expect);
 	}
 
-	@Test
+	@ParameterizedTest
+	@CsvSource({"PENDING", "CONFIRMED", "VISITED", "CANCELLED", "NO_SHOW"})
 	@DisplayName("식당의 예약 상세 조회")
-	public void getReservationDetail() {
+	public void getReservationDetail(String status) {
 		// given
-		Member owner = memberRepository.save(createOwner());
-		Member customer = memberRepository.save(createCustomer());
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
 
-		Restaurant restaurant = createRestaurant(owner);
-		Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+		Reservation reservation = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.valueOf(status),
+			customerInput
+		));
 
-		Reservation reservation = createReservation("PENDING", customer, savedRestaurant);
-		Reservation savedReservation = reservationRepository.save(reservation);
-
-		ReservationDetailRes expect = new ReservationDetailRes(savedReservation);
+		ReservationDetailRes expect = new ReservationDetailRes(reservation);
 
 		// when
-		ReservationDetailRes actual = reservationService.getReservationDetail(savedReservation.getId(),
+		ReservationDetailRes actual = reservationService.getReservationDetail(reservation.getId(),
 			customer.getId());
 
 		// then
@@ -159,71 +159,32 @@ class ReservationServiceTest {
 
 	}
 
-	private List<Reservation> createReservations(String status, Restaurant restaurant, Member consumer) {
-		Reservation reservation1 = createReservation(
-			status,
-			consumer,
-			restaurant
+	@Test
+	@DisplayName("고객은 식당의 예약을 요청할 수 있다.")
+	void create_reservation() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+
+		ReservationCustomerInputCreateReq customerInputCreateReq = new ReservationCustomerInputCreateReq(
+			LocalDateTime.now()
+				.plus(2, ChronoUnit.HOURS)
+				.truncatedTo(ChronoUnit.HOURS),
+			2,
+			"맛있게 해주세요"
 		);
 
-		Reservation reservation2 = createReservation(
-			status,
-			consumer,
-			restaurant
+		ReservationCreateReq reservationCreateReq = new ReservationCreateReq(
+			restaurant.getId(),
+			customerInputCreateReq
 		);
 
-		return List.of(reservation1, reservation2);
+		// when
+		reservationService.reserve(customer.getId(), reservationCreateReq);
+
+		// then
+		long actualCount = reservationRepository.count();
+		assertThat(actualCount).isEqualTo(1);
 	}
-
-	private Reservation createReservation(String status, Member consumer, Restaurant savedRestaurant) {
-		ReservationDetail detail = new ReservationDetail(
-			LocalDate.of(2023, 1, 16),
-			LocalTime.of(16, 59), 2,
-			"단무지는 빼주세요"
-		);
-
-		return new Reservation(
-			consumer,
-			savedRestaurant,
-			ReservationStatus.valueOf(status),
-			detail
-		);
-	}
-
-	private Restaurant createRestaurant(Member owner) {
-		return new Restaurant(
-			owner,
-			FoodType.KOREAN,
-			"장충동국밥",
-			100,
-			LocalTime.of(9, 0),
-			LocalTime.of(23, 0),
-			"서울특별시 서초구 어디길11 2층",
-			"실망시키지 않는 맛집",
-			"021234123",
-			List.of(new Menu("메뉴이름", BigInteger.valueOf(10000), "메모")),
-			List.of(new ClosingDay(DayOfWeek.MONDAY))
-		);
-	}
-
-	private Member createCustomer() {
-		return new Member(
-			"dlxortmd321",
-			"이택승이",
-			"01012341234",
-			"qwer1234!",
-			MemberType.CUSTOMER
-		);
-	}
-
-	private Member createOwner() {
-		return new Member(
-			"dlxortmd123",
-			"이택승",
-			"01012341234",
-			"qwer1234!",
-			MemberType.OWNER
-		);
-	}
-
 }

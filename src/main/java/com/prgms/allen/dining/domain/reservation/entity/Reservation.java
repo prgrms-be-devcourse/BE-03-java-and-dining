@@ -1,6 +1,11 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
+import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus.*;
+
+import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -14,8 +19,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.springframework.util.Assert;
+
 import com.prgms.allen.dining.domain.common.entity.BaseEntity;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Entity
@@ -40,22 +48,56 @@ public class Reservation extends BaseEntity {
 
 	@Embedded
 	@Column(name = "detail", nullable = false)
-	private ReservationDetail detail;
+	private ReservationCustomerInput customerInput;
 
 	protected Reservation() {
 	}
 
 	public Reservation(Long id, Member customer, Restaurant restaurant, ReservationStatus status,
-		ReservationDetail detail) {
+		ReservationCustomerInput customerInput) {
+		validate(customer, restaurant, customerInput);
+
 		this.id = id;
 		this.customer = customer;
 		this.restaurant = restaurant;
 		this.status = status;
-		this.detail = detail;
+		this.customerInput = customerInput;
 	}
 
-	public Reservation(Member customer, Restaurant restaurant, ReservationStatus status, ReservationDetail detail) {
-		this(null, customer, restaurant, status, detail);
+	public Reservation(Member customer, Restaurant restaurant, ReservationStatus status,
+		ReservationCustomerInput customerInput) {
+		this(null, customer, restaurant, status, customerInput);
+	}
+
+	public Reservation(Member customer, Restaurant restaurant, ReservationCustomerInput customerInput) {
+		validate(customer, restaurant, customerInput);
+
+		this.customer = customer;
+		this.restaurant = restaurant;
+		if (customerInput.checkVisitingToday()) {
+			this.status = CONFIRMED;
+		} else {
+			this.status = PENDING;
+		}
+		this.customerInput = customerInput;
+	}
+
+	private void validate(Member customer, Restaurant restaurant, ReservationCustomerInput customerInput) {
+		validateCustomer(customer);
+		validateRestaurant(restaurant);
+		validateReservationDetail(customerInput);
+	}
+
+	private void validateCustomer(Member customer) {
+		Assert.notNull(customer, "Customer must not be null.");
+	}
+
+	private void validateRestaurant(Restaurant restaurant) {
+		Assert.notNull(restaurant, "Restaurant must not be null.");
+	}
+
+	private void validateReservationDetail(ReservationCustomerInput customerInput) {
+		Assert.notNull(customerInput, "ReservationDetail must not be null.");
 	}
 
 	public Long getId() {
@@ -74,8 +116,8 @@ public class Reservation extends BaseEntity {
 		return status;
 	}
 
-	public ReservationDetail getDetail() {
-		return detail;
+	public ReservationCustomerInput getCustomerInput() {
+		return customerInput;
 	}
 
 	public long getRestaurantId() {
@@ -83,7 +125,7 @@ public class Reservation extends BaseEntity {
 	}
 
 	public int getVisitorCount() {
-		return detail.getVisitorCount();
+		return customerInput.getVisitorCount();
 	}
 
 	public String getCustomerPhone() {
@@ -95,7 +137,46 @@ public class Reservation extends BaseEntity {
 	}
 
 	public LocalDateTime getVisitDateTime() {
-		return detail.getVisitDateTime();
+		return customerInput.getVisitDateTime();
+	}
+
+	public Member getRestaurantOwner() {
+		return restaurant.getOwner();
+	}
+
+	public void confirm(Long ownerId) {
+		validUpdatableReservationState(ownerId, PENDING);
+		customerInput.assertVisitDateAfter(LocalDate.now());
+		status = CONFIRMED;
+	}
+
+	public void cancel(Long ownerId) {
+		validUpdatableReservationState(ownerId, PENDING, CONFIRMED);
+		customerInput.assertVisitDateAfter(LocalDate.now());
+		status = CANCELLED;
+	}
+
+	private void validUpdatableReservationState(Long ownerId, ReservationStatus... validStatuses) {
+		assertMatchesOwner(ownerId);
+		assertReservationStatus(validStatuses);
+	}
+
+	private void assertMatchesOwner(Long ownerId) {
+		if (!getRestaurantOwner().matchesId(ownerId)) {
+			throw new IllegalReservationStateException(MessageFormat.format(
+				"Owner does not match. Parameter ownerId={0} but actual ownerId={1}",
+				ownerId,
+				getRestaurantOwner().getId()
+			));
+		}
+	}
+
+	private void assertReservationStatus(ReservationStatus... validStatuses) {
+		if (!Arrays.asList(validStatuses).contains(this.status)) {
+			throw new IllegalReservationStateException(MessageFormat.format(
+				"ReservationStatus should be {0} but was {1}", Arrays.toString(validStatuses), this.status
+			));
+		}
 	}
 
 	public Long getCustomerId() {
