@@ -112,7 +112,7 @@ class RestaurantServiceTest {
 		Restaurant restaurant = createRestaurant();
 
 		// when
-		Restaurant findRestaurant = restaurantService.findRestaurantById(restaurant.getId());
+		Restaurant findRestaurant = restaurantService.findById(restaurant.getId());
 
 		// then
 		assertThat(restaurant)

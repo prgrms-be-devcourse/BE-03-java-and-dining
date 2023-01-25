@@ -64,18 +64,8 @@ public class RestaurantService {
 		return restaurant.getId();
 	}
 
-	public Restaurant findRestaurantById(Long restaurantId) {
-		return restaurantRepository.findById(restaurantId)
-			.orElseThrow(() -> {
-				throw new NotFoundResourceException(
-					ErrorCode.NOT_FOUND_RESOURCE,
-					MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
-				);
-			});
-	}
-
 	public RestaurantDetailResForCustomer getRestaurant(Long restaurantId) {
-		final Restaurant restaurant = findRestaurantById(restaurantId);
+		final Restaurant restaurant = findById(restaurantId);
 
 		return new RestaurantDetailResForCustomer(restaurant,
 			toMenuSimpleResList(restaurant.getMinorMenu()),
