@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
-import com.prgms.allen.dining.global.error.exception.IllegalModificationException;
 
 @Service
 @Transactional
@@ -23,25 +21,25 @@ public class ReservationStatusUpdateService {
 
 	public void confirm(Long reservationId, Long ownerId) {
 		Reservation findReservation = reservationService.findById(reservationId);
-
-		try {
-			findReservation.confirm(ownerId);
-		} catch (IllegalReservationStateException e) {
-			throw new IllegalModificationException(e.getMessage());
-		}
-
+		findReservation.confirm(ownerId);
 		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
 	}
 
 	public void cancel(Long reservationId, Long ownerId) {
 		Reservation findReservation = reservationService.findById(reservationId);
+		findReservation.cancel(ownerId);
+		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
+	}
 
-		try {
-			findReservation.cancel(ownerId);
-		} catch (IllegalReservationStateException e) {
-			throw new IllegalModificationException(e.getMessage());
-		}
+	public void visit(Long reservationId, Long ownerId) {
+		Reservation findReservation = reservationService.findById(reservationId);
+		findReservation.visit(ownerId);
+		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
+	}
 
+	public void noShow(Long reservationId, Long ownerId) {
+		Reservation findReservation = reservationService.findById(reservationId);
+		findReservation.noShow(ownerId);
 		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
 	}
 }

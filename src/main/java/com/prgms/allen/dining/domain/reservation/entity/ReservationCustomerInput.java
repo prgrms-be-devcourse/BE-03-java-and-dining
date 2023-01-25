@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 
 import javax.persistence.Column;
@@ -12,8 +13,6 @@ import javax.persistence.Lob;
 
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-
-import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
 
 @Embeddable
 public class ReservationCustomerInput {
@@ -79,11 +78,20 @@ public class ReservationCustomerInput {
 			)
 		);
 
+		LocalDate currentDate = now.toLocalDate();
 		LocalDate visitDate = visitDateTime.toLocalDate();
-		LocalDate nowDate = now.toLocalDate();
+
+		int daysBetweenCurrentDateAndVisitDate = Period.between(currentDate, visitDate)
+			.getDays() + 1;
+
 		Assert.state(
-			visitDate.isBefore(nowDate.plusDays(MAX_RESERVE_PERIOD)),
-			String.format("Field visitDate must be within %d days.", MAX_RESERVE_PERIOD)
+			daysBetweenCurrentDateAndVisitDate <= MAX_RESERVE_PERIOD,
+			MessageFormat.format(
+				"Period between currentDate={0} and visitDate={1} should be within {2} days.",
+				currentDate,
+				visitDate,
+				MAX_RESERVE_PERIOD
+			)
 		);
 	}
 
@@ -143,11 +151,35 @@ public class ReservationCustomerInput {
 	}
 
 	public void assertVisitDateAfter(LocalDate date) {
-		if (!visitDate.isAfter(date)) {
-			throw new IllegalReservationStateException(MessageFormat.format(
+		Assert.state(
+			visitDate.isAfter(date),
+			MessageFormat.format(
 				"visitDate={0} should be after date={1}", visitDate, date
-			));
-		}
+			)
+		);
+	}
+
+	public void assertVisitDateTimeBefore(LocalDateTime dateTime) {
+		Assert.state(
+			getVisitDateTime().isBefore(dateTime),
+			MessageFormat.format(
+				"visitDateTime={0} should be before dateTime={1}", getVisitDateTime(), dateTime
+			)
+		);
+	}
+
+	public void assertVisitDateWithin(LocalDate endDate, int days) {
+		int daysBetweenVisitDateAndEndDate = Period.between(visitDate, endDate)
+			.getDays() + 1;
+		Assert.state(
+			daysBetweenVisitDateAndEndDate <= days,
+			MessageFormat.format(
+				"Period between visitDate={0} and endDate={1} should be within {2} days.",
+				visitDate,
+				endDate,
+				days
+			)
+		);
 	}
 
 	@Override

@@ -24,6 +24,20 @@ Content-Type: application/json
 }
 
 
+### [고객 - 예약] 예약을 요청하는 API
+POST http://localhost:8080/customer/api/reservations?customerId=1
+Content-Type: application/json
+
+{
+  "restaurantId": 3,
+  "reservationCustomerInput": {
+    "visitDateTime": "2023-01-26T22:00:00",
+    "visitorCount": 2,
+    "memo": "단무지는 빼주세요~"
+  }
+}
+
+
 ### [점주 - 식당] 식당 등록 API
 POST http://localhost:8080/owner/api/restaurants?ownerId=2
 Content-Type: application/json
@@ -58,7 +72,7 @@ Content-Type: application/json
 
 
 ### [예약] 날짜와 인원수를 통해 식당의 예약가능 시간들을 조회하는 API
-GET http://localhost:8080/customer/api/reservations/available-times?restaurantId=3&date=2023-01-22&visitorCount=2
+GET http://localhost:8080/customer/api/reservations/available-times?restaurantId=3&date=2023-01-26&visitorCount=2
 
 
 ### [고객 - 예약] 예약을 요청하는 API
@@ -76,12 +90,40 @@ Content-Type: application/json
 
 
 ### [점주 - 예약] 예약을 확정하는 API
-PATCH http://localhost:8080/owner/api/reservations/4/confirm?ownerId=2
+PATCH http://localhost:8080/owner/api/reservations/5?ownerId=2
+Content-Type: application/json
+
+{
+  "status": "confirm"
+}
 
 
 ### [점주 - 예약] 예약을 취소하는 API
-PATCH http://localhost:8080/owner/api/reservations/4/cancel/?ownerId=2
+PATCH http://localhost:8080/owner/api/reservations/4?ownerId=2
+Content-Type: application/json
 
+{
+  "status": "cancel"
+}
+
+
+### [점주 - 예약] 예약을 방문완료로 변경하는 API
+PATCH http://localhost:8080/owner/api/reservations/5?ownerId=2
+Content-Type: application/json
+
+{
+  "status": "visit"
+}
 
 ### 레스토랑 목록 paging조회
 GET http://localhost:8080/customer/api/restaurants?page=0&size=3
+
+
+### [점주 - 예약] 예약을 노쇼로 변경하는 API
+PATCH http://localhost:8080/owner/api/reservations/5?ownerId=2
+Content-Type: application/json
+
+{
+  "status": "no-show"
+}
+
