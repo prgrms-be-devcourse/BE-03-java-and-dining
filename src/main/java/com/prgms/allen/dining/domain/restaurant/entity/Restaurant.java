@@ -160,7 +160,7 @@ public class Restaurant {
 	}
 
 	public boolean isNotOwner(Long requestOwnerId) {
-		return !requestOwnerId.equals(owner.getId());
+		return !owner.getId().equals(requestOwnerId);
 	}
 
 	public List<Menu> getMinorMenu() {
