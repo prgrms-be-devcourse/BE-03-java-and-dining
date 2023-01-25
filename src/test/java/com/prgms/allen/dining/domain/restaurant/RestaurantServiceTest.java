@@ -26,7 +26,6 @@ import com.prgms.allen.dining.domain.restaurant.dto.MenuDetailRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
-import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
@@ -135,23 +134,7 @@ class RestaurantServiceTest {
 	@DisplayName("식당의 상세정보를 조회할 수 있다.")
 	public void testGetOneRestaurant() {
 		// given
-		List<ClosingDay> closingDays = List.of(new ClosingDay(DayOfWeek.MONDAY));
-		List<Menu> menu = List.of(new Menu("맛있는 밥", BigInteger.valueOf(10000), "맛있어용"));
-
-		Restaurant beforeSaveRestaurant = new Restaurant(
-			savedOwner,
-			FoodType.WESTERN,
-			"유명한 레스토랑",
-			30,
-			LocalTime.of(12, 0),
-			LocalTime.of(20, 0),
-			"서울특별시 어딘구 어딘가로 222",
-			"BTS가 다녀간 유명한 레스토랑",
-			"023334444",
-			menu,
-			closingDays
-		);
-		Restaurant restaurant = restaurantRepository.save(beforeSaveRestaurant);
+		Restaurant restaurant = createRestaurant(savedOwner);
 
 		// when
 		Restaurant findRestaurant = restaurantService.findById(restaurant.getId());
@@ -209,7 +192,8 @@ class RestaurantServiceTest {
 	@DisplayName("휴무일을 제외한 이용가능한 날짜 목록을 받을 수 있다.")
 	public void testGetAvailableDates() {
 		// given
-		Restaurant restaurant = createRestaurant();
+		Member owner = createOwner("nickname123");
+		Restaurant restaurant = createRestaurant(owner);
 
 		// when
 		RestaurantAvailableDatesRes restaurantAvailableDatesRes =
@@ -234,7 +218,7 @@ class RestaurantServiceTest {
 	}
 
 	private Restaurant createRestaurant(Member owner) {
-		return new Restaurant(
+		Restaurant restaurant = new Restaurant(
 			owner,
 			FoodType.KOREAN,
 			"편의점",
@@ -247,6 +231,7 @@ class RestaurantServiceTest {
 			createMenuList(),
 			Collections.emptyList()
 		);
+		return restaurantRepository.save(restaurant);
 	}
 
 	private void restaurantSaveAll(RestaurantCreateReq createReq, List<Member> members) {
