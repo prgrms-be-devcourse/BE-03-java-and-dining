@@ -1,6 +1,7 @@
 package com.prgms.allen.dining.domain.restaurant;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,11 +45,8 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public Page<Restaurant> findAllByNameContains(Pageable pageable, String restaurantName) {
 
-		List<Restaurant> filteredRestaurants = restaurants.stream()
+		List<Restaurant> answer = restaurants.stream()
 			.filter(restaurant -> restaurant.getName().contains(restaurantName))
-			.toList();
-
-		List<Restaurant> answer = filteredRestaurants.stream()
 			.skip(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.toList();
@@ -60,18 +58,13 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public List<Menu> getMenus(Pageable pageable, Long id) {
 
-		List<Menu> menus = restaurants.stream()
+		return restaurants.stream()
 			.filter(restaurant -> restaurant.getId().equals(id))
-			.findAny()
 			.map(Restaurant::getMenu)
-			.get();
-
-		List<Menu> answer = menus.stream()
+			.flatMap(Collection::stream)
 			.skip(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.toList();
-
-		return answer;
 	}
 
 	@Override
