@@ -41,7 +41,7 @@ public class CustomerRestaurantApi {
 	}
 
 	@GetMapping("/{restaurantId}/menu")
-	public ResponseEntity<Page<MenuDetailRes>> getMenus(Pageable pageable,
+	public ResponseEntity<Page<MenuDetailRes>> getMenu(Pageable pageable,
 		@PathVariable Long restaurantId) {
 
 		Page<MenuDetailRes> menus = restaurantService.getMenus(pageable, restaurantId);
