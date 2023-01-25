@@ -21,9 +21,9 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void signup(MemberSignupReq signupRequest) {
-		final Member newMember = signupRequest.toEntity();
-		memberRepository.save(newMember);
+	public Long signup(MemberSignupReq signupReq) {
+		Member savedMember = memberRepository.save(signupReq.toEntity());
+		return savedMember.getId();
 	}
 
 	public Member findOwnerById(long ownerId) {
