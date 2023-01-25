@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.domain.restaurant.entity;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,8 +146,10 @@ public class Restaurant {
 		return List.copyOf(closingDays);
 	}
 
-	public boolean isNotOwner(Long requestOwnerId) {
-		return !requestOwnerId.equals(owner.getId());
+	public List<DayOfWeek> getAllClosingDayOfWeek() {
+		return getClosingDays().stream()
+			.map(ClosingDay::getDayOfWeek)
+			.toList();
 	}
 
 	public List<Menu> getMinorMenu() {
