@@ -54,17 +54,21 @@ public class Reservation extends BaseEntity {
 	protected Reservation() {
 	}
 
-	public Reservation(Member customer, Restaurant restaurant, ReservationStatus status,
-		ReservationCustomerInput customerInput) {
-		this(null, customer, restaurant, status, customerInput);
-	}
-
-	public Reservation(Member customer, Restaurant restaurant, ReservationCustomerInput customerInput) {
+	public Reservation(
+		Member customer,
+		Restaurant restaurant,
+		ReservationCustomerInput customerInput
+	) {
 		this(null, customer, restaurant, checkVisitingToday(customerInput), customerInput);
 	}
 
-	public Reservation(Long id, Member customer, Restaurant restaurant, ReservationStatus status,
-		ReservationCustomerInput customerInput) {
+	private Reservation(
+		Long id,
+		Member customer,
+		Restaurant restaurant,
+		ReservationStatus status,
+		ReservationCustomerInput customerInput
+	) {
 		validate(customer, restaurant, customerInput);
 
 		this.id = id;
@@ -72,6 +76,16 @@ public class Reservation extends BaseEntity {
 		this.restaurant = restaurant;
 		this.status = status;
 		this.customerInput = customerInput;
+	}
+
+	public static Reservation newTestInstance(
+		Long id,
+		Member customer,
+		Restaurant restaurant,
+		ReservationStatus status,
+		ReservationCustomerInput customerInput
+	) {
+		return new Reservation(id, customer, restaurant, status, customerInput);
 	}
 
 	private static ReservationStatus checkVisitingToday(ReservationCustomerInput customerInput) {

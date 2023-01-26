@@ -40,8 +40,10 @@ import com.prgms.allen.dining.generator.DummyGenerator;
 class OwnerReservationApiTest {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
+
 	@Autowired
 	private MockMvc mockMvc;
+
 	@Autowired
 	private MemberRepository memberRepository;
 
@@ -65,7 +67,9 @@ class OwnerReservationApiTest {
 				.truncatedTo(ChronoUnit.HOURS),
 			2
 		);
-		Reservation reservation = reservationRepository.save(new Reservation(customer, restaurant, customerInput));
+		Reservation reservation = reservationRepository.save(
+			new Reservation(customer, restaurant, customerInput)
+		);
 
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq("confirm");
 
@@ -136,7 +140,7 @@ class OwnerReservationApiTest {
 			2
 		);
 		Reservation reservation = reservationRepository.save(
-			new Reservation(customer, restaurant, ReservationStatus.CONFIRMED, customerInput)
+			Reservation.newTestInstance(null, customer, restaurant, ReservationStatus.CONFIRMED, customerInput)
 		);
 
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq("visit");
@@ -173,7 +177,7 @@ class OwnerReservationApiTest {
 			2
 		);
 		Reservation reservation = reservationRepository.save(
-			new Reservation(customer, restaurant, ReservationStatus.CONFIRMED, customerInput)
+			Reservation.newTestInstance(null, customer, restaurant, ReservationStatus.CONFIRMED, customerInput)
 		);
 
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq("no-show");

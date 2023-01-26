@@ -30,7 +30,7 @@ public class ReservationRepositoryTest {
 	private static final int VISITOR_COUNT = 2;
 
 	@Autowired
-	private ReservationRepository reservationRepository;
+	private ReservationRepository reservationRepository; // Fake
 
 	@Autowired
 	private RestaurantRepository restaurantRepository;
@@ -74,7 +74,8 @@ public class ReservationRepositoryTest {
 			"단무지는 빼주세요"
 		);
 
-		return reservationRepository.save(new Reservation(
+		return reservationRepository.save(Reservation.newTestInstance(
+			null,
 			consumer,
 			savedRestaurant,
 			status,
