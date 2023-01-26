@@ -1,13 +1,12 @@
 package com.prgms.allen.dining.domain.reservation;
 
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -140,9 +139,20 @@ public class ReservationService {
 			availableTimesReq.restaurantId()
 		);
 
-		Map<LocalTime, Long> visitorCountPerTimeMap = reservationRepository.findVisitorCountPerVisitTime(
+		Map<LocalTime, Long> visitorCountPerTimeMap = getVisitorCountPerTimeMap(availableTimesReq.date(), restaurant);
+
+		List<LocalTime> availableTimes = getAvailableTimes(
+			availableTimesReq.visitorCount(),
+			restaurant,
+			visitorCountPerTimeMap
+		);
+		return new ReservationAvailableTimesRes(availableTimes);
+	}
+
+	private Map<LocalTime, Long> getVisitorCountPerTimeMap(LocalDate visitDate, Restaurant restaurant) {
+		return reservationRepository.findVisitorCountPerVisitTime(
 				restaurant,
-				availableTimesReq.date(),
+				visitDate,
 				BEFORE_VISIT_STATUSES
 			)
 			.stream()
@@ -151,25 +161,22 @@ public class ReservationService {
 					VisitorCountPerVisitTimeProj::totalVisitorCount
 				)
 			);
+	}
 
-		List<LocalTime> availableTimes = generateTimeTable(restaurant)
+	private List<LocalTime> getAvailableTimes(
+		int visitorCount,
+		Restaurant restaurant,
+		Map<LocalTime, Long> visitorCountPerTimeMap
+	) {
+		return restaurant.generateTimeTable()
+			.stream()
 			.filter(time -> {
 				Long totalVisitorCount = visitorCountPerTimeMap.getOrDefault(time, 0L);
 				return restaurant.isAvailableVisitorCount(
 					totalVisitorCount.intValue(),
-					availableTimesReq.visitorCount()
+					visitorCount
 				);
 			})
 			.toList();
-
-		return new ReservationAvailableTimesRes(availableTimes);
-	}
-
-	private Stream<LocalTime> generateTimeTable(Restaurant restaurant) {
-		return Stream.iterate(
-			restaurant.getOpenTime(),
-			time -> time.plusHours(1L)
-				.truncatedTo(ChronoUnit.MINUTES)
-		).limit(restaurant.getRunningTime());
 	}
 }
