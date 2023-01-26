@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.domain.restaurant.entity;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -175,10 +176,6 @@ public class Restaurant {
 			.getHour();
 	}
 
-	public boolean isAvailable(int totalCount, int requestCount) {
-		return this.capacity - totalCount >= requestCount;
-	}
-
 	public void validate(Member owner, String name, int capacity, String phone, LocalTime openTime,
 		LocalTime lastOrderTime, String location) {
 		validateOwnerType(owner);
@@ -216,5 +213,22 @@ public class Restaurant {
 
 	private void validateLocation(String location) {
 		Assert.hasLength(location, "Location must be not empty.");
+	}
+
+	public boolean isAvailableVisitorCount(int totalCount, int requestCount) {
+		return this.capacity - totalCount >= requestCount;
+	}
+
+	public boolean isAvailableVisitDateTime(LocalDateTime visitDateTime) {
+		LocalTime visitTime = visitDateTime.toLocalTime();
+		return isAfterOrEqualOpenTime(visitTime) && isBeforeOrEqualLastOrderTime(visitTime);
+	}
+
+	private boolean isAfterOrEqualOpenTime(LocalTime visitTime) {
+		return visitTime.compareTo(openTime) >= 0;
+	}
+
+	private boolean isBeforeOrEqualLastOrderTime(LocalTime visitTime) {
+		return visitTime.compareTo(lastOrderTime) <= 0;
 	}
 }
