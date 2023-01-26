@@ -1,13 +1,12 @@
 package com.prgms.allen.dining.web.domain.customer.reservation;
 
 import java.net.URI;
-import java.time.LocalDate;
 
 import javax.validation.Valid;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.prgms.allen.dining.domain.reservation.ReservationService;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 
@@ -46,12 +46,9 @@ public class CustomerReservationApi {
 
 	@GetMapping("/available-times")
 	public ResponseEntity<ReservationAvailableTimesRes> getAvailableTimes(
-		@RequestParam Long restaurantId,
-		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-		@RequestParam int visitorCount
+		@ModelAttribute @Valid ReservationAvailableTimesReq availableTimesReq
 	) {
-		ReservationAvailableTimesRes availableTimes = reservationService.getAvailableTimes(restaurantId, date,
-			visitorCount);
+		ReservationAvailableTimesRes availableTimes = reservationService.getAvailableTimes(availableTimesReq);
 
 		return ResponseEntity.ok()
 			.body(availableTimes);

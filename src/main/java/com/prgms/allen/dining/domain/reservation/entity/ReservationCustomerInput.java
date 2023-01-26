@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
+import static com.prgms.allen.dining.domain.reservation.policy.ReservationPolicy.*;
+
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,11 +19,6 @@ import org.springframework.util.StringUtils;
 @Embeddable
 public class ReservationCustomerInput {
 
-	private static final int MIN_VISITOR_COUNT = 2;
-	private static final int MAX_VISITOR_COUNT = 8;
-	private static final long MAX_RESERVE_PERIOD = 30L;
-	private static final int MINUTE_FORMAT = 0;
-	private static final int SECOND_FORMAT = 0;
 	private static final int MAX_MEMO_LENGTH = 300;
 
 	@Column(name = "visit_date", nullable = false)
@@ -98,11 +95,10 @@ public class ReservationCustomerInput {
 	private void validateTimeFormat(LocalTime visitTime) {
 		Assert.notNull(visitTime, "Field visitTime must not be null");
 		Assert.state(
-			visitTime.getMinute() == MINUTE_FORMAT && visitTime.getSecond() == SECOND_FORMAT,
+			visitTime.toSecondOfDay() % UNIT_SECONDS == 0,
 			String.format(
-				"Field visitTime's minute must be %d and second must be %d.",
-				MINUTE_FORMAT,
-				SECOND_FORMAT
+				"Field visitTime's minute must be in hours. visitTime: %s",
+				visitTime
 			)
 		);
 	}

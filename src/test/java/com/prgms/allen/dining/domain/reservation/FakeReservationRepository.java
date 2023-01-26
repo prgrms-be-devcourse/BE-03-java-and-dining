@@ -39,8 +39,11 @@ public class FakeReservationRepository implements ReservationRepository {
 	}
 
 	@Override
-	public List<VisitorCountPerVisitTimeProj> findVisitorCountPerVisitTime(LocalDate date,
-		List<ReservationStatus> statuses) {
+	public List<VisitorCountPerVisitTimeProj> findVisitorCountPerVisitTime(
+		Restaurant restaurant,
+		LocalDate date,
+		List<ReservationStatus> statuses
+	) {
 		throw new UnsupportedOperationException();
 	}
 

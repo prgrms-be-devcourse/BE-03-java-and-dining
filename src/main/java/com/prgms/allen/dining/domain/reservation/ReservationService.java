@@ -1,15 +1,12 @@
 package com.prgms.allen.dining.domain.reservation;
 
-import static java.util.stream.Collectors.*;
-
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleRes;
@@ -32,7 +30,7 @@ import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 import com.prgms.allen.dining.global.error.exception.ReserveFailException;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class ReservationService {
 
 	private static final List<ReservationStatus> BEFORE_VISIT_STATUSES =
@@ -52,7 +50,6 @@ public class ReservationService {
 		this.memberService = memberService;
 	}
 
-	@Transactional
 	public Long reserve(Long customerId, ReservationCreateReq createRequest) {
 		Member customer = memberService.findCustomerById(customerId);
 		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId());
@@ -60,44 +57,57 @@ public class ReservationService {
 		ReservationCustomerInput customerInput = createRequest
 			.reservationCustomerInput()
 			.toEntity();
-
-		boolean isReserved = isAvailableReserve(
-			restaurant,
-			customerInput.getVisitDateTime(),
-			customerInput.getVisitorCount()
-		);
-
-		if (!isReserved) {
-			throw new ReserveFailException(
-				String.format(
-					"Reservation for restaurant ID %d on %s failed. Requested visitor count is %d",
-					restaurant.getId(),
-					customerInput.getVisitDateTime(),
-					customerInput.getVisitorCount()
-				)
-			);
-		}
+		checkAvailableReservation(restaurant, customerInput.getVisitDateTime(), customerInput.getVisitorCount());
 
 		Reservation newReservation = new Reservation(customer, restaurant, customerInput);
 		reservationRepository.save(newReservation);
 		return newReservation.getId();
 	}
 
-	private boolean isAvailableReserve(
-		Restaurant restaurant,
-		LocalDateTime requestTime,
-		int visitorCount
-	) {
+	private void checkAvailableReservation(Restaurant restaurant, LocalDateTime visitDateTime, int visitorCount) {
+		checkAvailableVisitDateTime(restaurant, visitDateTime);
+		checkAvailableVisitorCount(restaurant, visitDateTime, visitorCount);
+	}
 
-		Integer totalVisitorCount = reservationRepository.countTotalVisitorCount(restaurant,
-			requestTime.toLocalDate(),
-			requestTime.toLocalTime(),
+	private void checkAvailableVisitDateTime(Restaurant restaurant, LocalDateTime visitDateTime) {
+		boolean isAvailableVisitDateTime = restaurant.isAvailableVisitDateTime(visitDateTime);
+		if (!isAvailableVisitDateTime) {
+			throw new ReserveFailException(
+				String.format(
+					"Reservation for restaurant ID %d failed. "
+						+ "Requested visit date time %s is not between %s and %s",
+					restaurant.getId(),
+					visitDateTime,
+					restaurant.getOpenTime(),
+					restaurant.getLastOrderTime()
+				)
+			);
+		}
+	}
+
+	private void checkAvailableVisitorCount(Restaurant restaurant, LocalDateTime visitDateTime, int visitorCount) {
+		int totalVisitorCount = reservationRepository.countTotalVisitorCount(restaurant,
+			visitDateTime.toLocalDate(),
+			visitDateTime.toLocalTime(),
 			BEFORE_VISIT_STATUSES
 		).orElse(0);
 
-		return restaurant.isAvailable(totalVisitorCount, visitorCount);
+		boolean isAvailableVisitorCount = restaurant.isAvailableVisitorCount(totalVisitorCount, visitorCount);
+		if (!isAvailableVisitorCount) {
+			throw new ReserveFailException(
+				String.format(
+					"Reservation for restaurant ID %d on %s failed. "
+						+ "Requested visitor count is %d, but maximum available visitor count is %d",
+					restaurant.getId(),
+					visitDateTime,
+					visitorCount,
+					restaurant.getCapacity() - totalVisitorCount
+				)
+			);
+		}
 	}
 
+	@Transactional(readOnly = true)
 	public Page<ReservationSimpleRes> getRestaurantReservations(
 		long restaurantId,
 		ReservationStatus status,
@@ -113,6 +123,7 @@ public class ReservationService {
 		);
 	}
 
+	@Transactional(readOnly = true)
 	public Reservation findById(Long id) {
 		return reservationRepository.findById(id)
 			.orElseThrow(() ->
@@ -122,39 +133,50 @@ public class ReservationService {
 			);
 	}
 
-	public ReservationAvailableTimesRes getAvailableTimes(Long restaurantId, LocalDate requestDate, int visitorCount) {
-		Restaurant restaurant = restaurantService.findById(restaurantId);
+	@Transactional(readOnly = true)
+	public ReservationAvailableTimesRes getAvailableTimes(ReservationAvailableTimesReq availableTimesReq) {
+		Restaurant restaurant = restaurantService.findById(
+			availableTimesReq.restaurantId()
+		);
 
-		Map<LocalTime, Long> visitorCountPerTimeMap = reservationRepository.findVisitorCountPerVisitTime(
-				requestDate,
+		Map<LocalTime, Long> visitorCountPerTimeMap = getVisitorCountPerTimeMap(availableTimesReq.date(), restaurant);
+
+		List<LocalTime> availableTimes = getAvailableTimes(
+			availableTimesReq.visitorCount(),
+			restaurant,
+			visitorCountPerTimeMap
+		);
+		return new ReservationAvailableTimesRes(availableTimes);
+	}
+
+	private Map<LocalTime, Long> getVisitorCountPerTimeMap(LocalDate visitDate, Restaurant restaurant) {
+		return reservationRepository.findVisitorCountPerVisitTime(
+				restaurant,
+				visitDate,
 				BEFORE_VISIT_STATUSES
 			)
 			.stream()
-			.collect(toMap(
+			.collect(Collectors.toMap(
 					VisitorCountPerVisitTimeProj::visitTime,
 					VisitorCountPerVisitTimeProj::totalVisitorCount
 				)
 			);
-
-		List<LocalTime> availableTimes = generateTimeTable(restaurant)
-			.filter(time -> {
-					Long totalVisitorCount = visitorCountPerTimeMap.getOrDefault(time, 0L);
-					return restaurant.isAvailable(
-						totalVisitorCount.intValue(),
-						visitorCount
-					);
-				}
-			)
-			.toList();
-
-		return new ReservationAvailableTimesRes(availableTimes);
 	}
 
-	private Stream<LocalTime> generateTimeTable(Restaurant restaurant) {
-		return Stream.iterate(
-			restaurant.getOpenTime(),
-			time -> time.plusHours(1L)
-				.truncatedTo(ChronoUnit.MINUTES)
-		).limit(restaurant.getRunningTime());
+	private List<LocalTime> getAvailableTimes(
+		int visitorCount,
+		Restaurant restaurant,
+		Map<LocalTime, Long> visitorCountPerTimeMap
+	) {
+		return restaurant.generateTimeTable()
+			.stream()
+			.filter(time -> {
+				Long totalVisitorCount = visitorCountPerTimeMap.getOrDefault(time, 0L);
+				return restaurant.isAvailableVisitorCount(
+					totalVisitorCount.intValue(),
+					visitorCount
+				);
+			})
+			.toList();
 	}
 }
