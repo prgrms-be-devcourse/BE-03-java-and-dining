@@ -116,7 +116,7 @@ public class FakeReservationRepository implements ReservationRepository {
 
 	@Override
 	public <S extends Reservation> S save(S entity) {
-		Reservation newReservation = new Reservation(
+		Reservation newReservation = Reservation.newTestInstance(
 			++id,
 			entity.getCustomer(),
 			entity.getRestaurant(),

@@ -59,7 +59,8 @@ public class DummyGenerator {
 		ReservationStatus status,
 		ReservationCustomerInput customerInput
 	) {
-		return new Reservation(
+		return Reservation.newTestInstance(
+			null,
 			customer,
 			restaurant,
 			status,

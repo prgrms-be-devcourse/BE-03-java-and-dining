@@ -185,4 +185,14 @@ class ReservationRepositoryTest {
 			customerInput
 		));
 	}
+
+	private Member createOwner() {
+		return memberRepository.save(new Member(
+			"dlxortmd123",
+			"이택승",
+			"01012341234",
+			"qwer1234!",
+			MemberType.OWNER
+		));
+	}
 }
