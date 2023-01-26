@@ -158,34 +158,33 @@ public class Reservation extends BaseEntity {
 	}
 
 	public void confirm(Long ownerId) {
-		validUpdatableReservationState(ownerId, PENDING);
+		assertMatchesOwner(ownerId);
+		assertReservationStatus(PENDING, CONFIRMED);
 		customerInput.assertVisitDateAfter(LocalDate.now());
 		status = CONFIRMED;
 	}
 
 	public void cancel(Long ownerId) {
-		validUpdatableReservationState(ownerId, PENDING, CONFIRMED);
+		assertMatchesOwner(ownerId);
+		assertReservationStatus(PENDING, CONFIRMED);
 		customerInput.assertVisitDateAfter(LocalDate.now());
 		status = CANCELLED;
 	}
 
 	public void visit(Long ownerId) {
-		validUpdatableReservationState(ownerId, CONFIRMED);
+		assertMatchesOwner(ownerId);
+		assertReservationStatus(CONFIRMED);
 		customerInput.assertVisitDateTimeBefore(LocalDateTime.now());
 		customerInput.assertVisitDateWithin(LocalDate.now(), MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
 		status = VISITED;
 	}
 
 	public void noShow(Long ownerId) {
-		validUpdatableReservationState(ownerId, CONFIRMED);
+		assertMatchesOwner(ownerId);
+		assertReservationStatus(CONFIRMED);
 		customerInput.assertVisitDateTimeBefore(LocalDateTime.now());
 		customerInput.assertVisitDateWithin(LocalDate.now(), MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
 		status = NO_SHOW;
-	}
-
-	private void validUpdatableReservationState(Long ownerId, ReservationStatus... validStatuses) {
-		assertMatchesOwner(ownerId);
-		assertReservationStatus(validStatuses);
 	}
 
 	private void assertMatchesOwner(Long ownerId) {
