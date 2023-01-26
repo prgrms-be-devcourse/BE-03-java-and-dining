@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.reservation.dto;
 
+import static com.prgms.allen.dining.domain.reservation.policy.ReservationPolicy.*;
+
 import java.time.LocalDate;
 
 import javax.validation.constraints.Future;
@@ -18,7 +20,7 @@ public record ReservationAvailableTimesReq(
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	LocalDate date,
 
-	@Range(min = 2, max = 8)
+	@Range(min = MIN_VISITOR_COUNT, max = MAX_VISITOR_COUNT)
 	Integer visitorCount
 ) {
 	@Override
