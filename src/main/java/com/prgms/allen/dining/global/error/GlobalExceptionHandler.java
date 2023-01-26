@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ReserveFailException.class)
 	public ResponseEntity<ErrorResponse> handleReserveFailException(ReserveFailException e) {
 		log.info("ReserveFailException occurred.", e);
-		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_OPERATION_REQUEST);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
 		return newResponseEntity(response);
 	}
 
