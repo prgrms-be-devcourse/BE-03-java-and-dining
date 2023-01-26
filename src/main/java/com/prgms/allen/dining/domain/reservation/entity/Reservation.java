@@ -159,31 +159,31 @@ public class Reservation extends BaseEntity {
 
 	public void confirm(Long ownerId) {
 		assertMatchesOwner(ownerId);
-		assertReservationStatus(PENDING, CONFIRMED);
-		customerInput.assertVisitDateAfter(LocalDate.now());
+		assertReservationStatusOneOf(PENDING, CONFIRMED);
+		assertVisitDateAfterCurrentDate();
 		status = CONFIRMED;
 	}
 
 	public void cancel(Long ownerId) {
 		assertMatchesOwner(ownerId);
-		assertReservationStatus(PENDING, CONFIRMED);
-		customerInput.assertVisitDateAfter(LocalDate.now());
+		assertReservationStatusOneOf(PENDING, CONFIRMED);
+		assertVisitDateAfterCurrentDate();
 		status = CANCELLED;
 	}
 
 	public void visit(Long ownerId) {
 		assertMatchesOwner(ownerId);
-		assertReservationStatus(CONFIRMED);
-		customerInput.assertVisitDateTimeBefore(LocalDateTime.now());
-		customerInput.assertVisitDateWithin(LocalDate.now(), MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
+		assertReservationStatusOneOf(CONFIRMED);
+		assertVisitDateTimeBeforeCurrentDateTime();
+		assertDaysBetweenVisitDateAndCurrentDateWithin(MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
 		status = VISITED;
 	}
 
 	public void noShow(Long ownerId) {
 		assertMatchesOwner(ownerId);
-		assertReservationStatus(CONFIRMED);
-		customerInput.assertVisitDateTimeBefore(LocalDateTime.now());
-		customerInput.assertVisitDateWithin(LocalDate.now(), MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
+		assertReservationStatusOneOf(CONFIRMED);
+		assertVisitDateTimeBeforeCurrentDateTime();
+		assertDaysBetweenVisitDateAndCurrentDateWithin(MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
 		status = NO_SHOW;
 	}
 
@@ -198,11 +198,47 @@ public class Reservation extends BaseEntity {
 		);
 	}
 
-	private void assertReservationStatus(ReservationStatus... validStatuses) {
+	private void assertReservationStatusOneOf(ReservationStatus... validStatuses) {
 		Assert.state(
 			Arrays.asList(validStatuses).contains(status),
 			MessageFormat.format(
 				"ReservationStatus should be {0} but was {1}", Arrays.toString(validStatuses), this.status
+			)
+		);
+	}
+
+	private void assertVisitDateTimeBeforeCurrentDateTime() {
+		LocalDateTime currentDateTime = LocalDateTime.now();
+
+		Assert.state(
+			customerInput.isVisitDateTimeBefore(currentDateTime),
+			MessageFormat.format(
+				"visitDateTime={0} should be before dateTime={1}", getVisitDateTime(), currentDateTime
+			)
+		);
+	}
+
+	public void assertVisitDateAfterCurrentDate() {
+		LocalDate currentDate = LocalDate.now();
+
+		Assert.state(
+			customerInput.isVisitDateAfter(currentDate),
+			MessageFormat.format(
+				"visitDate={0} should be after date={1}", customerInput.getVisitDate(), currentDate
+			)
+		);
+	}
+
+	private void assertDaysBetweenVisitDateAndCurrentDateWithin(int days) {
+		LocalDate currentDate = LocalDate.now();
+
+		Assert.state(
+			customerInput.isVisitDateTimeWithin(currentDate, days),
+			MessageFormat.format(
+				"Days between visitDate={0} and currentDate={1} should be within {2} days.",
+				customerInput.getVisitDate(),
+				currentDate,
+				days
 			)
 		);
 	}

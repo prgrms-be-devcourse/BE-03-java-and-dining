@@ -159,27 +159,19 @@ public class ReservationCustomerInput {
 		);
 	}
 
-	public void assertVisitDateTimeBefore(LocalDateTime dateTime) {
-		Assert.state(
-			getVisitDateTime().isBefore(dateTime),
-			MessageFormat.format(
-				"visitDateTime={0} should be before dateTime={1}", getVisitDateTime(), dateTime
-			)
-		);
+	public boolean isVisitDateTimeBefore(LocalDateTime dateTime) {
+		return getVisitDateTime().isBefore(dateTime);
 	}
 
-	public void assertVisitDateWithin(LocalDate endDate, int days) {
+	public boolean isVisitDateAfter(LocalDate currentDate) {
+		return visitDate.isAfter(currentDate);
+	}
+
+	public boolean isVisitDateTimeWithin(LocalDate endDate, int days) {
 		int daysBetweenVisitDateAndEndDate = Period.between(visitDate, endDate)
 			.getDays() + 1;
-		Assert.state(
-			daysBetweenVisitDateAndEndDate <= days,
-			MessageFormat.format(
-				"Period between visitDate={0} and endDate={1} should be within {2} days.",
-				visitDate,
-				endDate,
-				days
-			)
-		);
+
+		return daysBetweenVisitDateAndEndDate <= days;
 	}
 
 	@Override
