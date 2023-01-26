@@ -1,9 +1,11 @@
 package com.prgms.allen.dining.domain.restaurant.entity;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -22,6 +24,7 @@ import org.springframework.util.Assert;
 
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.reservation.policy.ReservationPolicy;
 
 @Entity
 public class Restaurant {
@@ -166,10 +169,6 @@ public class Restaurant {
 		return this.menu.subList(0, 4);
 	}
 
-	public boolean isAvailable(int totalCount, int requestCount) {
-		return this.capacity - totalCount >= requestCount;
-	}
-
 	public void validate(Member owner, String name, int capacity, String phone, LocalTime openTime,
 		LocalTime lastOrderTime, String location) {
 		validateOwnerType(owner);
@@ -207,5 +206,34 @@ public class Restaurant {
 
 	private void validateLocation(String location) {
 		Assert.hasLength(location, "Location must be not empty.");
+	}
+
+	public boolean isAvailableVisitorCount(int totalCount, int requestCount) {
+		return this.capacity - totalCount >= requestCount;
+	}
+
+	public boolean isAvailableVisitDateTime(LocalDateTime visitDateTime) {
+		LocalTime visitTime = visitDateTime.toLocalTime();
+		return isAfterOrEqualOpenTime(visitTime) && isBeforeOrEqualLastOrderTime(visitTime);
+	}
+
+	private boolean isAfterOrEqualOpenTime(LocalTime visitTime) {
+		return visitTime.compareTo(openTime) >= 0;
+	}
+
+	private boolean isBeforeOrEqualLastOrderTime(LocalTime visitTime) {
+		return visitTime.compareTo(lastOrderTime) <= 0;
+	}
+
+	public List<LocalTime> generateTimeTable() {
+		return Stream.iterate(openTime,
+				time -> time.plusSeconds(ReservationPolicy.UNIT_SECONDS)
+			).limit(getRunningTime())
+			.toList();
+	}
+
+	private int getRunningTime() {
+		return lastOrderTime.minusHours(openTime.getHour())
+			.getHour() + 1;
 	}
 }

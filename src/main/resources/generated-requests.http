@@ -69,6 +69,10 @@ Content-Type: application/json
 }
 
 
+### [예약] 날짜와 인원수를 통해 식당의 예약가능 시간들을 조회하는 API
+GET http://localhost:8080/customer/api/reservations/available-times?restaurantId=3&date=2023-01-29&visitorCount=2
+
+
 ### [점주 - 예약] 예약을 확정하는 API
 PATCH http://localhost:8080/owner/api/reservations/4?ownerId=2
 Content-Type: application/json
