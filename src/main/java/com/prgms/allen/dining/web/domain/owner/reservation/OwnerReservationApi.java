@@ -1,7 +1,5 @@
 package com.prgms.allen.dining.web.domain.owner.reservation;
 
-import java.text.MessageFormat;
-
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -51,19 +49,10 @@ public class OwnerReservationApi {
 	@PatchMapping("/{reservationId}")
 	public ResponseEntity<Void> updateStatus(
 		@PathVariable Long reservationId,
-		@Valid @RequestBody ReservationStatusUpdateReq statusUpdateReq,
-		@RequestParam Long ownerId
+		@RequestParam Long ownerId,
+		@Valid @RequestBody ReservationStatusUpdateReq statusUpdateReq
 	) {
-		switch (statusUpdateReq.status()) {
-			case "confirm" -> reservationStatusUpdateService.confirm(reservationId, ownerId);
-			case "cancel" -> reservationStatusUpdateService.cancel(reservationId, ownerId);
-			case "visit" -> reservationStatusUpdateService.visit(reservationId, ownerId);
-			case "no-show" -> reservationStatusUpdateService.noShow(reservationId, ownerId);
-			default -> throw new IllegalArgumentException(MessageFormat.format(
-				"Cannot update reservation status for status={0}. Check your Payload.",
-				statusUpdateReq.status()
-			));
-		}
+		reservationStatusUpdateService.update(reservationId, ownerId, statusUpdateReq);
 		return ResponseEntity.ok()
 			.build();
 	}
