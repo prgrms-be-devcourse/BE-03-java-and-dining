@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.web.domain.owner.reservation;
 
+import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -25,10 +26,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.ReservationRepository;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.entity.FakeReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
@@ -71,7 +72,7 @@ class OwnerReservationApiTest {
 			new Reservation(customer, restaurant, customerInput)
 		);
 
-		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq("confirm");
+		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(CONFIRMED);
 
 		// when & then
 		mockMvc.perform(patch("/owner/api/reservations/{reservationId}?ownerId=" + owner.getId(),
@@ -106,7 +107,7 @@ class OwnerReservationApiTest {
 		);
 		Reservation reservation = reservationRepository.save(new Reservation(customer, restaurant, customerInput));
 
-		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq("cancel");
+		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(CANCELLED);
 
 		// when & then
 		mockMvc.perform(patch("/owner/api/reservations/{reservationId}?ownerId=" + owner.getId(),
@@ -140,10 +141,10 @@ class OwnerReservationApiTest {
 			2
 		);
 		Reservation reservation = reservationRepository.save(
-			Reservation.newTestInstance(null, customer, restaurant, ReservationStatus.CONFIRMED, customerInput)
+			Reservation.newTestInstance(null, customer, restaurant, CONFIRMED, customerInput)
 		);
 
-		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq("visit");
+		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(VISITED);
 
 		// when & then
 		mockMvc.perform(patch("/owner/api/reservations/{reservationId}?ownerId=" + owner.getId(),
@@ -177,10 +178,10 @@ class OwnerReservationApiTest {
 			2
 		);
 		Reservation reservation = reservationRepository.save(
-			Reservation.newTestInstance(null, customer, restaurant, ReservationStatus.CONFIRMED, customerInput)
+			Reservation.newTestInstance(null, customer, restaurant, CONFIRMED, customerInput)
 		);
 
-		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq("no-show");
+		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(NO_SHOW);
 
 		// when & then
 		mockMvc.perform(patch("/owner/api/reservations/{reservationId}?ownerId=" + owner.getId(),

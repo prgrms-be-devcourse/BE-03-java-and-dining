@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.web.domain.owner.reservation.ReservationStatusUpdateReq;
 
 @Service
 @Transactional
@@ -24,10 +24,10 @@ public class ReservationStatusUpdateService {
 
 	public void update(Long reservationId, Long ownerId, ReservationStatusUpdateReq updateReq) {
 		switch (updateReq.status()) {
-			case "confirm" -> confirm(reservationId, ownerId);
-			case "cancel" -> cancel(reservationId, ownerId);
-			case "visit" -> visit(reservationId, ownerId);
-			case "no-show" -> noShow(reservationId, ownerId);
+			case CONFIRMED -> confirm(reservationId, ownerId);
+			case CANCELLED -> cancel(reservationId, ownerId);
+			case VISITED -> visit(reservationId, ownerId);
+			case NO_SHOW -> noShow(reservationId, ownerId);
 			default -> throw new IllegalArgumentException(MessageFormat.format(
 				"Cannot update reservation status for status={0}. Check your Payload.",
 				updateReq.status()
