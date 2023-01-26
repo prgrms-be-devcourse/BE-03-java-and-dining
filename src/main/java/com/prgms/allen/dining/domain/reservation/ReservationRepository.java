@@ -35,10 +35,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 	@Query(
 		"select new com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj(r.customerInput.visitTime, sum(r.customerInput.visitorCount)) "
 			+ "from Reservation r "
-			+ "where r.customerInput.visitDate = :date "
+			+ "where r.restaurant = :restaurant "
+			+ "and r.customerInput.visitDate = :date "
 			+ "and r.status in (:statuses) "
 			+ "group by r.customerInput.visitTime")
 	List<VisitorCountPerVisitTimeProj> findVisitorCountPerVisitTime(
+		@Param("restaurant") Restaurant restaurant,
 		@Param("date") LocalDate date,
 		@Param("statuses") List<ReservationStatus> statuses
 	);

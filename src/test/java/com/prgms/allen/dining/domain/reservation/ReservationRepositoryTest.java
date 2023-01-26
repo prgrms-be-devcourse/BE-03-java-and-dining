@@ -131,6 +131,7 @@ class ReservationRepositoryTest {
 		// when
 		List<VisitorCountPerVisitTimeProj> visitorCountPerVisitTime = reservationRepository
 			.findVisitorCountPerVisitTime(
+				restaurant,
 				visitToday.toLocalDate(),
 				List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED)
 			);
