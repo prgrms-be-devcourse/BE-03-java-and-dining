@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -170,13 +171,21 @@ public class ReservationService {
 	) {
 		return restaurant.generateTimeTable()
 			.stream()
-			.filter(time -> {
-				Long totalVisitorCount = visitorCountPerTimeMap.getOrDefault(time, 0L);
-				return restaurant.isAvailableVisitorCount(
-					totalVisitorCount.intValue(),
-					visitorCount
-				);
-			})
+			.filter(availableVisitorCountPredicate(visitorCount, restaurant, visitorCountPerTimeMap))
 			.toList();
+	}
+
+	private Predicate<LocalTime> availableVisitorCountPredicate(
+		int visitorCount,
+		Restaurant restaurant,
+		Map<LocalTime, Long> visitorCountPerTimeMap
+	) {
+		return time -> {
+			Long totalVisitorCount = visitorCountPerTimeMap.getOrDefault(time, 0L);
+			return restaurant.isAvailableVisitorCount(
+				totalVisitorCount.intValue(),
+				visitorCount
+			);
+		};
 	}
 }
