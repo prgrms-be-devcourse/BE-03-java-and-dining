@@ -150,15 +150,6 @@ public class ReservationCustomerInput {
 		return visitDate.equals(LocalDate.now());
 	}
 
-	public void assertVisitDateAfter(LocalDate date) {
-		Assert.state(
-			visitDate.isAfter(date),
-			MessageFormat.format(
-				"visitDate={0} should be after date={1}", visitDate, date
-			)
-		);
-	}
-
 	public boolean isVisitDateTimeBefore(LocalDateTime dateTime) {
 		return getVisitDateTime().isBefore(dateTime);
 	}
