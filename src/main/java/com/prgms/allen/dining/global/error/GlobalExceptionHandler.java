@@ -7,7 +7,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.prgms.allen.dining.global.error.exception.IllegalModificationException;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
@@ -23,10 +22,17 @@ public class GlobalExceptionHandler {
 		return newResponseEntity(response);
 	}
 
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+		log.info("IllegalStateException occurred.", e);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_REQUEST);
+		return newResponseEntity(response);
+	}
+
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e) {
 		log.info("IllegalStateException occurred.", e);
-		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_REQUEST);
 		return newResponseEntity(response);
 	}
 
@@ -48,13 +54,6 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleRestaurantDuplicateCreationException(
 		RestaurantDuplicateCreationException e) {
 		log.info("RestaurantDuplicateCreationException occurred.", e);
-		ErrorResponse response = new ErrorResponse(e.getErrorCode());
-		return newResponseEntity(response);
-	}
-
-	@ExceptionHandler(IllegalModificationException.class)
-	public ResponseEntity<ErrorResponse> handleIllegalModificationException(IllegalModificationException e) {
-		log.info("IllegalModificationException occurred.", e);
 		ErrorResponse response = new ErrorResponse(e.getErrorCode());
 		return newResponseEntity(response);
 	}
