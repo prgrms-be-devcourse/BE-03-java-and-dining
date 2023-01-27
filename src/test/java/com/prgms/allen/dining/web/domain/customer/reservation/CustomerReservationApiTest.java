@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,7 +62,10 @@ class CustomerReservationApiTest {
 		ReservationCreateReq reservationCreateReq = new ReservationCreateReq(
 			restaurant.getId(),
 			new ReservationCustomerInputCreateReq(
-				LocalDateTime.now().plusDays(1L).truncatedTo(ChronoUnit.HOURS),
+				LocalDateTime.of(
+					LocalDate.now().plusDays(1),
+					restaurant.getOpenTime()
+				),
 				2,
 				"가지 빼주세요"
 			)
