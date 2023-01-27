@@ -230,3 +230,6 @@ gradle-app.setting
 
 # idea
 .idea
+
+# env.properties
+src/main/resources/properties/env.properties
