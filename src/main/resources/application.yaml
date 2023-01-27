@@ -18,10 +18,10 @@ spring:
     activate:
       on-profile: release
   datasource:
-    url: jdbc:h2:mem:test
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://localhost:3306/JD
+    username: root
+    password: ${db.mysql.root.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: validate
@@ -46,9 +46,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        jdbc:
-          lob:
-            non_contextual_creation: true
   h2:
     console:
       enabled: true
