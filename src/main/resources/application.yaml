@@ -1,6 +1,42 @@
 spring:
+  profiles:
+    active: release
+  output:
+    ansi:
+      enabled: always
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type.descriptor.sql.BasicBinder: TRACE
+---
+
+spring:
+  config:
+    activate:
+      on-profile: release
   datasource:
     url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:h2:mem:test;MODE=MYSQL
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -10,16 +46,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  output:
-    ansi:
-      enabled: always
+        jdbc:
+          lob:
+            non_contextual_creation: true
   h2:
     console:
       enabled: true
-
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: debug
-        type.descriptor.sql.BasicBinder: TRACE
