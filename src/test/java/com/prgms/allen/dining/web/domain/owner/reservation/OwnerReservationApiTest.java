@@ -81,7 +81,7 @@ class OwnerReservationApiTest {
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
 			.andDo(print())
-			.andDo(document("reservation-update-status-confirm",
+			.andDo(document("owner-reservation-update-status-confirm",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
 				),
@@ -116,7 +116,7 @@ class OwnerReservationApiTest {
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
 			.andDo(print())
-			.andDo(document("reservation-update-status-cancel",
+			.andDo(document("owner-reservation-update-status-cancel",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
 				),
@@ -153,7 +153,7 @@ class OwnerReservationApiTest {
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
 			.andDo(print())
-			.andDo(document("reservation-update-status-visit",
+			.andDo(document("owner-reservation-update-status-visit",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
 				),
@@ -190,7 +190,7 @@ class OwnerReservationApiTest {
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
 			.andDo(print())
-			.andDo(document("reservation-update-status-noShow",
+			.andDo(document("owner-reservation-update-status-noShow",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
 				),

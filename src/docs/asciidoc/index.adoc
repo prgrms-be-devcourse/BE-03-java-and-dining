@@ -2,7 +2,7 @@
 :doctype: book
 :source-highlighter: highlightjs
 :toc: left
-:toclevels: 4
+:toclevels: 3
 
 = 자바랑 식당
 
@@ -10,13 +10,39 @@
 
 === 인증
 
-=== 인가
+==== 회원 가입
+
+operation::member-join[snippets='http-request,request-fields,http-response']
 
 == 고객
 
 === 예약
 
+==== 예약 요청
+
+operation::customer-reserve[snippets='http-request,request-fields,http-response']
+
+==== 예약 가능 시간 조회
+
+operation::customer-reservation-get-available-times[snippets='http-request,request-parameters,http-response']
+
 === 식당
+
+==== 식당 다건 조회
+
+operation::customer-get-restaurant-list[snippets='http-request,http-response,response-fields']
+
+==== 식당 단건 조회
+
+operation::customer-get-one-restaurant[snippets='http-request,http-response,response-fields']
+
+==== 메뉴 조회
+
+operation::customer-get-menus[snippets='http-request,http-response,response-fields']
+
+==== 식당 이름으로 다건조회
+
+operation::customer-get-restaurant-list-containing-name[snippets='http-request,http-response,response-fields']
 
 == 점주
 
@@ -26,18 +52,26 @@
 
 ===== 예약 확정으로 변경
 
-operation::reservation-update-status-confirm[snippets='http-request,request-fields,http-response']
+operation::owner-reservation-update-status-confirm[snippets='http-request,request-fields,http-response']
 
 ===== 예약 취소로 변경
 
-operation::reservation-update-status-cancel[snippets='http-request,request-fields,http-response']
+operation::owner-reservation-update-status-cancel[snippets='http-request,request-fields,http-response']
 
 ===== 예약 방문완료로 변경
 
-operation::reservation-update-status-visit[snippets='http-request,request-fields,http-response']
+operation::owner-reservation-update-status-visit[snippets='http-request,request-fields,http-response']
 
 ===== 예약 노쇼로 변경
 
-operation::reservation-update-status-noShow[snippets='http-request,request-fields,http-response']
+operation::owner-reservation-update-status-noShow[snippets='http-request,request-fields,http-response']
 
 === 식당
+
+==== 식당 등록
+
+operation::owner-create-restaurant[snippets='http-request,request-fields,http-response']
+
+==== 식당 단건 조회
+
+operation::owner-get-owned-restaurant[snippets='http-request,http-response,response-fields']
