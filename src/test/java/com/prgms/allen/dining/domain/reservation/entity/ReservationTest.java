@@ -95,24 +95,24 @@ class ReservationTest {
 	@DisplayName("당일 예약이면 예약 상태가 CONFIRMED(예약 확정) 상태입니다.")
 	void reservation_status_confirmed() {
 		// given
-		LocalDateTime visitToday = LocalDateTime.now()
-			.plusHours(1L)
-			.truncatedTo(ChronoUnit.HOURS);
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
 
-		// when
-		Reservation reservation = new Reservation(
-			validCustomer,
-			validRestaurant,
-			new ReservationCustomerInput(
-				visitToday,
-				2,
-				"맛있게 해주세요~"
-			)
+		ReservationCustomerInput fakeCustomerInput = new FakeReservationCustomerInput(
+			LocalDate.now(),
+			LocalTime.now()
+				.plusHours(1)
+				.truncatedTo(ChronoUnit.HOURS),
+			2
 		);
 
+		// when
+		Reservation reservation = new Reservation(customer, restaurant, fakeCustomerInput);
+
 		// then
-		ReservationStatus status = reservation.getStatus();
-		assertThat(status).isEqualTo(ReservationStatus.CONFIRMED);
+		ReservationStatus actualStatus = reservation.getStatus();
+		assertThat(actualStatus).isEqualTo(ReservationStatus.CONFIRMED);
 	}
 
 	@Test
