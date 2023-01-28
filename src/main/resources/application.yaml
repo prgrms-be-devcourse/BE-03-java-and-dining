@@ -17,6 +17,12 @@ spring:
   config:
     activate:
       on-profile: release
+  flyway:
+    enabled: true
+    baselineOnMigrate: true
+    url: jdbc:mysql://localhost:3306/dining
+    user: root
+    password:
   datasource:
     url: jdbc:mysql://localhost:3306/JD
     username: root
@@ -25,9 +31,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+      use-new-id-generator-mappings: false
     properties:
       hibernate:
         format_sql: true
+        dbc:
+          lob:
+            non_contextual_creation: true
 
 ---
 
