@@ -17,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoParam;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
 import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -246,5 +248,46 @@ public class FakeReservationRepository implements ReservationRepository {
 	public <S extends Reservation, R> R findBy(Example<S> example,
 		Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public CustomerReservationInfoProj findCustomerReservationInfo(
+		CustomerReservationInfoParam customerReservationInfoParam) {
+		return new CustomerReservationInfoProj(
+			reservations.stream()
+				.filter(reservation -> reservation.getId().equals(customerReservationInfoParam.id()))
+				.map(Reservation::getCustomerName)
+				.findAny()
+				.get(),
+			reservations.stream()
+				.filter(reservation -> reservation.getId().equals(customerReservationInfoParam.id()))
+				.map(Reservation::getCustomerPhone)
+				.findAny()
+				.get(),
+			reservations.stream()
+				.filter(reservation -> reservation.getId().equals(customerReservationInfoParam.id()))
+				.filter(reservation -> reservation.getStatus() == ReservationStatus.VISITED)
+				.count(),
+			reservations.stream()
+				.filter(reservation -> reservation.getId().equals(customerReservationInfoParam.id()))
+				.filter(reservation -> reservation.getStatus() == ReservationStatus.NO_SHOW)
+				.count(),
+			reservations.stream()
+				.filter(reservation -> reservation.getId().equals(customerReservationInfoParam.id()))
+				.filter(reservation -> reservation.getStatus() == ReservationStatus.VISITED)
+				.sorted((o1, o2) -> {
+					if (o1.getVisitDateTime().compareTo(o2.getVisitDateTime()) > 0) {
+						return 1;
+					} else if (o1.getVisitDateTime().compareTo(o2.getVisitDateTime()) < 0) {
+						return -1;
+					}
+					return 0;
+				})
+				.limit(1)
+				.map(Reservation::getVisitDateTime)
+				.findAny()
+				.get()
+				.toString()
+		);
 	}
 }

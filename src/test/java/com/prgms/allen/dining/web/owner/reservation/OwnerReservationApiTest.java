@@ -118,7 +118,7 @@ class OwnerReservationApiTest {
 
 	private Member createCustomer() {
 		return memberRepository.save(new Member(
-			"customer",
+			"id",
 			"구매자",
 			"01012341234",
 			"qwer1234!",

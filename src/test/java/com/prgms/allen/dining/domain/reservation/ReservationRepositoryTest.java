@@ -17,11 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoParam;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
 import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
@@ -31,9 +32,9 @@ import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.generator.DummyGenerator;
 
 @DataJpaTest
-@Transactional
 class ReservationRepositoryTest {
 
 	Logger log = LoggerFactory.getLogger(ReservationRepositoryTest.class);
@@ -169,6 +170,66 @@ class ReservationRepositoryTest {
 
 		// then
 		assertThat(currentReservedCount).contains(2);
+	}
+
+	@Test
+	void findCountsPerStatus() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
+		ReservationCustomerInput customerInput1 = DummyGenerator.CUSTOMER_INPUT_PLUS_1_HOUR;
+		ReservationCustomerInput customerInput2 = DummyGenerator.CUSTOMER_INPUT_PLUS_2_HOUR;
+		ReservationCustomerInput customerInput3 = DummyGenerator.CUSTOMER_INPUT_PLUS_3_HOUR;
+		ReservationCustomerInput customerInput4 = DummyGenerator.CUSTOMER_INPUT_PLUS_4_HOUR;
+
+		Reservation reservation1 = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput
+		));
+		Reservation reservation2 = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput1
+		));
+		Reservation reservation3 = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput2
+		));
+		Reservation reservation4 = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.NO_SHOW,
+			customerInput3
+		));
+		Reservation reservation5 = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.CONFIRMED,
+			customerInput4
+		));
+
+		CustomerReservationInfoParam customerReservationInfoParam = new CustomerReservationInfoParam(
+			reservation3.getId());
+		CustomerReservationInfoProj expect = new CustomerReservationInfoProj(customer.getName(), customer.getPhone(),
+			3L, 1L,
+			reservation3.getVisitDateTime().toString());
+
+		// when
+		CustomerReservationInfoProj actual = reservationRepository.findCustomerReservationInfo(
+			customerReservationInfoParam);
+
+		System.out.println("actual = " + actual);
+
+		// then
+		assertThat(actual)
+			.isEqualTo(expect);
 	}
 
 	private void saveReservation(

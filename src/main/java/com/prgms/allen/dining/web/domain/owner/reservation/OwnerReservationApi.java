@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.prgms.allen.dining.domain.reservation.ReservationService;
 import com.prgms.allen.dining.domain.reservation.ReservationStatusUpdateService;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 
 @RestController
@@ -44,6 +45,15 @@ public class OwnerReservationApi {
 			restaurantId,
 			reservationStatus,
 			pageable
+		));
+	}
+
+	@GetMapping("/{reservationId}")
+	public ResponseEntity<ReservationDetailResForOwner> getReservationDetail(
+		@PathVariable Long reservationId
+	) {
+		return ResponseEntity.ok(reservationService.getReservationDetail(
+			reservationId
 		));
 	}
 

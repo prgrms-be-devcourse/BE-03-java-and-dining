@@ -18,9 +18,11 @@ import com.prgms.allen.dining.domain.member.FakeMemberRepository;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForCustomer;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
@@ -147,10 +149,10 @@ class ReservationServiceTest {
 			customerInput
 		));
 
-		ReservationDetailRes expect = new ReservationDetailRes(reservation);
+		ReservationDetailResForCustomer expect = new ReservationDetailResForCustomer(reservation);
 
 		// when
-		ReservationDetailRes actual = reservationService.getReservationDetail(reservation.getId(),
+		ReservationDetailResForCustomer actual = reservationService.getReservationDetail(reservation.getId(),
 			customer.getId());
 
 		// then
@@ -185,5 +187,57 @@ class ReservationServiceTest {
 		// then
 		long actualCount = reservationRepository.count();
 		assertThat(actualCount).isEqualTo(1);
+	}
+
+	@Test
+	@DisplayName("점주는 예약을 상세조회 할 수 있다.")
+	void getReservationDetail() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
+
+		Reservation reservation1 = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput
+		));
+		Reservation reservation2 = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput
+		));
+		Reservation reservation3 = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput
+		));
+		Reservation reservation4 = reservationRepository.save(DummyGenerator.createReservation(
+			customer,
+			restaurant,
+			ReservationStatus.NO_SHOW,
+			customerInput
+		));
+
+		ReservationDetailResForOwner expect = new ReservationDetailResForOwner(
+			new CustomerReservationInfoProj(
+				customer.getName(), customer.getPhone(), 3L,
+				1L,
+				reservation3.getVisitDateTime().toString()
+			),
+			reservation4
+		);
+
+		// when
+		ReservationDetailResForOwner actual = reservationService.getReservationDetail(reservation3.getId());
+
+		// then
+		assertThat(actual)
+			.isEqualTo(expect);
+
 	}
 }

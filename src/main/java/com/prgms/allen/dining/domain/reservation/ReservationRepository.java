@@ -17,7 +17,7 @@ import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
-public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+public interface ReservationRepository extends JpaRepository<Reservation, Long>, CustomReservationRepository {
 
 	@Query("select sum(r.customerInput.visitorCount) "
 		+ " from Reservation r "
