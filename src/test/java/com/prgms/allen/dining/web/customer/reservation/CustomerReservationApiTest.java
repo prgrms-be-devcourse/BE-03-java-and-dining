@@ -78,9 +78,9 @@ class CustomerReservationApiTest {
 		size = "5";
 
 		// when && then
-		// mockMvc.perform(get("/customer/api/reservations?status=" + status + "&customerId=" + customer.getId())
+		// mockMvc.perform(get("/id/api/reservations?status=" + status + "&customerId=" + id.getId())
 
-		mockMvc.perform(get("/customer/api/reservations")
+		mockMvc.perform(get("/id/api/reservations")
 				.param("status", status)
 				.param("customerId", customer.getId().toString())
 				.param("page", page)
@@ -137,7 +137,7 @@ class CustomerReservationApiTest {
 		));
 
 		// when & then
-		mockMvc.perform(get("/customer/api/reservations/{reservationId}", reservation.getId())
+		mockMvc.perform(get("/id/api/reservations/{reservationId}", reservation.getId())
 				.param("customerId", customer.getId().toString())
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
@@ -145,7 +145,7 @@ class CustomerReservationApiTest {
 			.andDo(
 				document("reservation-getAllByCustomer",
 					pathParameters(
-						parameterWithName("reservationId").description("조회할 상태")
+						parameterWithName("id").description("조회할 상태")
 					),
 					requestParameters(
 						parameterWithName("customerId").description("조회하는 구매자 아이디")

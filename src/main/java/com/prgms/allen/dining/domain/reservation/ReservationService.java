@@ -154,7 +154,7 @@ public class ReservationService {
 
 		return new ReservationDetailResForCustomer(reservationRepository.findByIdAndCustomer(reservationId, customer)
 			.orElseThrow(() -> new NotFoundResourceException(
-				MessageFormat.format("Cannot find Reservation entity for reservationId = {0}", reservationId)
+				MessageFormat.format("Cannot find Reservation entity for id = {0}", reservationId)
 			)));
 	}
 

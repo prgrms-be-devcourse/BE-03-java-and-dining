@@ -66,7 +66,7 @@ public class CustomerReservationApi {
 	) {
 		final Long reservationId = reservationService.reserve(customerId, createRequest);
 
-		final URI location = UriComponentsBuilder.fromPath("/customer/api/me/reservations/{reservationId}")
+		final URI location = UriComponentsBuilder.fromPath("/id/api/me/reservations/{id}")
 			.buildAndExpand(reservationId)
 			.toUri();
 
