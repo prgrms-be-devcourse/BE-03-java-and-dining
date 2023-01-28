@@ -102,7 +102,7 @@ class OwnerRestaurantApiTest {
 			.andDo(print())
 			.andDo(document("owner-get-owned-restaurant",
 				requestParameters(
-					parameterWithName("ownerId").description("It must same as owner id of restaurant")
+					parameterWithName("ownerId").description("It must same as owner reservationId of restaurant")
 				),
 				responseFields(
 					fieldWithPath("foodType").type(JsonFieldType.STRING).description("음식 종류"),
