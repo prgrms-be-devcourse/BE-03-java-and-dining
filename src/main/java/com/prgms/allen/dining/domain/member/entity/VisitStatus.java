@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.reservation.dto;
+package com.prgms.allen.dining.domain.member.entity;
 
 import java.util.List;
 
