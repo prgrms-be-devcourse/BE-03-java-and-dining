@@ -151,15 +151,16 @@ class CustomerReservationApiTest {
 						parameterWithName("customerId").description("조회하는 구매자 아이디")
 					),
 					responseFields(
-						fieldWithPath("reservationInfoRes").type(JsonFieldType.OBJECT).description("예약 정보"),
-						fieldWithPath("reservationInfoRes.customerName").type(JsonFieldType.STRING)
+						fieldWithPath("reservationInfoResForCustomer").type(JsonFieldType.OBJECT).description("예약 정보"),
+						fieldWithPath("reservationInfoResForCustomer.customerName").type(JsonFieldType.STRING)
 							.description("예약자 이름"),
-						fieldWithPath("reservationInfoRes.phone").type(JsonFieldType.STRING).description("예약자 핸드폰 번호"),
-						fieldWithPath("reservationInfoRes.visitDateTime").type(JsonFieldType.STRING)
+						fieldWithPath("reservationInfoResForCustomer.phone").type(JsonFieldType.STRING)
+							.description("예약자 핸드폰 번호"),
+						fieldWithPath("reservationInfoResForCustomer.visitDateTime").type(JsonFieldType.STRING)
 							.description("예약한 날짜"),
-						fieldWithPath("reservationInfoRes.visitorCount").type(JsonFieldType.NUMBER)
+						fieldWithPath("reservationInfoResForCustomer.visitorCount").type(JsonFieldType.NUMBER)
 							.description("예약한 시간"),
-						fieldWithPath("reservationInfoRes.memo").type(JsonFieldType.STRING)
+						fieldWithPath("reservationInfoResForCustomer.memo").type(JsonFieldType.STRING)
 							.optional()
 							.description("예약 메모"),
 
