@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
@@ -60,11 +61,69 @@ public class FakeReservationRepository implements ReservationRepository {
 	}
 
 	@Override
+	public Page<Reservation> findAllByCustomerAndStatusIn(Member customer, List<ReservationStatus> statuses,
+		Pageable pageable) {
+		return new PageImpl<>(
+			reservations.stream()
+				.filter(reservation -> Objects.equals(reservation.getCustomerId(), customer.getId()))
+				.filter(reservation -> statuses.contains(reservation.getStatus()))
+				.skip(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.toList());
+	}
+
+	@Override
+	public Optional<Reservation> findByIdAndCustomer(Long reservationId, Member customer) {
+		return reservations.stream()
+			.filter(reservation -> Objects.equals(reservation.getId(), reservationId))
+			.filter(reservation -> Objects.equals(reservation.getCustomer().getId(), customer.getId()))
+			.findFirst();
+	}
+
+	@Override
+	public Page<Reservation> findAllByCustomerAndStatusIn(Member customer, List<ReservationStatus> statuses,
+		Pageable pageable) {
+		return new PageImpl<>(
+			reservations.stream()
+				.filter(reservation -> Objects.equals(reservation.getCustomerId(), customer.getId()))
+				.filter(reservation -> statuses.contains(reservation.getStatus()))
+				.skip(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.toList());
+	}
+
+	@Override
+	public Optional<Reservation> findByIdAndCustomer(Long reservationId, Member customer) {
+		return reservations.stream()
+			.filter(reservation -> Objects.equals(reservation.getId(), reservationId))
+			.filter(reservation -> Objects.equals(reservation.getCustomer().getId(), customer.getId()))
+			.findFirst();
+	}
+
+	@Override
+	public List<VisitorCountPerVisitTimeProj> findVisitorCountPerVisitTime(
+		Restaurant restaurant,
+		LocalDate date,
+		List<ReservationStatus> statuses
+	) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public Optional<Integer> countTotalVisitorCount(Restaurant restaurant,
 		LocalDate visitDate,
 		LocalTime visitTime,
 		List<ReservationStatus> statuses) {
-		throw new UnsupportedOperationException();
+		return reservations.stream()
+			.filter(reservation -> restaurant.getId().equals(reservation.getRestaurantId()))
+			.filter(reservation -> reservation.getVisitDateTime()
+				.toLocalDate()
+				.equals(visitDate))
+			.filter(reservation -> reservation.getVisitDateTime()
+				.toLocalTime()
+				.equals(visitTime))
+			.map(Reservation::getVisitorCount)
+			.reduce(Integer::sum);
 	}
 
 	@Override
@@ -119,7 +178,7 @@ public class FakeReservationRepository implements ReservationRepository {
 
 	@Override
 	public <S extends Reservation> S save(S entity) {
-		Reservation newReservation = new Reservation(
+		Reservation newReservation = Reservation.newTestInstance(
 			++id,
 			entity.getCustomer(),
 			entity.getRestaurant(),

@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
+	INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
 	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "파라미터 값을 확인해주세요."),
 	INVALID_OPERATION_REQUEST(HttpStatus.BAD_REQUEST, "요청하신 작업을 수행할 수 없습니다."),
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러입니다."),

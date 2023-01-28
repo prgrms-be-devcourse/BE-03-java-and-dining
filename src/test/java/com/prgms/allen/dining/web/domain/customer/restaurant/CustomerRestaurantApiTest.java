@@ -98,19 +98,19 @@ class CustomerRestaurantApiTest {
 			.andDo(print())
 			.andDo(document("customer-get-one-restaurant",
 				responseFields(
-					fieldWithPath("foodType").type(JsonFieldType.STRING).description("food type"),
-					fieldWithPath("name").type(JsonFieldType.STRING).description("restaurant name"),
-					fieldWithPath("openTime").type(JsonFieldType.STRING).description("restaurant open time"),
-					fieldWithPath("lastOrderTime").type(JsonFieldType.STRING).description("restaurant last order time"),
-					fieldWithPath("location").type(JsonFieldType.STRING).description("restaurant location"),
-					fieldWithPath("description").type(JsonFieldType.STRING).description("restaurant description"),
-					fieldWithPath("phone").type(JsonFieldType.STRING).description("restaurant phone"),
-					fieldWithPath("menuList").type(JsonFieldType.ARRAY).optional().description("menu list"),
-					fieldWithPath("menuList[].name").type(JsonFieldType.STRING).optional().description("menu name"),
-					fieldWithPath("menuList[].price").type(JsonFieldType.NUMBER).optional().description("menu price"),
-					fieldWithPath("closingDays").type(JsonFieldType.ARRAY).optional().description("closing days"),
+					fieldWithPath("foodType").type(JsonFieldType.STRING).description("음식 종류"),
+					fieldWithPath("name").type(JsonFieldType.STRING).description("식당 이름"),
+					fieldWithPath("openTime").type(JsonFieldType.STRING).description("식당 오픈 시간"),
+					fieldWithPath("lastOrderTime").type(JsonFieldType.STRING).description("식당 라스트 오더 시간"),
+					fieldWithPath("location").type(JsonFieldType.STRING).description("식당 주소"),
+					fieldWithPath("description").type(JsonFieldType.STRING).description("식당 설명"),
+					fieldWithPath("phone").type(JsonFieldType.STRING).description("식당 전화번호"),
+					fieldWithPath("menuList").type(JsonFieldType.ARRAY).optional().description("메뉴 리스트"),
+					fieldWithPath("menuList[].name").type(JsonFieldType.STRING).optional().description("메뉴 이름"),
+					fieldWithPath("menuList[].price").type(JsonFieldType.NUMBER).optional().description("메뉴 가격"),
+					fieldWithPath("closingDays").type(JsonFieldType.ARRAY).optional().description("휴무일 리스트"),
 					fieldWithPath("closingDays[].dayOfWeek").optional().type(JsonFieldType.STRING)
-						.description("closing day of week")
+						.description("휴무 요일")
 				))
 			);
 	}
@@ -129,26 +129,26 @@ class CustomerRestaurantApiTest {
 			.andDo(print())
 			.andDo(document("customer-get-restaurant-list",
 				requestParameters(
-					parameterWithName("page").description("pageable page"),
-					parameterWithName("size").description("pageable size")
+					parameterWithName("page").description("페이지"),
+					parameterWithName("size").description("페이지 사이즈")
 				),
 				responseFields(
-					fieldWithPath("content[].foodType").description("food type"),
-					fieldWithPath("content[].restaurantName").description("restaurant Name"),
-					fieldWithPath("content[].location").description("restaurant location"),
-					fieldWithPath("pageable").description("pageable"),
-					fieldWithPath("totalElements").description("totalElements"),
-					fieldWithPath("first").description("first"),
-					fieldWithPath("last").description("last"),
-					fieldWithPath("totalPages").description("totalPages"),
-					fieldWithPath("numberOfElements").description("numberOfElements"),
-					fieldWithPath("size").description("size"),
-					fieldWithPath("number").description("number"),
-					fieldWithPath("sort").description("sort"),
-					fieldWithPath("sort.sorted").description("sort sorted"),
-					fieldWithPath("sort.unsorted").description("sort unsorted"),
-					fieldWithPath("sort.empty").description("sort empty"),
-					fieldWithPath("empty").description("empty")
+					fieldWithPath("content[].foodType").description("음식 카테고리"),
+					fieldWithPath("content[].restaurantName").description("레스토랑 이름"),
+					fieldWithPath("content[].location").description("레스토랑 주소"),
+					fieldWithPath("pageable").description(""),
+					fieldWithPath("totalElements").description("전체 데이터 개수"),
+					fieldWithPath("first").description("첫번째 페이지인지 여부"),
+					fieldWithPath("last").description("마지막 페이지인지 여부"),
+					fieldWithPath("totalPages").description("전체 페이지 개수"),
+					fieldWithPath("numberOfElements").description("요청 페이지에서 조회된 데이터 개수"),
+					fieldWithPath("size").description("한 페이지당 조회할 데이터 개수"),
+					fieldWithPath("number").description("현재 페이지 번호"),
+					fieldWithPath("sort").description("정렬 기준"),
+					fieldWithPath("sort.sorted").description("정렬 됐는지 여부"),
+					fieldWithPath("sort.unsorted").description("정렬 안됐는지 여부"),
+					fieldWithPath("sort.empty").description("데이터가 비었는지 여부"),
+					fieldWithPath("empty").description("데이터가 비었는지 여부")
 				)));
 	}
 
@@ -167,27 +167,27 @@ class CustomerRestaurantApiTest {
 			.andDo(print())
 			.andDo(document("customer-get-restaurant-list-containing-name",
 				requestParameters(
-					parameterWithName("page").description("pageable page"),
-					parameterWithName("size").description("pageable size"),
-					parameterWithName("restaurantName").description("search keyword(restaurant name)")
+					parameterWithName("page").description("페이지"),
+					parameterWithName("size").description("페이지 사이즈"),
+					parameterWithName("restaurantName").description("검색할 레스토랑 이름")
 				),
 				responseFields(
-					fieldWithPath("content[].foodType").description("food type"),
-					fieldWithPath("content[].restaurantName").description("restaurant Name"),
-					fieldWithPath("content[].location").description("restaurant location"),
-					fieldWithPath("pageable").description("pageable"),
-					fieldWithPath("totalElements").description("totalElements"),
-					fieldWithPath("first").description("first"),
-					fieldWithPath("last").description("last"),
-					fieldWithPath("totalPages").description("totalPages"),
-					fieldWithPath("numberOfElements").description("numberOfElements"),
-					fieldWithPath("size").description("size"),
-					fieldWithPath("number").description("number"),
-					fieldWithPath("sort").description("sort"),
-					fieldWithPath("sort.sorted").description("sort sorted"),
-					fieldWithPath("sort.unsorted").description("sort unsorted"),
-					fieldWithPath("sort.empty").description("sort empty"),
-					fieldWithPath("empty").description("empty")
+					fieldWithPath("content[].foodType").description("음식 카테고리"),
+					fieldWithPath("content[].restaurantName").description("레스토랑 이름"),
+					fieldWithPath("content[].location").description("레스토랑 주소"),
+					fieldWithPath("pageable").description(""),
+					fieldWithPath("totalElements").description("전체 데이터 개수"),
+					fieldWithPath("first").description("첫번째 페이지인지 여부"),
+					fieldWithPath("last").description("마지막 페이지인지 여부"),
+					fieldWithPath("totalPages").description("전체 페이지 개수"),
+					fieldWithPath("numberOfElements").description("요청 페이지에서 조회된 데이터 개수"),
+					fieldWithPath("size").description("한 페이지당 조회할 데이터 개수"),
+					fieldWithPath("number").description("현재 페이지 번호"),
+					fieldWithPath("sort").description("정렬 기준"),
+					fieldWithPath("sort.sorted").description("정렬 됐는지 여부"),
+					fieldWithPath("sort.unsorted").description("정렬 안됐는지 여부"),
+					fieldWithPath("sort.empty").description("데이터가 비었는지 여부"),
+					fieldWithPath("empty").description("데이터가 비었는지 여부")
 				)));
 	}
 
@@ -202,7 +202,25 @@ class CustomerRestaurantApiTest {
 				"/customer/api/restaurants/{0}/menu", restaurantId)))
 			.andExpect(status().isOk())
 			.andDo(print())
-			.andDo(document("customer-get-menus"));
+			.andDo(document("customer-get-menus",
+				responseFields(
+					fieldWithPath("content[].name").description("메뉴 이름"),
+					fieldWithPath("content[].price").description("메뉴 가격"),
+					fieldWithPath("content[].description").description("메뉴 설명"),
+					fieldWithPath("pageable").description(""),
+					fieldWithPath("totalElements").description("전체 데이터 개수"),
+					fieldWithPath("first").description("첫번째 페이지인지 여부"),
+					fieldWithPath("last").description("마지막 페이지인지 여부"),
+					fieldWithPath("totalPages").description("전체 페이지 개수"),
+					fieldWithPath("numberOfElements").description("요청 페이지에서 조회된 데이터 개수"),
+					fieldWithPath("size").description("한 페이지당 조회할 데이터 개수"),
+					fieldWithPath("number").description("현재 페이지 번호"),
+					fieldWithPath("sort").description("정렬 기준"),
+					fieldWithPath("sort.sorted").description("정렬 됐는지 여부"),
+					fieldWithPath("sort.unsorted").description("정렬 안됐는지 여부"),
+					fieldWithPath("sort.empty").description("데이터가 비었는지 여부"),
+					fieldWithPath("empty").description("데이터가 비었는지 여부")
+				)));
 	}
 
 	private Member createOwner(String nickName) {

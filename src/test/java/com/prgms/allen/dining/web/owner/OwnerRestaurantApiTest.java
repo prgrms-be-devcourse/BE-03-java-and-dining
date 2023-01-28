@@ -69,22 +69,22 @@ class OwnerRestaurantApiTest {
 			.andDo(print())
 			.andDo(document("owner-create-restaurant",
 				requestFields(
-					fieldWithPath("foodType").type(JsonFieldType.STRING).description("food type"),
-					fieldWithPath("name").type(JsonFieldType.STRING).description("restaurant name"),
-					fieldWithPath("capacity").type(JsonFieldType.NUMBER).description("restaurant capacity"),
-					fieldWithPath("openTime").type(JsonFieldType.STRING).description("restaurant open time"),
-					fieldWithPath("lastOrderTime").type(JsonFieldType.STRING).description("restaurant last order time"),
-					fieldWithPath("location").type(JsonFieldType.STRING).description("restaurant location"),
-					fieldWithPath("description").type(JsonFieldType.STRING).description("restaurant description"),
-					fieldWithPath("phone").type(JsonFieldType.STRING).description("restaurant phone"),
-					fieldWithPath("menuList").type(JsonFieldType.ARRAY).optional().description("menu list"),
-					fieldWithPath("menuList[].name").type(JsonFieldType.STRING).optional().description("menu name"),
-					fieldWithPath("menuList[].price").type(JsonFieldType.NUMBER).optional().description("menu price"),
+					fieldWithPath("foodType").type(JsonFieldType.STRING).description("음식 종류"),
+					fieldWithPath("name").type(JsonFieldType.STRING).description("식당 이름"),
+					fieldWithPath("capacity").type(JsonFieldType.NUMBER).description("식당 단위시간 최대 수용 인원"),
+					fieldWithPath("openTime").type(JsonFieldType.STRING).description("식당 오픈 시간"),
+					fieldWithPath("lastOrderTime").type(JsonFieldType.STRING).description("식당 라스트 오더 시간"),
+					fieldWithPath("location").type(JsonFieldType.STRING).description("식당 주소"),
+					fieldWithPath("description").type(JsonFieldType.STRING).description("식당 설명"),
+					fieldWithPath("phone").type(JsonFieldType.STRING).description("식당 전화번호"),
+					fieldWithPath("menuList").type(JsonFieldType.ARRAY).optional().description("메뉴 리스트"),
+					fieldWithPath("menuList[].name").type(JsonFieldType.STRING).optional().description("메뉴 름이"),
+					fieldWithPath("menuList[].price").type(JsonFieldType.NUMBER).optional().description("메뉴 가격"),
 					fieldWithPath("menuList[].description").type(JsonFieldType.STRING).optional()
-						.description("menu description"),
-					fieldWithPath("closingDays").type(JsonFieldType.ARRAY).optional().description("closing days"),
+						.description("메뉴 설명"),
+					fieldWithPath("closingDays").type(JsonFieldType.ARRAY).optional().description("휴무일 리스트"),
 					fieldWithPath("closingDays[].dayOfWeek").optional().type(JsonFieldType.STRING)
-						.description("closing day of week")
+						.description("휴무 요일")
 				))
 			);
 	}
@@ -105,20 +105,20 @@ class OwnerRestaurantApiTest {
 					parameterWithName("ownerId").description("It must same as owner id of restaurant")
 				),
 				responseFields(
-					fieldWithPath("foodType").type(JsonFieldType.STRING).description("food type"),
-					fieldWithPath("name").type(JsonFieldType.STRING).description("restaurant name"),
-					fieldWithPath("capacity").type(JsonFieldType.NUMBER).description("restaurant capacity"),
-					fieldWithPath("openTime").type(JsonFieldType.STRING).description("restaurant open time"),
-					fieldWithPath("lastOrderTime").type(JsonFieldType.STRING).description("restaurant last order time"),
-					fieldWithPath("location").type(JsonFieldType.STRING).description("restaurant location"),
-					fieldWithPath("description").type(JsonFieldType.STRING).description("restaurant description"),
-					fieldWithPath("phone").type(JsonFieldType.STRING).description("restaurant phone"),
-					fieldWithPath("menuList").type(JsonFieldType.ARRAY).optional().description("menu list"),
-					fieldWithPath("menuList[].name").type(JsonFieldType.STRING).optional().description("menu name"),
-					fieldWithPath("menuList[].price").type(JsonFieldType.NUMBER).optional().description("menu price"),
-					fieldWithPath("closingDays").type(JsonFieldType.ARRAY).optional().description("closing days"),
+					fieldWithPath("foodType").type(JsonFieldType.STRING).description("음식 종류"),
+					fieldWithPath("name").type(JsonFieldType.STRING).description("식당 이름"),
+					fieldWithPath("capacity").type(JsonFieldType.NUMBER).description("식당 단위시간 최대 수용 인원"),
+					fieldWithPath("openTime").type(JsonFieldType.STRING).description("식당 오픈 시간"),
+					fieldWithPath("lastOrderTime").type(JsonFieldType.STRING).description("식당 라스트 오더 시간"),
+					fieldWithPath("location").type(JsonFieldType.STRING).description("식당 주소"),
+					fieldWithPath("description").type(JsonFieldType.STRING).description("식당 설명"),
+					fieldWithPath("phone").type(JsonFieldType.STRING).description("식당 전화번호"),
+					fieldWithPath("menuList").type(JsonFieldType.ARRAY).optional().description("메뉴 리스트"),
+					fieldWithPath("menuList[].name").type(JsonFieldType.STRING).optional().description("메뉴 이름"),
+					fieldWithPath("menuList[].price").type(JsonFieldType.NUMBER).optional().description("메뉴 가격"),
+					fieldWithPath("closingDays").type(JsonFieldType.ARRAY).optional().description("휴무일 리스트"),
 					fieldWithPath("closingDays[].dayOfWeek").optional().type(JsonFieldType.STRING)
-						.description("closing day of week")
+						.description("휴무 요일")
 				))
 			);
 	}

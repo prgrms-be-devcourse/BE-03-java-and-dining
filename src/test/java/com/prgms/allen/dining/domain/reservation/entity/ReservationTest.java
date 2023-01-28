@@ -19,7 +19,6 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.FakeReservationRepository;
 import com.prgms.allen.dining.domain.reservation.ReservationRepository;
-import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
@@ -157,7 +156,7 @@ class ReservationTest {
 		);
 
 		// when & then
-		assertThrows(IllegalReservationStateException.class, () ->
+		assertThrows(IllegalStateException.class, () ->
 			reservation.confirm(owner.getId())
 		);
 	}
@@ -184,7 +183,7 @@ class ReservationTest {
 		);
 
 		// when & then
-		assertThrows(IllegalReservationStateException.class, () ->
+		assertThrows(IllegalStateException.class, () ->
 			lateReservation.confirm(owner.getId())
 		);
 	}
@@ -223,7 +222,7 @@ class ReservationTest {
 		);
 
 		// when & then
-		assertThrows(IllegalReservationStateException.class, () ->
+		assertThrows(IllegalStateException.class, () ->
 			reservation.cancel(owner.getId())
 		);
 	}
@@ -250,8 +249,109 @@ class ReservationTest {
 		);
 
 		// when & then
-		assertThrows(IllegalReservationStateException.class, () ->
+		assertThrows(IllegalStateException.class, () ->
 			reservation.confirm(owner.getId())
+		);
+	}
+
+	@Test
+	@DisplayName("점주는 확정된 예약을 방문 시간 이후 방문완료로 변경할 수 있다.")
+	void visit_reservation() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		ReservationCustomerInput fakeCustomerInput = new FakeReservationCustomerInput(
+			LocalDate.now()
+				.minusDays(1),
+			LocalTime.now()
+				.truncatedTo(ChronoUnit.HOURS),
+			2
+		);
+		Reservation reservation = reservationRepository.save(
+			DummyGenerator.createReservation(customer, restaurant, ReservationStatus.CONFIRMED, fakeCustomerInput)
+		);
+
+		// when
+		reservation.visit(owner.getId());
+
+		// then
+		assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.VISITED);
+	}
+
+	@Test
+	@DisplayName("점주는 확정된 예약을 방문 시간 이후 노쇼로 변경할 수 있다.")
+	void noShow_reservation() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		ReservationCustomerInput fakeCustomerInput = new FakeReservationCustomerInput(
+			LocalDate.now()
+				.minusDays(1),
+			LocalTime.now()
+				.truncatedTo(ChronoUnit.HOURS),
+			2
+		);
+		Reservation reservation = reservationRepository.save(
+			DummyGenerator.createReservation(customer, restaurant, ReservationStatus.CONFIRMED, fakeCustomerInput)
+		);
+
+		// when
+		reservation.noShow(owner.getId());
+
+		// then
+		assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.NO_SHOW);
+	}
+
+	@Test
+	@DisplayName("점주가 확정된 예약을 방문시간 전에 방문완료 또는 노쇼로 변경 시 예외가 발생한다.")
+	void throws_exception_when_owner_change_reservation_status_before_visitDateTime() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		ReservationCustomerInput fakeCustomerInput = new FakeReservationCustomerInput(
+			LocalDate.now()
+				.plusDays(1),
+			LocalTime.now()
+				.plusHours(1)
+				.truncatedTo(ChronoUnit.HOURS),
+			2
+		);
+		Reservation reservation = reservationRepository.save(
+			DummyGenerator.createReservation(customer, restaurant, ReservationStatus.CONFIRMED, fakeCustomerInput)
+		);
+
+		// when & then
+		assertAll(
+			() -> assertThrows(IllegalStateException.class, () -> reservation.visit(owner.getId())),
+			() -> assertThrows(IllegalStateException.class, () -> reservation.noShow(owner.getId()))
+		);
+	}
+
+	@Test
+	@DisplayName("점주가 확정된 예약을 방문일로부터 30일 이후에 방문완료 또는 노쇼로 변경 시 예외가 발생한다.")
+	void throws_exception_when_owner_change_reservation_status_after_30_days_from_visitDate() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		ReservationCustomerInput fakeCustomerInput = new FakeReservationCustomerInput(
+			LocalDate.now()
+				.minusDays(30),
+			LocalTime.now()
+				.truncatedTo(ChronoUnit.HOURS),
+			2
+		);
+		Reservation reservation = reservationRepository.save(
+			DummyGenerator.createReservation(customer, restaurant, ReservationStatus.CONFIRMED, fakeCustomerInput)
+		);
+
+		// when & then
+		assertAll(
+			() -> assertThrows(IllegalStateException.class, () -> reservation.visit(owner.getId())),
+			() -> assertThrows(IllegalStateException.class, () -> reservation.noShow(owner.getId()))
 		);
 	}
 }
