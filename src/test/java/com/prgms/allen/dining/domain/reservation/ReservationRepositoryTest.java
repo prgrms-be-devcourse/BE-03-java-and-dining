@@ -186,6 +186,7 @@ class ReservationRepositoryTest {
 	}
 
 	@Test
+	@DisplayName("예약한 고객의 해당 식당에 대한 방문 횟수, 노쇼한 횟수, 마지막 방문 일자를 조회할 수 있다.")
 	void findCountsPerStatus() {
 		// given
 		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
