@@ -161,7 +161,8 @@ class OwnerReservationApiTest {
 			"맛있게 해주세요"
 		);
 
-		return reservationRepository.save(new Reservation(
+		return reservationRepository.save(Reservation.newTestInstance(
+			null,
 			consumer,
 			savedRestaurant,
 			status,

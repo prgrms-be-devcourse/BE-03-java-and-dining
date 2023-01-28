@@ -2,8 +2,8 @@ package com.prgms.allen.dining.domain.reservation;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -167,17 +167,16 @@ class ReservationServiceTest {
 		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
 		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
 
-		ReservationCustomerInputCreateReq customerInputCreateReq = new ReservationCustomerInputCreateReq(
-			LocalDateTime.now()
-				.plus(2, ChronoUnit.HOURS)
-				.truncatedTo(ChronoUnit.HOURS),
-			2,
-			"맛있게 해주세요"
-		);
-
 		ReservationCreateReq reservationCreateReq = new ReservationCreateReq(
 			restaurant.getId(),
-			customerInputCreateReq
+			new ReservationCustomerInputCreateReq(
+				LocalDateTime.of(
+					LocalDate.now().plusDays(1),
+					restaurant.getOpenTime()
+				),
+				2,
+				"가지 빼주세요"
+			)
 		);
 
 		// when

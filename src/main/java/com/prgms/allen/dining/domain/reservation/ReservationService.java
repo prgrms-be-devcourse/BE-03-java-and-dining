@@ -24,7 +24,6 @@ import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleRes;
 import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;

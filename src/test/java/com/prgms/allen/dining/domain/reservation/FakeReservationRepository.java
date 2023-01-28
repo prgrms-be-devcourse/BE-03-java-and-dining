@@ -61,46 +61,6 @@ public class FakeReservationRepository implements ReservationRepository {
 	}
 
 	@Override
-	public Page<Reservation> findAllByCustomerAndStatusIn(Member customer, List<ReservationStatus> statuses,
-		Pageable pageable) {
-		return new PageImpl<>(
-			reservations.stream()
-				.filter(reservation -> Objects.equals(reservation.getCustomerId(), customer.getId()))
-				.filter(reservation -> statuses.contains(reservation.getStatus()))
-				.skip(pageable.getOffset())
-				.limit(pageable.getPageSize())
-				.toList());
-	}
-
-	@Override
-	public Optional<Reservation> findByIdAndCustomer(Long reservationId, Member customer) {
-		return reservations.stream()
-			.filter(reservation -> Objects.equals(reservation.getId(), reservationId))
-			.filter(reservation -> Objects.equals(reservation.getCustomer().getId(), customer.getId()))
-			.findFirst();
-	}
-
-	@Override
-	public Page<Reservation> findAllByCustomerAndStatusIn(Member customer, List<ReservationStatus> statuses,
-		Pageable pageable) {
-		return new PageImpl<>(
-			reservations.stream()
-				.filter(reservation -> Objects.equals(reservation.getCustomerId(), customer.getId()))
-				.filter(reservation -> statuses.contains(reservation.getStatus()))
-				.skip(pageable.getOffset())
-				.limit(pageable.getPageSize())
-				.toList());
-	}
-
-	@Override
-	public Optional<Reservation> findByIdAndCustomer(Long reservationId, Member customer) {
-		return reservations.stream()
-			.filter(reservation -> Objects.equals(reservation.getId(), reservationId))
-			.filter(reservation -> Objects.equals(reservation.getCustomer().getId(), customer.getId()))
-			.findFirst();
-	}
-
-	@Override
 	public List<VisitorCountPerVisitTimeProj> findVisitorCountPerVisitTime(
 		Restaurant restaurant,
 		LocalDate date,
