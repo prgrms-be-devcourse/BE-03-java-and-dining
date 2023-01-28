@@ -17,10 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoParam;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForCustomer;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
@@ -41,8 +44,9 @@ public class ReservationService {
 		List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING);
 
 	private final ReservationRepository reservationRepository;
-	private final RestaurantService restaurantService;
+
 	private final MemberService memberService;
+	private final RestaurantService restaurantService;
 
 	public ReservationService(
 		ReservationRepository reservationRepository,
@@ -144,11 +148,11 @@ public class ReservationService {
 			.toList());
 	}
 
-	public ReservationDetailRes getReservationDetail(Long reservationId, Long customerId) {
+	public ReservationDetailResForCustomer getReservationDetail(Long reservationId, Long customerId) {
 
 		final Member customer = memberService.findCustomerById(customerId);
 
-		return new ReservationDetailRes(reservationRepository.findByIdAndCustomer(reservationId, customer)
+		return new ReservationDetailResForCustomer(reservationRepository.findByIdAndCustomer(reservationId, customer)
 			.orElseThrow(() -> new NotFoundResourceException(
 				MessageFormat.format("Cannot find Reservation entity for reservationId = {0}", reservationId)
 			)));
@@ -215,5 +219,19 @@ public class ReservationService {
 				visitorCount
 			);
 		};
+	}
+
+	public ReservationDetailResForOwner getReservationDetail(
+		Long reservationId
+	) {
+		final Reservation reservation = findById(reservationId);
+		final CustomerReservationInfoParam customerReservationInfoParam = new CustomerReservationInfoParam(
+			reservationId
+		);
+		final CustomerReservationInfoProj customerReservationInfo = reservationRepository.findCustomerReservationInfo(
+			customerReservationInfoParam
+		);
+
+		return new ReservationDetailResForOwner(customerReservationInfo, reservation);
 	}
 }
