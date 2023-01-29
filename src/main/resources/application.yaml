@@ -22,11 +22,11 @@ spring:
     baselineOnMigrate: true
     url: jdbc:mysql://localhost:3306/dining
     user: root
-    password:
+    password: ${db.mysql.root.password}
   datasource:
     url: jdbc:mysql://localhost:3306/dining
     username: root
-    password:
+    password: ${db.mysql.root.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
