@@ -17,22 +17,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.prgms.allen.dining.domain.member.entity.VisitStatus;
+import com.prgms.allen.dining.domain.reservation.ReservationFindService;
 import com.prgms.allen.dining.domain.reservation.ReservationService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
-import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
 public class CustomerReservationApi {
 
 	private final ReservationService reservationService;
+	private final ReservationFindService reservationFindService;
 
-	public CustomerReservationApi(ReservationService reservationService) {
+	public CustomerReservationApi(ReservationService reservationService,
+		ReservationFindService reservationFindService) {
 		this.reservationService = reservationService;
+		this.reservationFindService = reservationFindService;
 	}
 
 	@GetMapping
@@ -41,7 +45,7 @@ public class CustomerReservationApi {
 		@RequestParam Long customerId,
 		Pageable pageable
 	) {
-		return ResponseEntity.ok(reservationService.getRestaurantReservations(
+		return ResponseEntity.ok(reservationFindService.getReservations(
 			customerId,
 			status,
 			pageable
@@ -53,7 +57,7 @@ public class CustomerReservationApi {
 		@PathVariable Long reservationId,
 		@RequestParam Long customerId
 	) {
-		return ResponseEntity.ok(reservationService.getReservationDetail(
+		return ResponseEntity.ok(reservationFindService.getReservationDetail(
 			reservationId,
 			customerId
 		));
