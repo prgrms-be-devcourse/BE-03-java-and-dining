@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
+import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -26,16 +28,36 @@ public class FakeReservationRepository implements ReservationRepository {
 	private Long id = 0L;
 
 	@Override
-	public Page<Reservation> findAllByRestaurantIdAndStatus(long restaurantId, ReservationStatus status,
+	public Page<Reservation> findAllByRestaurantAndStatus(Restaurant restaurant, ReservationStatus status,
 		Pageable pageable) {
 		return new PageImpl<>(
 			reservations.stream()
-				.filter(reservation -> reservation.getRestaurantId() == restaurantId)
+				.filter(reservation -> Objects.equals(reservation.getRestaurantId(), restaurant.getId()))
 				.filter(reservation -> reservation.getStatus() == status)
 				.skip(pageable.getOffset())
 				.limit(pageable.getPageSize())
 				.toList()
 		);
+	}
+
+	@Override
+	public Page<Reservation> findAllByCustomerAndStatusIn(Member customer, List<ReservationStatus> statuses,
+		Pageable pageable) {
+		return new PageImpl<>(
+			reservations.stream()
+				.filter(reservation -> Objects.equals(reservation.getCustomerId(), customer.getId()))
+				.filter(reservation -> statuses.contains(reservation.getStatus()))
+				.skip(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.toList());
+	}
+
+	@Override
+	public Optional<Reservation> findByIdAndCustomer(Long reservationId, Member customer) {
+		return reservations.stream()
+			.filter(reservation -> Objects.equals(reservation.getId(), reservationId))
+			.filter(reservation -> Objects.equals(reservation.getCustomer().getId(), customer.getId()))
+			.findFirst();
 	}
 
 	@Override
@@ -135,7 +157,9 @@ public class FakeReservationRepository implements ReservationRepository {
 
 	@Override
 	public Optional<Reservation> findById(Long aLong) {
-		throw new UnsupportedOperationException();
+		return reservations.stream()
+			.filter(reservation -> Objects.equals(reservation.getId(), aLong))
+			.findFirst();
 	}
 
 	@Override
