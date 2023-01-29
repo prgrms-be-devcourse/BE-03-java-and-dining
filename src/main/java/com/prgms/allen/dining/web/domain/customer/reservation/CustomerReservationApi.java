@@ -23,7 +23,7 @@ import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRe
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
-import com.prgms.allen.dining.domain.reservation.dto.VisitStatus;
+import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
