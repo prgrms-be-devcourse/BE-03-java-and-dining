@@ -24,9 +24,9 @@ spring:
     user: root
     password:
   datasource:
-    url: jdbc:mysql://localhost:3306/JD
+    url: jdbc:mysql://localhost:3306/dining
     username: root
-    password: ${db.mysql.root.password}
+    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
