@@ -17,6 +17,14 @@ spring:
     console:
       enabled: true
 
+slack:
+  token: xoxb-2070788189600-4701637872135-DTWPG4iKuJjb2VtbQhidWKmA
+  channel:
+    customer:
+      monitor: '#03-allen-customer-alarm-javaAndDining'
+    owner:
+      monitor: '#03-allen-owner-alarm-javaAndDining'
+
 logging:
   level:
     org:
