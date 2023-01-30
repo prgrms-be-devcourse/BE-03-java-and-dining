@@ -52,7 +52,7 @@ class ReservationCustomerInputTest {
 
 		@ParameterizedTest
 		@ValueSource(longs = {0L, 30L})
-		@DisplayName("예약일보다 일찍, 혹은 예야일로부터 30일을 넘겨서 날짜를 잡으면 예약에 실패한다.")
+		@DisplayName("예약일보다 일찍, 혹은 예약일로부터 30일을 넘겨서 날짜를 잡으면 예약에 실패한다.")
 		void fail_by_invalid_day(long invalidDay) {
 			// given
 			LocalDateTime visitAt = LocalDateTime.now()

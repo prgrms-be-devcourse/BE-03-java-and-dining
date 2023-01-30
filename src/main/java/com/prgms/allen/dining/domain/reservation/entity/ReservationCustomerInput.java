@@ -6,7 +6,6 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 
 import javax.persistence.Column;
@@ -78,8 +77,7 @@ public class ReservationCustomerInput {
 		LocalDate currentDate = now.toLocalDate();
 		LocalDate visitDate = visitDateTime.toLocalDate();
 
-		int daysBetweenCurrentDateAndVisitDate = Period.between(currentDate, visitDate)
-			.getDays() + 1;
+		long daysBetweenCurrentDateAndVisitDate = ChronoUnit.DAYS.between(currentDate, visitDate) + 1;
 
 		Assert.state(
 			daysBetweenCurrentDateAndVisitDate <= MAX_RESERVE_PERIOD,
@@ -155,10 +153,7 @@ public class ReservationCustomerInput {
 	}
 
 	public boolean isVisitDateTimeWithin(LocalDate endDate, int days) {
-		int daysBetweenVisitDateAndEndDate = Period.between(visitDate, endDate)
-			.getDays() + 1;
-
-		return daysBetweenVisitDateAndEndDate <= days;
+		return ChronoUnit.DAYS.between(visitDate, endDate) + 1 <= days;
 	}
 
 	@Override
