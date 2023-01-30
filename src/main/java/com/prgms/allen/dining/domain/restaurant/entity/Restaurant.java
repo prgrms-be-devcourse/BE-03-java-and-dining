@@ -30,7 +30,7 @@ import com.prgms.allen.dining.domain.reservation.policy.ReservationPolicy;
 public class Restaurant {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "restaurant_id")
 	private Long id;
 

@@ -31,7 +31,7 @@ public class Reservation extends BaseEntity {
 	private static final int MAX_STATUS_UPDATE_EXPIRATION_PERIOD = 30;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "reservation_id")
 	private Long id;
 
