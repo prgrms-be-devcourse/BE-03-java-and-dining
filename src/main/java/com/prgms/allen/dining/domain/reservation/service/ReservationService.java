@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.reservation;
+package com.prgms.allen.dining.domain.reservation.service;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;

@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.prgms.allen.dining.domain.reservation.ReservationFindService;
-import com.prgms.allen.dining.domain.reservation.ReservationService;
-import com.prgms.allen.dining.domain.reservation.ReservationStatusUpdateService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationStatusUpdateService;
 
 @RestController
 @RequestMapping("/owner/api/reservations")

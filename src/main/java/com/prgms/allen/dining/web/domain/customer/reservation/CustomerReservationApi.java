@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.prgms.allen.dining.domain.member.entity.VisitStatus;
-import com.prgms.allen.dining.domain.reservation.ReservationFindService;
-import com.prgms.allen.dining.domain.reservation.ReservationService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
+import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
