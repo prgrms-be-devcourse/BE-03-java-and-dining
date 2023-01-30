@@ -16,6 +16,13 @@ public class GlobalExceptionHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorResponse> handleException(Exception e) {
+		log.info("Unchecked exception occurred.", e);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+		return newResponseEntity(response);
+	}
+
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e) {
 		log.info("RuntimeException occurred.", e);
