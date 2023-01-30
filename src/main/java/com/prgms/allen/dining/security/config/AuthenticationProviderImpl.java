@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.security.config;
+package com.prgms.allen.dining.security.config;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

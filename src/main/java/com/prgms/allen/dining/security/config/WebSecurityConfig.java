@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.security.config;
+package com.prgms.allen.dining.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,9 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.prgms.allen.dining.web.security.handler.LoginFailureHandler;
-import com.prgms.allen.dining.web.security.handler.LoginSuccessHandler;
 
 @Configuration
 @EnableWebSecurity

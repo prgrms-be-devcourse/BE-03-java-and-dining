@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.member;
+package com.prgms.allen.dining.security.service;
 
 import java.util.Collections;
 
@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.prgms.allen.dining.domain.member.dto.UserDetailsImpl;
+import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 
 @Service

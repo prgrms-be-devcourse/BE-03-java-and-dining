@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.member.dto;
+package com.prgms.allen.dining.security.service;
 
 import java.util.Collection;
 

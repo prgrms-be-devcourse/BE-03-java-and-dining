@@ -1,6 +1,4 @@
-package com.prgms.allen.dining.web.security.config;
-
-import static com.prgms.allen.dining.web.security.config.WebSecurityConfig.*;
+package com.prgms.allen.dining.security.config;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -17,15 +15,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.prgms.allen.dining.web.security.HeaderValue;
-import com.prgms.allen.dining.web.security.handler.LoginFailureHandler;
-import com.prgms.allen.dining.web.security.handler.LoginSuccessHandler;
 
 public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
 	private static final String HTTP_METHOD = "POST";
 	private static final AntPathRequestMatcher DEFAULT_LOGIN_PATH_REQUEST_MATCHER =
-		new AntPathRequestMatcher(LOGIN_REQUEST_URL, HTTP_METHOD);
+		new AntPathRequestMatcher(WebSecurityConfig.LOGIN_REQUEST_URL, HTTP_METHOD);
 
 	private final ObjectMapper objectMapper;
 

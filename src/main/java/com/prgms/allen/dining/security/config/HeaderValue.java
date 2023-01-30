@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.security;
+package com.prgms.allen.dining.security.config;
 
 public enum HeaderValue {
 	CONTENT_TYPE("application/json");

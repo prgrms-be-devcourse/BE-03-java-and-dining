@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.security.handler;
+package com.prgms.allen.dining.security.config;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgms.allen.dining.global.error.ErrorCode;
 import com.prgms.allen.dining.global.error.ErrorResponse;
-import com.prgms.allen.dining.web.security.HeaderValue;
 
 @Component
 public class LoginFailureHandler implements AuthenticationFailureHandler {

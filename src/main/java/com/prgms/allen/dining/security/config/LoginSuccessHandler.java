@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.security.handler;
+package com.prgms.allen.dining.security.config;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
