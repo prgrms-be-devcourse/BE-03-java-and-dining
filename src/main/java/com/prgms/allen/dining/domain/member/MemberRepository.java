@@ -10,4 +10,6 @@ import com.prgms.allen.dining.domain.member.entity.MemberType;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	Optional<Member> findByIdAndMemberType(Long id, MemberType memberType);
+
+	Optional<Member> findByNickname(String nickname);
 }
