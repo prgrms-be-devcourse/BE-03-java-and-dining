@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
+import static com.prgms.allen.dining.domain.member.entity.MemberType.*;
 import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus.*;
 
 import java.text.MessageFormat;
@@ -23,6 +24,7 @@ import org.springframework.util.Assert;
 
 import com.prgms.allen.dining.domain.common.entity.BaseEntity;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Entity
@@ -164,8 +166,8 @@ public class Reservation extends BaseEntity {
 		status = CONFIRMED;
 	}
 
-	public void cancel(Long ownerId) {
-		assertMatchesOwner(ownerId);
+	public void cancel(MemberType memberType, Long memberId) {
+		assertMatchesMember(memberType, memberId);
 		assertReservationStatusOneOf(PENDING, CONFIRMED);
 		assertVisitDateAfterCurrentDate();
 		status = CANCELLED;
@@ -185,6 +187,25 @@ public class Reservation extends BaseEntity {
 		assertVisitDateTimeBeforeCurrentDateTime();
 		assertDaysBetweenVisitDateAndCurrentDateWithin(MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
 		status = NO_SHOW;
+	}
+
+	private void assertMatchesMember(MemberType memberType, Long memberId) {
+		if (memberType == CUSTOMER) {
+			assertMatchesCustomer(memberId);
+			return;
+		}
+		assertMatchesOwner(memberId);
+	}
+
+	private void assertMatchesCustomer(Long customerId) {
+		Assert.state(
+			customer.matchesId(customerId),
+			MessageFormat.format(
+				"Customer does not match. Parameter customerId={0} but actual customerId={1}",
+				customerId,
+				customer.getId()
+			)
+		);
 	}
 
 	private void assertMatchesOwner(Long ownerId) {
