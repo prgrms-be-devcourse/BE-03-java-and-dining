@@ -129,3 +129,6 @@ GET http://localhost:8080/customer/api/restaurants/search?page=0&size=5&restaura
 
 ### 레스토랑 메뉴 조회 API
 GET http://localhost:8080/customer/api/restaurants/2/menu
+
+### 점주의 예약 상세 조회
+GET http://localhost:8080/owner/api/reservations/5

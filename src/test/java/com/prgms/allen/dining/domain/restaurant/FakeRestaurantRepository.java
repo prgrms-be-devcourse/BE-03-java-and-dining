@@ -125,7 +125,9 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 
 	@Override
 	public <S extends Restaurant> List<S> saveAll(Iterable<S> entities) {
-		throw new UnsupportedOperationException();
+		entities.forEach(i -> save(i));
+
+		return (List<S>)restaurants;
 	}
 
 	@Override
@@ -226,8 +228,8 @@ public class FakeRestaurantRepository implements RestaurantRepository {
 	@Override
 	public boolean existsRestaurantByOwnerId(Long ownerId) {
 		return restaurants.stream().anyMatch(restaurant -> restaurant.getOwner()
-				.getId()
-				.equals(ownerId));
+			.getId()
+			.equals(ownerId));
 	}
 
 	@Override

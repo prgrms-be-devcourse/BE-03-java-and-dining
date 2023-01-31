@@ -157,6 +157,10 @@ public class Reservation extends BaseEntity {
 		return restaurant.getOwner();
 	}
 
+	public String getMemo() {
+		return customerInput.getCustomerMemo();
+	}
+
 	public void confirm(Long ownerId) {
 		assertMatchesOwner(ownerId);
 		assertReservationStatusOneOf(PENDING, CONFIRMED);

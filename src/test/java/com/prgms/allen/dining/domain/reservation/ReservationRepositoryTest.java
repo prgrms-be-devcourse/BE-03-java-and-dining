@@ -17,11 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoParam;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
 import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
@@ -31,9 +32,9 @@ import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.generator.DummyGenerator;
 
 @DataJpaTest
-@Transactional
 class ReservationRepositoryTest {
 
 	Logger log = LoggerFactory.getLogger(ReservationRepositoryTest.class);
@@ -67,6 +68,19 @@ class ReservationRepositoryTest {
 		List.of(new Menu("맛있는 밥", BigInteger.valueOf(10000), "맛있어용")),
 		List.of(new ClosingDay(DayOfWeek.MONDAY))
 	);
+	private final Restaurant restaurant2 = new Restaurant(
+		owner,
+		FoodType.KOREAN,
+		"유명 레스토랑",
+		6,
+		LocalTime.of(11, 0),
+		LocalTime.of(21, 0),
+		"서울특별시 강남구 어딘가로 123 무슨빌딩 1층",
+		"우리는 유명한 한식당입니다.",
+		"0211112222",
+		List.of(new Menu("맛있는 밥", BigInteger.valueOf(10000), "맛있어용")),
+		List.of(new ClosingDay(DayOfWeek.MONDAY))
+	);
 
 	@Autowired
 	private MemberRepository memberRepository;
@@ -80,7 +94,7 @@ class ReservationRepositoryTest {
 	@BeforeEach
 	void initMembersAndRestaurant() {
 		memberRepository.saveAll(List.of(customer, owner));
-		restaurantRepository.save(restaurant);
+		restaurantRepository.saveAll(List.of(restaurant, restaurant2));
 	}
 
 	@Test
@@ -108,8 +122,8 @@ class ReservationRepositoryTest {
 		);
 		saveReservation(
 			customer,
-			restaurant,
-			ReservationStatus.CONFIRMED,
+			restaurant2,
+			ReservationStatus.VISITED,
 			tomorrowCustomerInput2
 		);
 
@@ -171,14 +185,85 @@ class ReservationRepositoryTest {
 		assertThat(currentReservedCount).contains(2);
 	}
 
-	private void saveReservation(
+	@Test
+	@DisplayName("예약한 고객의 해당 식당에 대한 방문 횟수, 노쇼한 횟수, 마지막 방문 일자를 조회할 수 있다.")
+	void findCountsPerStatus() {
+		// given
+		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
+		ReservationCustomerInput customerInput1 = DummyGenerator.CUSTOMER_INPUT_PLUS_1_HOUR;
+		ReservationCustomerInput customerInput2 = DummyGenerator.CUSTOMER_INPUT_PLUS_2_HOUR;
+		ReservationCustomerInput customerInput3 = DummyGenerator.CUSTOMER_INPUT_PLUS_3_HOUR;
+		ReservationCustomerInput customerInput4 = DummyGenerator.CUSTOMER_INPUT_PLUS_4_HOUR;
+
+		saveReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput
+		);
+		saveReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput1
+		);
+		Reservation lastVisitedReservation = saveReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput2
+		);
+		saveReservation(
+			customer,
+			restaurant,
+			ReservationStatus.NO_SHOW,
+			customerInput3
+		);
+		saveReservation(
+			customer,
+			restaurant,
+			ReservationStatus.CONFIRMED,
+			customerInput4
+		);
+		saveReservation(
+			customer,
+			restaurant,
+			ReservationStatus.CONFIRMED,
+			customerInput4
+		);
+
+		CustomerReservationInfoParam customerReservationInfoParam = new CustomerReservationInfoParam(
+			lastVisitedReservation.getId()
+		);
+
+		CustomerReservationInfoProj expect = new CustomerReservationInfoProj(
+			customer.getName(),
+			customer.getPhone(),
+			3L,
+			1L,
+			lastVisitedReservation.getVisitDateTime().toString()
+		);
+
+		// when
+		CustomerReservationInfoProj actual = reservationRepository.findCustomerReservationInfo(
+			customerReservationInfoParam
+		);
+
+		System.out.println("actual = " + actual);
+
+		// then
+		assertThat(actual)
+			.isEqualTo(expect);
+	}
+
+	private Reservation saveReservation(
 		Member consumer,
 		Restaurant savedRestaurant,
 		ReservationStatus status,
 		ReservationCustomerInput customerInput
 	) {
 
-		reservationRepository.save(Reservation.newTestInstance(
+		return reservationRepository.save(Reservation.newTestInstance(
 			null,
 			consumer,
 			savedRestaurant,
