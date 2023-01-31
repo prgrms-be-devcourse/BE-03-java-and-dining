@@ -28,13 +28,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.member.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
@@ -217,15 +217,16 @@ class CustomerReservationApiTest {
 						parameterWithName("customerId").description("조회하는 구매자 아이디")
 					),
 					responseFields(
-						fieldWithPath("reservationInfoRes").type(JsonFieldType.OBJECT).description("예약 정보"),
-						fieldWithPath("reservationInfoRes.customerName").type(JsonFieldType.STRING)
+						fieldWithPath("reservationInfoResForCustomer").type(JsonFieldType.OBJECT).description("예약 정보"),
+						fieldWithPath("reservationInfoResForCustomer.customerName").type(JsonFieldType.STRING)
 							.description("예약자 이름"),
-						fieldWithPath("reservationInfoRes.phone").type(JsonFieldType.STRING).description("예약자 핸드폰 번호"),
-						fieldWithPath("reservationInfoRes.visitDateTime").type(JsonFieldType.STRING)
+						fieldWithPath("reservationInfoResForCustomer.phone").type(JsonFieldType.STRING)
+							.description("예약자 핸드폰 번호"),
+						fieldWithPath("reservationInfoResForCustomer.visitDateTime").type(JsonFieldType.STRING)
 							.description("예약한 날짜"),
-						fieldWithPath("reservationInfoRes.visitorCount").type(JsonFieldType.NUMBER)
+						fieldWithPath("reservationInfoResForCustomer.visitorCount").type(JsonFieldType.NUMBER)
 							.description("예약한 시간"),
-						fieldWithPath("reservationInfoRes.memo").type(JsonFieldType.STRING)
+						fieldWithPath("reservationInfoResForCustomer.memo").type(JsonFieldType.STRING)
 							.optional()
 							.description("예약 메모"),
 

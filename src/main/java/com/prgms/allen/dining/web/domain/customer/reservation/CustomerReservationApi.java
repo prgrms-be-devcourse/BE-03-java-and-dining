@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.prgms.allen.dining.domain.member.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.ReservationFindService;
 import com.prgms.allen.dining.domain.reservation.ReservationService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
+import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
@@ -53,7 +53,7 @@ public class CustomerReservationApi {
 	}
 
 	@GetMapping("/{reservationId}")
-	public ResponseEntity<ReservationDetailRes> getReservationDetail(
+	public ResponseEntity<ReservationDetailResForCustomer> getReservationDetail(
 		@PathVariable Long reservationId,
 		@RequestParam Long customerId
 	) {

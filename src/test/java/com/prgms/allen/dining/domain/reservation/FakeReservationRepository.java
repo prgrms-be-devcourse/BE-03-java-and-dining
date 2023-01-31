@@ -4,10 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoParam;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
 import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -246,5 +250,78 @@ public class FakeReservationRepository implements ReservationRepository {
 	public <S extends Reservation, R> R findBy(Example<S> example,
 		Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public CustomerReservationInfoProj findCustomerReservationInfo(
+		CustomerReservationInfoParam customerReservationInfoParam
+	) {
+		return new CustomerReservationInfoProj(
+			reservations.stream()
+				.filter(reservation -> reservation.getId().equals(customerReservationInfoParam.reservationId()))
+				.map(Reservation::getCustomerName)
+				.findAny()
+				.get(),
+			reservations.stream()
+				.filter(reservation -> reservation.getId().equals(customerReservationInfoParam.reservationId()))
+				.map(Reservation::getCustomerPhone)
+				.findAny()
+				.get(),
+			reservations.stream()
+				.filter(isCustomerReservationPredicate(customerReservationInfoParam))
+				.filter(isRestaurantReservationPredicate(customerReservationInfoParam))
+				.filter(reservation -> reservation.getStatus() == ReservationStatus.VISITED)
+				.count(),
+			reservations.stream()
+				.filter(isCustomerReservationPredicate(customerReservationInfoParam))
+				.filter(isRestaurantReservationPredicate(customerReservationInfoParam))
+				.filter(reservation -> reservation.getStatus() == ReservationStatus.NO_SHOW)
+				.count(),
+			reservations.stream()
+				.filter(isCustomerReservationPredicate(customerReservationInfoParam))
+				.filter(isRestaurantReservationPredicate(customerReservationInfoParam))
+				.filter(reservation -> reservation.getStatus() == ReservationStatus.VISITED)
+				.sorted(latestDateTimeComparator())
+				.limit(1)
+				.map(Reservation::getVisitDateTime)
+				.findAny()
+				.get()
+				.toString()
+		);
+	}
+
+	private Comparator<Reservation> latestDateTimeComparator() {
+		return (o1, o2) -> {
+			if (o1.getVisitDateTime().compareTo(o2.getVisitDateTime()) < 0) {
+				return 1;
+			} else if (o1.getVisitDateTime().compareTo(o2.getVisitDateTime()) > 0) {
+				return -1;
+			}
+			return 0;
+		};
+	}
+
+	private Predicate<Reservation> isRestaurantReservationPredicate(
+		CustomerReservationInfoParam customerReservationInfoParam) {
+		return reservation -> reservation.getRestaurant().equals(
+			reservations.stream()
+				.filter(
+					reservation1 -> reservation1.getId().equals(customerReservationInfoParam.reservationId()))
+				.map(Reservation::getRestaurant)
+				.findAny()
+				.get()
+		);
+	}
+
+	private Predicate<Reservation> isCustomerReservationPredicate(
+		CustomerReservationInfoParam customerReservationInfoParam) {
+		return reservation -> reservation.getCustomer().equals(
+			reservations.stream()
+				.filter(
+					reservation1 -> reservation1.getId().equals(customerReservationInfoParam.reservationId()))
+				.map(Reservation::getCustomer)
+				.findAny()
+				.get()
+		);
 	}
 }
