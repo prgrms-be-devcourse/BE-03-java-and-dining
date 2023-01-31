@@ -32,7 +32,7 @@ jobs:
           YML_DIR: src/main/resources
           YML_DIR_FILE_NAME: application.yml
         run: |
-          echo $APPLICATION_YML | base64 --decode > $YML_DIR/YML_DIR_FILE_NAME  
+          echo $APPLICATION_YML | base64 --decode > src/main/resources/application.yml
           cd src/main/resources
           ls -al
           cat application.yml
