@@ -79,8 +79,8 @@ class OwnerReservationApiTest {
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(CONFIRMED);
 
 		// when & then
-		mockMvc.perform(patch("/owner/api/reservations/{reservationId}?ownerId=" + owner.getId(),
-				reservation.getId())
+		mockMvc.perform(patch("/owner/api/reservations/{reservationId}", reservation.getId())
+				.param("ownerId", owner.getId().toString())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
@@ -88,6 +88,9 @@ class OwnerReservationApiTest {
 			.andDo(document("owner-reservation-update-status-confirm",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
+				),
+				requestParameters(
+					parameterWithName("ownerId").description("점주 식별자")
 				),
 				requestFields(
 					fieldWithPath("status").description("변경할 상태")
@@ -114,8 +117,8 @@ class OwnerReservationApiTest {
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(CANCELLED);
 
 		// when & then
-		mockMvc.perform(patch("/owner/api/reservations/{reservationId}?ownerId=" + owner.getId(),
-				reservation.getId())
+		mockMvc.perform(patch("/owner/api/reservations/{reservationId}", reservation.getId())
+				.param("ownerId", owner.getId().toString())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
@@ -123,6 +126,9 @@ class OwnerReservationApiTest {
 			.andDo(document("owner-reservation-update-status-cancel",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
+				),
+				requestParameters(
+					parameterWithName("ownerId").description("점주 식별자")
 				),
 				requestFields(
 					fieldWithPath("status").description("변경할 상태")
@@ -151,8 +157,8 @@ class OwnerReservationApiTest {
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(VISITED);
 
 		// when & then
-		mockMvc.perform(patch("/owner/api/reservations/{reservationId}?ownerId=" + owner.getId(),
-				reservation.getId())
+		mockMvc.perform(patch("/owner/api/reservations/{reservationId}", reservation.getId())
+				.param("ownerId", owner.getId().toString())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
@@ -160,6 +166,9 @@ class OwnerReservationApiTest {
 			.andDo(document("owner-reservation-update-status-visit",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
+				),
+				requestParameters(
+					parameterWithName("ownerId").description("점주 식별자")
 				),
 				requestFields(
 					fieldWithPath("status").description("변경할 상태")
@@ -188,8 +197,8 @@ class OwnerReservationApiTest {
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(NO_SHOW);
 
 		// when & then
-		mockMvc.perform(patch("/owner/api/reservations/{reservationId}?ownerId=" + owner.getId(),
-				reservation.getId())
+		mockMvc.perform(patch("/owner/api/reservations/{reservationId}", reservation.getId())
+				.param("ownerId", owner.getId().toString())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
@@ -197,6 +206,9 @@ class OwnerReservationApiTest {
 			.andDo(document("owner-reservation-update-status-noShow",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
+				),
+				requestParameters(
+					parameterWithName("ownerId").description("점주 식별자")
 				),
 				requestFields(
 					fieldWithPath("status").description("변경할 상태")
