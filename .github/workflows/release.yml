@@ -60,6 +60,16 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_EC2_KEY }}
           script: |
+            sudo mkdir -p /etc/systemd/system/docker.service.d/
+            sudo touch /etc/systemd/system/docker.service.d/aws-credentials.conf
+            
+            echo "[Service]" | tee -i /etc/systemd/system/docker.service.d/aws-credentials.conf
+            echo "Environment=${{ secrets.AWS_ACCESS_KEY }} | tee -i /etc/systemd/system/docker.service.d/aws-credentials.conf
+            echo "Environment=${{ secrets.AWS_SECRET_KEY }} | tee -i /etc/systemd/system/docker.service.d/aws-credentials.conf
+            
+            sudo systemctl daemon-reload
+            sudo service docker restart
+            
             docker rm -f $(docker ps -qa)
             docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/java-and-dining
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/java-and-dining
