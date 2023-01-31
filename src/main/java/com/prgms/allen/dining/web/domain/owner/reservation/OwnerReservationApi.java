@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.prgms.allen.dining.domain.reservation.ReservationFindService;
-import com.prgms.allen.dining.domain.reservation.ReservationService;
 import com.prgms.allen.dining.domain.reservation.ReservationStatusUpdateService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
@@ -24,15 +23,12 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 @RequestMapping("/owner/api/reservations")
 public class OwnerReservationApi {
 
-	private final ReservationService reservationService;
 	private final ReservationStatusUpdateService reservationStatusUpdateService;
 	private final ReservationFindService reservationFindService;
 
 	public OwnerReservationApi(
-		ReservationService reservationService,
 		ReservationStatusUpdateService reservationStatusUpdateService,
 		ReservationFindService reservationFindService) {
-		this.reservationService = reservationService;
 		this.reservationStatusUpdateService = reservationStatusUpdateService;
 		this.reservationFindService = reservationFindService;
 	}

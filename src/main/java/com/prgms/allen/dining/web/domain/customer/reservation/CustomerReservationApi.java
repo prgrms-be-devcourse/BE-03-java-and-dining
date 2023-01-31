@@ -25,7 +25,6 @@ import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRe
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
-import com.prgms.allen.dining.event.NotificationService;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
@@ -33,16 +32,13 @@ public class CustomerReservationApi {
 
 	private final ReservationService reservationService;
 	private final ReservationFindService reservationFindService;
-	private final NotificationService notificationService;
 
 	public CustomerReservationApi(
 		ReservationService reservationService,
-		ReservationFindService reservationFindService,
-		NotificationService notificationService
+		ReservationFindService reservationFindService
 	) {
 		this.reservationService = reservationService;
 		this.reservationFindService = reservationFindService;
-		this.notificationService = notificationService;
 	}
 
 	@GetMapping
@@ -74,7 +70,7 @@ public class CustomerReservationApi {
 		@RequestParam Long customerId,
 		@RequestBody @Valid ReservationCreateReq createRequest
 	) {
-		final Long reservationId = notificationService.reserve(customerId, createRequest);
+		final Long reservationId = reservationService.reserve(customerId, createRequest);
 
 		final URI location = UriComponentsBuilder.fromPath("/customer/api/me/reservations/{reservationId}")
 			.buildAndExpand(reservationId)

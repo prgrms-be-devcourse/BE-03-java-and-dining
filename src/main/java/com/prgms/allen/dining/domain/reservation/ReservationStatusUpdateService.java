@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 
@@ -17,9 +18,12 @@ public class ReservationStatusUpdateService {
 	private static final Logger log = LoggerFactory.getLogger(ReservationStatusUpdateService.class);
 
 	private final ReservationService reservationService;
+	private final SlackNotifyService slackNotifyService;
 
-	public ReservationStatusUpdateService(ReservationService reservationService) {
+	public ReservationStatusUpdateService(ReservationService reservationService, SlackNotifyService slackNotifyService,
+		SlackNotifyService slackNotifyService1) {
 		this.reservationService = reservationService;
+		this.slackNotifyService = slackNotifyService1;
 	}
 
 	public void update(Long reservationId, Long ownerId, ReservationStatusUpdateReq updateReq) {
@@ -38,12 +42,14 @@ public class ReservationStatusUpdateService {
 	private void confirm(Long reservationId, Long ownerId) {
 		Reservation findReservation = reservationService.findById(reservationId);
 		findReservation.confirm(ownerId);
+		slackNotifyService.notifyConfirm(findReservation);
 		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
 	}
 
 	private void cancel(Long reservationId, Long ownerId) {
 		Reservation findReservation = reservationService.findById(reservationId);
 		findReservation.cancel(ownerId);
+		slackNotifyService.notifyCancel(findReservation);
 		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
 	}
 
