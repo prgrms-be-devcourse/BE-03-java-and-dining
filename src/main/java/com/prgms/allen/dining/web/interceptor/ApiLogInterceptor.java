@@ -20,6 +20,7 @@ public class ApiLogInterceptor implements HandlerInterceptor {
 		HttpServletResponse response,
 		Object handler
 	) throws Exception {
+		String method = request.getMethod();
 		String requestUri = request.getRequestURI();
 		String logId = UUID.randomUUID()
 			.toString()
@@ -27,7 +28,7 @@ public class ApiLogInterceptor implements HandlerInterceptor {
 
 		request.setAttribute(LOG_ID, logId);
 
-		log.info("[>>> REQUEST] {} ({})", requestUri, logId);
+		log.info("[>>> REQUEST] {} {} ({})", method, requestUri, logId);
 		return true;
 	}
 
@@ -38,8 +39,10 @@ public class ApiLogInterceptor implements HandlerInterceptor {
 		Object handler,
 		Exception ex
 	) throws Exception {
+		String method = request.getMethod();
 		String requestUri = request.getRequestURI();
 		String logId = (String)request.getAttribute(LOG_ID);
-		log.info("[<<< RESPONSE] {} ({})", requestUri, logId);
+
+		log.info("[<<< RESPONSE] {} {} ({})", method, requestUri, logId);
 	}
 }
