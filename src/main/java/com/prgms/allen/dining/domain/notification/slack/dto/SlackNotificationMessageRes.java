@@ -1,10 +1,10 @@
-package com.prgms.allen.dining.event.dto;
+package com.prgms.allen.dining.domain.notification.slack.dto;
 
 import java.time.LocalDateTime;
 
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 
-public record SlackMessageRes(
+public record SlackNotificationMessageRes(
 	String customerName,
 	String customerPhone,
 	int visitorCount,
@@ -12,7 +12,8 @@ public record SlackMessageRes(
 	String restaurantName,
 	HeaderMessage headerMessage
 ) {
-	public SlackMessageRes(Reservation reservation, HeaderMessage headerMessage) {
+
+	public SlackNotificationMessageRes(Reservation reservation, HeaderMessage headerMessage) {
 		this(
 			reservation.getCustomerName(),
 			reservation.getCustomerPhone(),

@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.event.dto;
+package com.prgms.allen.dining.domain.notification.slack.dto;
 
 public enum HeaderMessage {
 	RESERVATION_ACCEPTED("예약이 접수되었습니다"),
