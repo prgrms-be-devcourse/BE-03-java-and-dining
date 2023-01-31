@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
+import com.prgms.allen.dining.global.error.exception.NotificationFailedException;
 import com.prgms.allen.dining.global.error.exception.ReserveFailException;
 import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
@@ -69,6 +70,13 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleRestaurantDuplicateCreationException(
 		RestaurantDuplicateCreationException e) {
 		log.info("RestaurantDuplicateCreationException occurred.", e);
+		ErrorResponse response = new ErrorResponse(e.getErrorCode());
+		return newResponseEntity(response);
+	}
+
+	@ExceptionHandler(NotificationFailedException.class)
+	public ResponseEntity<ErrorResponse> handleNotificationFailedException(NotificationFailedException e) {
+		log.info("NotificationFailedException occurred.", e);
 		ErrorResponse response = new ErrorResponse(e.getErrorCode());
 		return newResponseEntity(response);
 	}

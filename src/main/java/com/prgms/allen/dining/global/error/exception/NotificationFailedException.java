@@ -2,12 +2,13 @@ package com.prgms.allen.dining.global.error.exception;
 
 import com.prgms.allen.dining.global.error.ErrorCode;
 
-public class CustomException extends IllegalArgumentException {
+public class NotificationFailedException extends RuntimeException {
 
 	private final ErrorCode errorCode;
 
-	public CustomException(ErrorCode errorCode) {
-		this.errorCode = errorCode;
+	public NotificationFailedException(String message) {
+		super(message);
+		this.errorCode = ErrorCode.NOTIFICATION_CONNECTION_ERROR;
 	}
 
 	public ErrorCode getErrorCode() {
