@@ -31,6 +31,7 @@ import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
+import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;

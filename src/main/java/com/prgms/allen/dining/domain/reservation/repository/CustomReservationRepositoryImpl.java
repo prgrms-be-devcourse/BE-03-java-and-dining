@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.reservation;
+package com.prgms.allen.dining.domain.reservation.repository;
 
 import java.time.LocalDateTime;
 
