@@ -2,6 +2,7 @@ package com.prgms.allen.dining.web.domain.owner.reservation;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +26,16 @@ import com.prgms.allen.dining.domain.reservation.service.ReservationStatusUpdate
 public class OwnerReservationApi {
 
 	private final ReservationService reservationService;
-	private final ReservationStatusUpdateService reservationStatusUpdateService;
 	private final ReservationFindService reservationFindService;
+	private final ReservationStatusUpdateService statusUpdateService;
 
 	public OwnerReservationApi(
 		ReservationService reservationService,
-		ReservationStatusUpdateService reservationStatusUpdateService,
-		ReservationFindService reservationFindService) {
+		ReservationFindService reservationFindService,
+		@Qualifier("ownerReservationStatusUpdateService") ReservationStatusUpdateService statusUpdateService
+	) {
 		this.reservationService = reservationService;
-		this.reservationStatusUpdateService = reservationStatusUpdateService;
+		this.statusUpdateService = statusUpdateService;
 		this.reservationFindService = reservationFindService;
 	}
 
@@ -56,7 +58,7 @@ public class OwnerReservationApi {
 		@RequestParam Long ownerId,
 		@Valid @RequestBody ReservationStatusUpdateReq statusUpdateReq
 	) {
-		reservationStatusUpdateService.update(reservationId, ownerId, statusUpdateReq);
+		statusUpdateService.update(reservationId, ownerId, statusUpdateReq);
 		return ResponseEntity.ok()
 			.build();
 	}
