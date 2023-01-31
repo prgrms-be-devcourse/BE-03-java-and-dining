@@ -13,9 +13,13 @@ import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.ReservationRepository;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoParam;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForCustomer;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
+import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
@@ -28,12 +32,18 @@ public class ReservationFindService {
 	private final ReservationRepository reservationRepository;
 	private final RestaurantService restaurantService;
 	private final MemberService memberService;
+	private final ReservationService reservationService;
 
-	public ReservationFindService(ReservationRepository reservationRepository, RestaurantService restaurantService,
-		MemberService memberService) {
+	public ReservationFindService(
+		ReservationRepository reservationRepository,
+		RestaurantService restaurantService,
+		MemberService memberService,
+		ReservationService reservationService
+	) {
 		this.reservationRepository = reservationRepository;
 		this.restaurantService = restaurantService;
 		this.memberService = memberService;
+		this.reservationService = reservationService;
 	}
 
 	// TODO: Owner 정보 추가하기
@@ -68,16 +78,30 @@ public class ReservationFindService {
 			.toList());
 	}
 
-	public ReservationDetailRes getReservationDetail(Long reservationId, Long customerId) {
+	public ReservationDetailResForCustomer getReservationDetail(Long reservationId, Long customerId) {
 
 		final Member customer = memberService.findCustomerById(customerId);
 
-		return new ReservationDetailRes(reservationRepository.findByIdAndCustomer(reservationId, customer)
+		return new ReservationDetailResForCustomer(reservationRepository.findByIdAndCustomer(reservationId, customer)
 			.orElseThrow(() -> new NotFoundResourceException(
 				MessageFormat.format(
 					"Cannot find Reservation entity satisfies both reservation id={0} and customer id={1}",
 					reservationId,
 					customerId
 				))));
+	}
+
+	public ReservationDetailResForOwner getReservationDetail(
+		Long reservationId
+	) {
+		final Reservation reservation = reservationService.findById(reservationId);
+		final CustomerReservationInfoParam customerReservationInfoParam = new CustomerReservationInfoParam(
+			reservationId
+		);
+		final CustomerReservationInfoProj customerReservationInfo = reservationRepository.findCustomerReservationInfo(
+			customerReservationInfoParam
+		);
+
+		return new ReservationDetailResForOwner(customerReservationInfo, reservation);
 	}
 }

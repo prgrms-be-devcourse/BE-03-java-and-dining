@@ -1,8 +1,6 @@
-package com.prgms.allen.dining.domain.member.entity;
+package com.prgms.allen.dining.domain.reservation.entity;
 
 import java.util.List;
-
-import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 
 public enum VisitStatus {
 

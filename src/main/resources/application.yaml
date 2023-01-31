@@ -10,6 +10,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
   output:
     ansi:
       enabled: always

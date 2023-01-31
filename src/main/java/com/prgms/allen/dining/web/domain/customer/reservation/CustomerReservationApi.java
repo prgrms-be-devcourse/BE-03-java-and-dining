@@ -23,7 +23,6 @@ import com.prgms.allen.dining.domain.member.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
@@ -62,7 +61,7 @@ public class CustomerReservationApi {
 	}
 
 	@GetMapping("/{reservationId}")
-	public ResponseEntity<ReservationDetailRes> getReservationDetail(
+	public ResponseEntity<ReservationDetailResForCustomer> getReservationDetail(
 		@PathVariable Long reservationId,
 		@RequestParam Long customerId
 	) {

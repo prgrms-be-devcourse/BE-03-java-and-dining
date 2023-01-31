@@ -35,8 +35,8 @@ public class OwnerReservationApi {
 		@Qualifier("ownerReservationStatusUpdateService") ReservationStatusUpdateService statusUpdateService
 	) {
 		this.reservationService = reservationService;
-		this.statusUpdateService = statusUpdateService;
 		this.reservationFindService = reservationFindService;
+		this.statusUpdateService = statusUpdateService;
 	}
 
 	@GetMapping
@@ -49,6 +49,15 @@ public class OwnerReservationApi {
 			restaurantId,
 			reservationStatus,
 			pageable
+		));
+	}
+
+	@GetMapping("/{reservationId}")
+	public ResponseEntity<ReservationDetailResForOwner> getReservationDetail(
+		@PathVariable Long reservationId
+	) {
+		return ResponseEntity.ok(reservationFindService.getReservationDetail(
+			reservationId
 		));
 	}
 
