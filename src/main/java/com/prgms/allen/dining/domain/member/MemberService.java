@@ -26,10 +26,10 @@ public class MemberService {
 		return savedMember.getId();
 	}
 
-	public Member findOwnerById(long ownerId) {
+	public Member findOwnerById(Long ownerId) {
 		return memberRepository.findByIdAndMemberType(ownerId, MemberType.OWNER)
 			.orElseThrow(() -> new NotFoundResourceException(
-				MessageFormat.format("Cannot find Restaurant entity for owner id = {0}", ownerId)
+				MessageFormat.format("Cannot find Owner entity for owner id = {0}", ownerId)
 			));
 	}
 
