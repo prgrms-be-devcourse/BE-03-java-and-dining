@@ -4,11 +4,13 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,8 +25,10 @@ import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRe
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationStatusUpdateService;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
@@ -32,11 +36,16 @@ public class CustomerReservationApi {
 
 	private final ReservationService reservationService;
 	private final ReservationFindService reservationFindService;
+	private final ReservationStatusUpdateService statusUpdateService;
 
-	public CustomerReservationApi(ReservationService reservationService,
-		ReservationFindService reservationFindService) {
+	public CustomerReservationApi(
+		ReservationService reservationService,
+		ReservationFindService reservationFindService,
+		@Qualifier("customerReservationStatusUpdateService") ReservationStatusUpdateService statusUpdateService
+	) {
 		this.reservationService = reservationService;
 		this.reservationFindService = reservationFindService;
+		this.statusUpdateService = statusUpdateService;
 	}
 
 	@GetMapping
@@ -86,5 +95,16 @@ public class CustomerReservationApi {
 
 		return ResponseEntity.ok()
 			.body(availableTimes);
+	}
+
+	@PatchMapping("/{reservationId}")
+	public ResponseEntity<Void> cancel(
+		@PathVariable Long reservationId,
+		@RequestParam Long customerId,
+		@Valid @RequestBody ReservationStatusUpdateReq statusUpdateReq
+	) {
+		statusUpdateService.update(reservationId, customerId, statusUpdateReq);
+		return ResponseEntity.ok()
+			.build();
 	}
 }

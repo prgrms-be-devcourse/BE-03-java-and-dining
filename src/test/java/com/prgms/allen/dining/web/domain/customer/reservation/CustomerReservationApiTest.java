@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.web.domain.customer.reservation;
 
+import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -9,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +35,7 @@ import com.prgms.allen.dining.domain.member.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -235,6 +239,44 @@ class CustomerReservationApiTest {
 						fieldWithPath("restaurantInfoRes.phone").type(JsonFieldType.STRING).description("식당 전화번호")
 					)
 				)
+			);
+	}
+
+	@Test
+	@DisplayName("고객은 자신의 예약을 취소할 수 있다.")
+	void cancel_reservation() throws Exception {
+		// given
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		ReservationCustomerInput customerInput = new ReservationCustomerInput(
+			LocalDate.now()
+				.plusDays(1),
+			LocalTime.now()
+				.truncatedTo(ChronoUnit.HOURS),
+			2
+		);
+		Reservation reservation = reservationRepository.save(new Reservation(customer, restaurant, customerInput));
+
+		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(CANCELLED);
+
+		// when & then
+		mockMvc.perform(patch("/customer/api/reservations/{reservationId}?", reservation.getId())
+				.param("customerId", customer.getId().toString())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(statusUpdateReq)))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("customer-reservation-update-status-cancel",
+				pathParameters(
+					parameterWithName("reservationId").description("예약 식별자")
+				),
+				requestParameters(
+					parameterWithName("customerId").description("고객 식별자")
+				),
+				requestFields(
+					fieldWithPath("status").description("변경할 상태")
+				))
 			);
 	}
 }
