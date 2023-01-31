@@ -22,7 +22,6 @@ import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.domain.member.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForOwner;
