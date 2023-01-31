@@ -39,6 +39,42 @@ public class DummyGenerator {
 		2
 	);
 
+	public static final ReservationCustomerInput CUSTOMER_INPUT_PLUS_1_HOUR = new ReservationCustomerInput(
+		LocalDate.now()
+			.plusDays(1),
+		LocalTime.now()
+			.plusHours(2)
+			.truncatedTo(ChronoUnit.HOURS),
+		2
+	);
+
+	public static final ReservationCustomerInput CUSTOMER_INPUT_PLUS_2_HOUR = new ReservationCustomerInput(
+		LocalDate.now()
+			.plusDays(1),
+		LocalTime.now()
+			.plusHours(3)
+			.truncatedTo(ChronoUnit.HOURS),
+		2
+	);
+
+	public static final ReservationCustomerInput CUSTOMER_INPUT_PLUS_3_HOUR = new ReservationCustomerInput(
+		LocalDate.now()
+			.plusDays(1),
+		LocalTime.now()
+			.plusHours(4)
+			.truncatedTo(ChronoUnit.HOURS),
+		2
+	);
+
+	public static final ReservationCustomerInput CUSTOMER_INPUT_PLUS_4_HOUR = new ReservationCustomerInput(
+		LocalDate.now()
+			.plusDays(1),
+		LocalTime.now()
+			.plusHours(5)
+			.truncatedTo(ChronoUnit.HOURS),
+		2
+	);
+
 	public static Restaurant createRestaurant(Member owner) {
 		return new Restaurant(
 			owner,

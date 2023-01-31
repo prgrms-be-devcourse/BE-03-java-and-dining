@@ -2,9 +2,13 @@ package com.prgms.allen.dining.domain.reservation;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.math.BigInteger;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.data.domain.Page;
@@ -15,16 +19,22 @@ import com.prgms.allen.dining.domain.member.FakeMemberRepository;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.member.entity.VisitStatus;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailRes;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForCustomer;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForOwner;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForOwner;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
+import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
+import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
+import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
 
@@ -35,10 +45,16 @@ class ReservationFindServiceTest {
 	private final MemberRepository memberRepository = new FakeMemberRepository();
 	private final MemberService memberService = new MemberService(memberRepository);
 	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
-	private final ReservationFindService reservationFindService = new ReservationFindService(
+	private final ReservationService reservationService = new ReservationService(
 		reservationRepository,
 		restaurantService,
 		memberService
+	);
+	private final ReservationFindService reservationFindService = new ReservationFindService(
+		reservationRepository,
+		restaurantService,
+		memberService,
+		reservationService
 	);
 
 	@ParameterizedTest
@@ -142,15 +158,123 @@ class ReservationFindServiceTest {
 			customerInput
 		));
 
-		ReservationDetailRes expect = new ReservationDetailRes(reservation);
+		ReservationDetailResForCustomer expect = new ReservationDetailResForCustomer(reservation);
 
 		// when
-		ReservationDetailRes actual = reservationFindService.getReservationDetail(reservation.getId(),
+		ReservationDetailResForCustomer actual = reservationFindService.getReservationDetail(reservation.getId(),
 			customer.getId());
 
 		// then
 		assertThat(actual)
 			.isEqualTo(expect);
 
+	}
+
+	@Test
+	@DisplayName("점주는 예약을 상세조회 할 수 있다.")
+	void getReservationDetail() {
+		// given
+		Member customer = memberRepository.save(new Member(
+			"customer",
+			"김환이",
+			"01012342345",
+			"asdfg123!",
+			MemberType.CUSTOMER
+		));
+
+		Member owner = memberRepository.save(new Member(
+			"owner",
+			"김환이",
+			"01012342345",
+			"asdfg123!",
+			MemberType.OWNER
+		));
+
+		Restaurant restaurant = restaurantRepository.save(new Restaurant(
+			owner,
+			FoodType.KOREAN,
+			"유명 레스토랑",
+			6,
+			LocalTime.of(11, 0),
+			LocalTime.of(21, 0),
+			"서울특별시 강남구 어딘가로 123 무슨빌딩 1층",
+			"우리는 유명한 한식당입니다.",
+			"0211112222",
+			List.of(new Menu("맛있는 밥", BigInteger.valueOf(10000), "맛있어용")),
+			List.of(new ClosingDay(DayOfWeek.MONDAY))
+		));
+
+		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
+		ReservationCustomerInput customerInput1 = DummyGenerator.CUSTOMER_INPUT_PLUS_1_HOUR;
+		ReservationCustomerInput customerInput2 = DummyGenerator.CUSTOMER_INPUT_PLUS_2_HOUR;
+		ReservationCustomerInput customerInput3 = DummyGenerator.CUSTOMER_INPUT_PLUS_3_HOUR;
+		ReservationCustomerInput customerInput4 = DummyGenerator.CUSTOMER_INPUT_PLUS_4_HOUR;
+
+		saveReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput
+		);
+		saveReservation(
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput1
+		);
+		Reservation lastVisitedReservation = reservationRepository.save(Reservation.newTestInstance(
+			null,
+			customer,
+			restaurant,
+			ReservationStatus.VISITED,
+			customerInput2
+		));
+		saveReservation(
+			customer,
+			restaurant,
+			ReservationStatus.NO_SHOW,
+			customerInput3
+		);
+		saveReservation(
+			customer,
+			restaurant,
+			ReservationStatus.CONFIRMED,
+			customerInput4
+		);
+
+		ReservationDetailResForOwner expect = new ReservationDetailResForOwner(
+			new CustomerReservationInfoProj(
+				customer.getName(),
+				customer.getPhone(),
+				3L,
+				1L,
+				lastVisitedReservation.getVisitDateTime().toString()
+			),
+			lastVisitedReservation
+		);
+
+		// when
+		ReservationDetailResForOwner actual = reservationFindService.getReservationDetail(
+			lastVisitedReservation.getId());
+
+		// then
+		assertThat(actual)
+			.isEqualTo(expect);
+	}
+
+	private void saveReservation(
+		Member consumer,
+		Restaurant savedRestaurant,
+		ReservationStatus status,
+		ReservationCustomerInput customerInput
+	) {
+
+		reservationRepository.save(Reservation.newTestInstance(
+			null,
+			consumer,
+			savedRestaurant,
+			status,
+			customerInput
+		));
 	}
 }
