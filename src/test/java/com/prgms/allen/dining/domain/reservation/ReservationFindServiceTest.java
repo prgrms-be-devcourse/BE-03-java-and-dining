@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigInteger;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -204,12 +206,50 @@ class ReservationFindServiceTest {
 			List.of(new ClosingDay(DayOfWeek.MONDAY))
 		));
 
-		ReservationCustomerInput customerInput = DummyGenerator.CUSTOMER_INPUT;
-		ReservationCustomerInput customerInput1 = DummyGenerator.CUSTOMER_INPUT_PLUS_1_HOUR;
-		ReservationCustomerInput customerInput2 = DummyGenerator.CUSTOMER_INPUT_PLUS_2_HOUR;
-		ReservationCustomerInput customerInput3 = DummyGenerator.CUSTOMER_INPUT_PLUS_3_HOUR;
-		ReservationCustomerInput customerInput4 = DummyGenerator.CUSTOMER_INPUT_PLUS_4_HOUR;
-
+		ReservationCustomerInput customerInput = new ReservationCustomerInput(
+			LocalDateTime.of(
+				LocalDate.now().plusDays(1),
+				restaurant.getOpenTime()
+			),
+			2,
+			"가지 빼주세요"
+		);
+		ReservationCustomerInput customerInput1 = new ReservationCustomerInput(
+			LocalDateTime.of(
+				LocalDate.now().plusDays(1),
+				restaurant.getOpenTime()
+					.plusHours(1)
+			),
+			2,
+			"가지 빼주세요"
+		);
+		ReservationCustomerInput customerInput2 = new ReservationCustomerInput(
+			LocalDateTime.of(
+				LocalDate.now().plusDays(1),
+				restaurant.getOpenTime()
+					.plusHours(2)
+			),
+			2,
+			"가지 빼주세요"
+		);
+		ReservationCustomerInput customerInput3 = new ReservationCustomerInput(
+			LocalDateTime.of(
+				LocalDate.now().plusDays(1),
+				restaurant.getOpenTime()
+					.plusHours(3)
+			),
+			2,
+			"가지 빼주세요"
+		);
+		ReservationCustomerInput customerInput4 = new ReservationCustomerInput(
+			LocalDateTime.of(
+				LocalDate.now().plusDays(1),
+				restaurant.getOpenTime()
+					.plusHours(4)
+			),
+			2,
+			"가지 빼주세요"
+		);
 		saveReservation(
 			customer,
 			restaurant,
