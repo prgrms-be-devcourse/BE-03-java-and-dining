@@ -54,6 +54,8 @@ jobs:
 
       # 서버에서 Docker 이미지 실행
       - name: EC2 Docker Run
+        env:
+          APP_NAME: java-and-dining
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AWS_EC2_HOST }}
@@ -70,8 +72,8 @@ jobs:
             sudo systemctl daemon-reload
             sudo service docker restart
             
-            docker rm -f $(docker ps -qa)
-            docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/java-and-dining
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/java-and-dining
+            docker rm -f ${APP_NAME}
+            docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/${APP_NAME}
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${APP_NAME}
             docker-compose up -d
 
