@@ -9,18 +9,19 @@ public record CustomerInfoRes(
 	long noShowCount,
 	LocalDateTime lastVisitedDateTime
 ) {
-	public static final String DEFAULT_DATE_TIME = LocalDateTime.MIN.toString();
-
 	public CustomerInfoRes(CustomerReservationInfoProj customerReservationInfo) {
 		this(
 			customerReservationInfo.getName(),
 			customerReservationInfo.getPhone(),
 			customerReservationInfo.getVisitedCount(),
 			customerReservationInfo.getNoShowCount(),
-			LocalDateTime.parse(
-				customerReservationInfo.getLastVisitedDateTime()
-					.orElse(DEFAULT_DATE_TIME)
-			)
+			getLastVisitedDateTime(customerReservationInfo)
 		);
+	}
+
+	private static LocalDateTime getLastVisitedDateTime(CustomerReservationInfoProj customerReservationInfo) {
+		return customerReservationInfo.getLastVisitedDateTime()
+			.map(LocalDateTime::parse)
+			.orElse(null);
 	}
 }
