@@ -161,12 +161,6 @@ public class Restaurant {
 		return List.copyOf(closingDays);
 	}
 
-	public List<DayOfWeek> getAllClosingDayOfWeek() {
-		return this.closingDays.stream()
-			.map(ClosingDay::getDayOfWeek)
-			.toList();
-	}
-
 	public List<Menu> getMinorMenu() {
 		if (menu.size() < 5) {
 			return this.getMenu();
@@ -176,6 +170,17 @@ public class Restaurant {
 
 	public boolean isAvailable(int totalCount, int requestCount) {
 		return this.capacity - totalCount >= requestCount;
+	}
+
+	public boolean isAvailableForDay(long totalCount) {
+		long availableTotalCapacity = (long)(this.lastOrderTime.getHour() - this.openTime.getHour() + 1) * capacity;
+		return availableTotalCapacity - totalCount >= 2;
+	}
+
+	public boolean isClosingDay(LocalDate requestDate) {
+		return this.closingDays.stream()
+			.map(ClosingDay::getDayOfWeek)
+			.anyMatch(dayOfWeek -> dayOfWeek.equals(requestDate.getDayOfWeek()));
 	}
 
 	public void validate(Member owner, String name, int capacity, String phone, LocalTime openTime,
