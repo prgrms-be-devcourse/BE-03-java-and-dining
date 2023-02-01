@@ -172,9 +172,9 @@ public class Restaurant {
 		return this.capacity - totalCount >= requestCount;
 	}
 
-	public boolean isAvailableForDay(long totalCount) {
+	public boolean isNotReserveAvailableForDay(long totalCount) {
 		long availableTotalCapacity = (long)(this.lastOrderTime.getHour() - this.openTime.getHour() + 1) * capacity;
-		return availableTotalCapacity - totalCount >= 2;
+		return availableTotalCapacity - totalCount < 2;
 	}
 
 	public boolean isClosingDay(LocalDate requestDate) {

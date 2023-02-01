@@ -108,23 +108,34 @@ public class ReservationService {
 	public ReservationAvailableDatesRes getAvailableDates(Long restaurantId) {
 		Restaurant restaurant = restaurantService.findById(restaurantId);
 
+		List<LocalDate> notAvailableDates = getReserveNotAvailableDates(restaurant);
+
+		List<LocalDate> canReserveDates = getOpenDays(restaurant);
+
+		return new ReservationAvailableDatesRes(
+			filterReserveNotAvailableDates(notAvailableDates, canReserveDates));
+	}
+
+	private List<LocalDate> filterReserveNotAvailableDates(List<LocalDate> notAvailableDates,
+		List<LocalDate> canReserveDates) {
+		return canReserveDates.stream()
+			.filter(localDate -> !notAvailableDates.contains(localDate))
+			.toList();
+	}
+
+	private List<LocalDate> getOpenDays(Restaurant restaurant) {
 		LocalDate start = LocalDate.now();
 		LocalDate end = start.plusDays(MAX_RESERVE_PERIOD);
 
-		List<LocalDate> availableDatesByRestaurant = getDatesExceptFullReserveDates(restaurant);
-
-		List<LocalDate> canReverseDates = start.datesUntil(end)
+		return start.datesUntil(end)
 			.filter(localDate -> !restaurant.isClosingDay(localDate))
-			.filter(availableDatesByRestaurant::contains)
 			.toList();
-
-		return new ReservationAvailableDatesRes(canReverseDates);
 	}
 
-	private List<LocalDate> getDatesExceptFullReserveDates(Restaurant restaurant) {
+	private List<LocalDate> getReserveNotAvailableDates(Restaurant restaurant) {
 		return reservationRepository.findTotalVisitorCountPerDay(restaurant, TAKEN_STATUS_LIST)
 			.stream()
-			.filter(proj -> restaurant.isAvailableForDay(proj.count()))
+			.filter(proj -> restaurant.isNotReserveAvailableForDay(proj.count()))
 			.map(DateAndTotalVisitCountPerDayProj::date)
 			.toList();
 	}
