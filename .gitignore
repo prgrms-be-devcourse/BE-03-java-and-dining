@@ -203,6 +203,7 @@ $RECYCLE.BIN/
 .gradle
 **/build/
 !src/**/build/
+!/build/generated/**
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -230,3 +231,5 @@ gradle-app.setting
 
 # idea
 .idea
+
+/src/main/resources/application.yml

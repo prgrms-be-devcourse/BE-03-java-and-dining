@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgms.allen.dining.domain.common.NotFoundResourceException;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
@@ -21,6 +22,7 @@ import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.global.error.ErrorCode;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 

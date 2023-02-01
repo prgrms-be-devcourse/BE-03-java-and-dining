@@ -11,7 +11,6 @@ Content-Type: application/json
 }
 
 
-
 ### [회원 - 회원 가입] 점주 회원 가입 API
 POST http://localhost:8080/api/members/signup
 Content-Type: application/json
@@ -23,22 +22,6 @@ Content-Type: application/json
   "password": "password123!",
   "memberType": "OWNER"
 }
-
-
-### [고객 - 예약] 예약을 요청하는 API
-POST http://localhost:8080/customer/api/reservations?customerId=1
-Content-Type: application/json
-
-{
-  "restaurantId": 3,
-  "reservationCustomerInput": {
-    "visitDateTime": "2023-02-28T16:00:00",
-    "visitorCount": 2,
-    "memo": "단무지는 빼주세요~"
-  }
-}
-
-
 
 ### [점주 - 식당] 식당 등록 API
 POST http://localhost:8080/owner/api/restaurants?ownerId=2
@@ -72,18 +55,68 @@ Content-Type: application/json
   ]
 }
 
+### [고객 - 예약] 예약을 요청하는 API
+POST http://localhost:8080/customer/api/reservations?customerId=1
+Content-Type: application/json
+
+{
+  "restaurantId": 3,
+  "reservationCustomerInput": {
+    "visitDateTime": "2023-02-28T22:00:00",
+    "visitorCount": 2,
+    "memo": "단무지는 빼주세요~"
+  }
+}
+
+
+### [예약] 날짜와 인원수를 통해 식당의 예약가능 시간들을 조회하는 API
+GET http://localhost:8080/customer/api/reservations/available-times?restaurantId=3&date=2023-01-29&visitorCount=2
+
 
 ### [점주 - 예약] 예약을 확정하는 API
-PATCH http://localhost:8080/owner/api/reservations/4/confirm?ownerId=2
+PATCH http://localhost:8080/owner/api/reservations/4?ownerId=2
+Content-Type: application/json
+
+{
+  "status": "confirm"
+}
 
 
 ### [점주 - 예약] 예약을 취소하는 API
-PATCH http://localhost:8080/owner/api/reservations/4/cancel/?ownerId=2
+PATCH http://localhost:8080/owner/api/reservations/4?ownerId=2
+Content-Type: application/json
+
+{
+  "status": "cancel"
+}
+
+
+### [점주 - 예약] 예약을 방문완료로 변경하는 API
+PATCH http://localhost:8080/owner/api/reservations/4?ownerId=2
+Content-Type: application/json
+
+{
+  "status": "visit"
+}
+
+
+### [점주 - 예약] 예약을 노쇼로 변경하는 API
+PATCH http://localhost:8080/owner/api/reservations/4?ownerId=2
+Content-Type: application/json
+
+{
+  "status": "no-show"
+}
 
 
 ### 레스토랑 목록 paging조회
 GET http://localhost:8080/customer/api/restaurants?page=0&size=3
 
+### 구매자의 예약을 확인하는 API
+GET http://localhost:8080/customer/api/reservations?status=PLANNED&customerId=1
+
+### 구매자의 예약을 상세 조회하는 API
+GET http://localhost:8080/customer/api/reservations/4?customerId=1
 
 ### 고객이 식당의 상세정보를 조회
 GET http://localhost:8080/customer/api/restaurants/2
@@ -98,6 +131,9 @@ GET http://localhost:8080/customer/api/restaurants/search?page=0&size=5&restaura
 
 ### 레스토랑 메뉴 조회 API
 GET http://localhost:8080/customer/api/restaurants/2/menu
+
+### 점주의 예약 상세 조회
+GET http://localhost:8080/owner/api/reservations/5
 
 
 ### 식당 예약 가능 날짜 조회 API

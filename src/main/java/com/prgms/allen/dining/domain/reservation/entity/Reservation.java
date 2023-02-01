@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
+import static com.prgms.allen.dining.domain.member.entity.MemberType.*;
 import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus.*;
 
 import java.text.MessageFormat;
@@ -23,11 +24,13 @@ import org.springframework.util.Assert;
 
 import com.prgms.allen.dining.domain.common.entity.BaseEntity;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.reservation.exception.IllegalReservationStateException;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Entity
 public class Reservation extends BaseEntity {
+
+	private static final int MAX_STATUS_UPDATE_EXPIRATION_PERIOD = 30;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -53,8 +56,21 @@ public class Reservation extends BaseEntity {
 	protected Reservation() {
 	}
 
-	public Reservation(Long id, Member customer, Restaurant restaurant, ReservationStatus status,
-		ReservationCustomerInput customerInput) {
+	public Reservation(
+		Member customer,
+		Restaurant restaurant,
+		ReservationCustomerInput customerInput
+	) {
+		this(null, customer, restaurant, checkVisitingToday(customerInput), customerInput);
+	}
+
+	private Reservation(
+		Long id,
+		Member customer,
+		Restaurant restaurant,
+		ReservationStatus status,
+		ReservationCustomerInput customerInput
+	) {
 		validate(customer, restaurant, customerInput);
 
 		this.id = id;
@@ -64,22 +80,21 @@ public class Reservation extends BaseEntity {
 		this.customerInput = customerInput;
 	}
 
-	public Reservation(Member customer, Restaurant restaurant, ReservationStatus status,
-		ReservationCustomerInput customerInput) {
-		this(null, customer, restaurant, status, customerInput);
+	public static Reservation newTestInstance(
+		Long id,
+		Member customer,
+		Restaurant restaurant,
+		ReservationStatus status,
+		ReservationCustomerInput customerInput
+	) {
+		return new Reservation(id, customer, restaurant, status, customerInput);
 	}
 
-	public Reservation(Member customer, Restaurant restaurant, ReservationCustomerInput customerInput) {
-		validate(customer, restaurant, customerInput);
-
-		this.customer = customer;
-		this.restaurant = restaurant;
+	public static ReservationStatus checkVisitingToday(ReservationCustomerInput customerInput) {
 		if (customerInput.checkVisitingToday()) {
-			this.status = CONFIRMED;
-		} else {
-			this.status = PENDING;
+			return CONFIRMED;
 		}
-		this.customerInput = customerInput;
+		return PENDING;
 	}
 
 	private void validate(Member customer, Restaurant restaurant, ReservationCustomerInput customerInput) {
@@ -144,38 +159,124 @@ public class Reservation extends BaseEntity {
 		return restaurant.getOwner();
 	}
 
+	public String getMemo() {
+		return customerInput.getCustomerMemo();
+	}
+
 	public void confirm(Long ownerId) {
-		validUpdatableReservationState(ownerId, PENDING);
-		customerInput.assertVisitDateAfter(LocalDate.now());
+		assertMatchesOwner(ownerId);
+		assertReservationStatusOneOf(PENDING, CONFIRMED);
+		assertVisitDateAfterCurrentDate();
 		status = CONFIRMED;
 	}
 
-	public void cancel(Long ownerId) {
-		validUpdatableReservationState(ownerId, PENDING, CONFIRMED);
-		customerInput.assertVisitDateAfter(LocalDate.now());
+	public void cancel(MemberType memberType, Long memberId) {
+		assertMatchesMember(memberType, memberId);
+		assertReservationStatusOneOf(PENDING, CONFIRMED);
+		assertVisitDateAfterCurrentDate();
 		status = CANCELLED;
 	}
 
-	private void validUpdatableReservationState(Long ownerId, ReservationStatus... validStatuses) {
+	public void visit(Long ownerId) {
 		assertMatchesOwner(ownerId);
-		assertReservationStatus(validStatuses);
+		assertReservationStatusOneOf(CONFIRMED);
+		assertVisitDateTimeBeforeCurrentDateTime();
+		assertDaysBetweenVisitDateAndCurrentDateWithin(MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
+		status = VISITED;
+	}
+
+	public void noShow(Long ownerId) {
+		assertMatchesOwner(ownerId);
+		assertReservationStatusOneOf(CONFIRMED);
+		assertVisitDateTimeBeforeCurrentDateTime();
+		assertDaysBetweenVisitDateAndCurrentDateWithin(MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
+		status = NO_SHOW;
+	}
+
+	private void assertMatchesMember(MemberType memberType, Long memberId) {
+		if (memberType == CUSTOMER) {
+			assertMatchesCustomer(memberId);
+			return;
+		}
+		assertMatchesOwner(memberId);
+	}
+
+	private void assertMatchesCustomer(Long customerId) {
+		Assert.state(
+			customer.matchesId(customerId),
+			MessageFormat.format(
+				"Customer does not match. Parameter customerId={0} but actual customerId={1}",
+				customerId,
+				customer.getId()
+			)
+		);
 	}
 
 	private void assertMatchesOwner(Long ownerId) {
-		if (!getRestaurantOwner().matchesId(ownerId)) {
-			throw new IllegalReservationStateException(MessageFormat.format(
+		Assert.state(
+			getRestaurantOwner().matchesId(ownerId),
+			MessageFormat.format(
 				"Owner does not match. Parameter ownerId={0} but actual ownerId={1}",
 				ownerId,
 				getRestaurantOwner().getId()
-			));
-		}
+			)
+		);
 	}
 
-	private void assertReservationStatus(ReservationStatus... validStatuses) {
-		if (!Arrays.asList(validStatuses).contains(this.status)) {
-			throw new IllegalReservationStateException(MessageFormat.format(
+	private void assertReservationStatusOneOf(ReservationStatus... validStatuses) {
+		Assert.state(
+			Arrays.asList(validStatuses).contains(status),
+			MessageFormat.format(
 				"ReservationStatus should be {0} but was {1}", Arrays.toString(validStatuses), this.status
-			));
-		}
+			)
+		);
+	}
+
+	private void assertVisitDateTimeBeforeCurrentDateTime() {
+		LocalDateTime currentDateTime = LocalDateTime.now();
+
+		Assert.state(
+			customerInput.isVisitDateTimeBefore(currentDateTime),
+			MessageFormat.format(
+				"visitDateTime={0} should be before dateTime={1}", getVisitDateTime(), currentDateTime
+			)
+		);
+	}
+
+	public void assertVisitDateAfterCurrentDate() {
+		LocalDate currentDate = LocalDate.now();
+
+		Assert.state(
+			customerInput.isVisitDateAfter(currentDate),
+			MessageFormat.format(
+				"visitDate={0} should be after date={1}", customerInput.getVisitDate(), currentDate
+			)
+		);
+	}
+
+	private void assertDaysBetweenVisitDateAndCurrentDateWithin(int days) {
+		LocalDate currentDate = LocalDate.now();
+
+		Assert.state(
+			customerInput.isVisitDateTimeWithin(currentDate, days),
+			MessageFormat.format(
+				"Days between visitDate={0} and currentDate={1} should be within {2} days.",
+				customerInput.getVisitDate(),
+				currentDate,
+				days
+			)
+		);
+	}
+
+	public Long getCustomerId() {
+		return customer.getId();
+	}
+
+	public String getRestaurantName() {
+		return restaurant.getName();
+	}
+
+	public String getRestaurantAddress() {
+		return restaurant.getLocation();
 	}
 }

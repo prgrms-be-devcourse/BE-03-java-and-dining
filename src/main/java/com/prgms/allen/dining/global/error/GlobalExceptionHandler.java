@@ -7,26 +7,41 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.prgms.allen.dining.global.error.exception.IllegalModificationException;
-import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
-import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
+import com.prgms.allen.dining.domain.common.NotFoundResourceException;
+import com.prgms.allen.dining.domain.notification.NotificationFailedException;
+import com.prgms.allen.dining.domain.reservation.ReserveFailException;
+import com.prgms.allen.dining.domain.restaurant.RestaurantDuplicateCreationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorResponse> handleException(Exception e) {
+		log.error("Unchecked exception occurred.", e);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+		return newResponseEntity(response);
+	}
+
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e) {
-		log.info("RuntimeException occurred.", e);
+		log.error("RuntimeException occurred.", e);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+		return newResponseEntity(response);
+	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+		log.info("IllegalArgumentException occurred.", e);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_REQUEST);
 		return newResponseEntity(response);
 	}
 
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e) {
 		log.info("IllegalStateException occurred.", e);
-		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_REQUEST);
 		return newResponseEntity(response);
 	}
 
@@ -44,6 +59,13 @@ public class GlobalExceptionHandler {
 		return newResponseEntity(response);
 	}
 
+	@ExceptionHandler(ReserveFailException.class)
+	public ResponseEntity<ErrorResponse> handleReserveFailException(ReserveFailException e) {
+		log.info("ReserveFailException occurred.", e);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_PARAMETER);
+		return newResponseEntity(response);
+	}
+
 	@ExceptionHandler(RestaurantDuplicateCreationException.class)
 	public ResponseEntity<ErrorResponse> handleRestaurantDuplicateCreationException(
 		RestaurantDuplicateCreationException e) {
@@ -52,9 +74,9 @@ public class GlobalExceptionHandler {
 		return newResponseEntity(response);
 	}
 
-	@ExceptionHandler(IllegalModificationException.class)
-	public ResponseEntity<ErrorResponse> handleIllegalModificationException(IllegalModificationException e) {
-		log.info("IllegalModificationException occurred.", e);
+	@ExceptionHandler(NotificationFailedException.class)
+	public ResponseEntity<ErrorResponse> handleNotificationFailedException(NotificationFailedException e) {
+		log.info("NotificationFailedException occurred.", e);
 		ErrorResponse response = new ErrorResponse(e.getErrorCode());
 		return newResponseEntity(response);
 	}

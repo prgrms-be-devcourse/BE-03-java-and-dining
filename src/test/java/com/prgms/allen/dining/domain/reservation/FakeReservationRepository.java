@@ -4,10 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Example;
@@ -18,8 +22,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
 import com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj;
+import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoParam;
+import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
+import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public class FakeReservationRepository implements ReservationRepository {
@@ -28,11 +37,11 @@ public class FakeReservationRepository implements ReservationRepository {
 	private Long id = 0L;
 
 	@Override
-	public Page<Reservation> findAllByRestaurantIdAndStatus(long restaurantId, ReservationStatus status,
+	public Page<Reservation> findAllByRestaurantAndStatus(Restaurant restaurant, ReservationStatus status,
 		Pageable pageable) {
 		return new PageImpl<>(
 			reservations.stream()
-				.filter(reservation -> reservation.getRestaurantId() == restaurantId)
+				.filter(reservation -> Objects.equals(reservation.getRestaurantId(), restaurant.getId()))
 				.filter(reservation -> reservation.getStatus() == status)
 				.skip(pageable.getOffset())
 				.limit(pageable.getPageSize())
@@ -41,11 +50,49 @@ public class FakeReservationRepository implements ReservationRepository {
 	}
 
 	@Override
+	public Page<Reservation> findAllByCustomerAndStatusIn(Member customer, List<ReservationStatus> statuses,
+		Pageable pageable) {
+		return new PageImpl<>(
+			reservations.stream()
+				.filter(reservation -> Objects.equals(reservation.getCustomerId(), customer.getId()))
+				.filter(reservation -> statuses.contains(reservation.getStatus()))
+				.skip(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.toList());
+	}
+
+	@Override
+	public Optional<Reservation> findByIdAndCustomer(Long reservationId, Member customer) {
+		return reservations.stream()
+			.filter(reservation -> Objects.equals(reservation.getId(), reservationId))
+			.filter(reservation -> Objects.equals(reservation.getCustomer().getId(), customer.getId()))
+			.findFirst();
+	}
+
+	@Override
+	public List<VisitorCountPerVisitTimeProj> findVisitorCountPerVisitTime(
+		Restaurant restaurant,
+		LocalDate date,
+		List<ReservationStatus> statuses
+	) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public Optional<Integer> countTotalVisitorCount(Restaurant restaurant,
 		LocalDate visitDate,
 		LocalTime visitTime,
 		List<ReservationStatus> statuses) {
-		throw new UnsupportedOperationException();
+		return reservations.stream()
+			.filter(reservation -> restaurant.getId().equals(reservation.getRestaurantId()))
+			.filter(reservation -> reservation.getVisitDateTime()
+				.toLocalDate()
+				.equals(visitDate))
+			.filter(reservation -> reservation.getVisitDateTime()
+				.toLocalTime()
+				.equals(visitTime))
+			.map(Reservation::getVisitorCount)
+			.reduce(Integer::sum);
 	}
 
 	@Override
@@ -122,7 +169,7 @@ public class FakeReservationRepository implements ReservationRepository {
 
 	@Override
 	public <S extends Reservation> S save(S entity) {
-		Reservation newReservation = new Reservation(
+		Reservation newReservation = Reservation.newTestInstance(
 			++id,
 			entity.getCustomer(),
 			entity.getRestaurant(),
@@ -141,7 +188,9 @@ public class FakeReservationRepository implements ReservationRepository {
 
 	@Override
 	public Optional<Reservation> findById(Long aLong) {
-		throw new UnsupportedOperationException();
+		return reservations.stream()
+			.filter(reservation -> Objects.equals(reservation.getId(), aLong))
+			.findFirst();
 	}
 
 	@Override
@@ -228,5 +277,78 @@ public class FakeReservationRepository implements ReservationRepository {
 	public <S extends Reservation, R> R findBy(Example<S> example,
 		Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public CustomerReservationInfoProj findCustomerReservationInfo(
+		CustomerReservationInfoParam customerReservationInfoParam
+	) {
+		return new CustomerReservationInfoProj(
+			reservations.stream()
+				.filter(reservation -> reservation.getId().equals(customerReservationInfoParam.reservationId()))
+				.map(Reservation::getCustomerName)
+				.findAny()
+				.get(),
+			reservations.stream()
+				.filter(reservation -> reservation.getId().equals(customerReservationInfoParam.reservationId()))
+				.map(Reservation::getCustomerPhone)
+				.findAny()
+				.get(),
+			reservations.stream()
+				.filter(isCustomerReservationPredicate(customerReservationInfoParam))
+				.filter(isRestaurantReservationPredicate(customerReservationInfoParam))
+				.filter(reservation -> reservation.getStatus() == ReservationStatus.VISITED)
+				.count(),
+			reservations.stream()
+				.filter(isCustomerReservationPredicate(customerReservationInfoParam))
+				.filter(isRestaurantReservationPredicate(customerReservationInfoParam))
+				.filter(reservation -> reservation.getStatus() == ReservationStatus.NO_SHOW)
+				.count(),
+			reservations.stream()
+				.filter(isCustomerReservationPredicate(customerReservationInfoParam))
+				.filter(isRestaurantReservationPredicate(customerReservationInfoParam))
+				.filter(reservation -> reservation.getStatus() == ReservationStatus.VISITED)
+				.sorted(latestDateTimeComparator())
+				.limit(1)
+				.map(Reservation::getVisitDateTime)
+				.findAny()
+				.get()
+				.toString()
+		);
+	}
+
+	private Comparator<Reservation> latestDateTimeComparator() {
+		return (o1, o2) -> {
+			if (o1.getVisitDateTime().compareTo(o2.getVisitDateTime()) < 0) {
+				return 1;
+			} else if (o1.getVisitDateTime().compareTo(o2.getVisitDateTime()) > 0) {
+				return -1;
+			}
+			return 0;
+		};
+	}
+
+	private Predicate<Reservation> isRestaurantReservationPredicate(
+		CustomerReservationInfoParam customerReservationInfoParam) {
+		return reservation -> reservation.getRestaurant().equals(
+			reservations.stream()
+				.filter(
+					reservation1 -> reservation1.getId().equals(customerReservationInfoParam.reservationId()))
+				.map(Reservation::getRestaurant)
+				.findAny()
+				.get()
+		);
+	}
+
+	private Predicate<Reservation> isCustomerReservationPredicate(
+		CustomerReservationInfoParam customerReservationInfoParam) {
+		return reservation -> reservation.getCustomer().equals(
+			reservations.stream()
+				.filter(
+					reservation1 -> reservation1.getId().equals(customerReservationInfoParam.reservationId()))
+				.map(Reservation::getCustomer)
+				.findAny()
+				.get()
+		);
 	}
 }
