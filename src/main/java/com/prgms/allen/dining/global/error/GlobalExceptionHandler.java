@@ -19,21 +19,21 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception e) {
-		log.info("Unchecked exception occurred.", e);
+		log.error("Unchecked exception occurred.", e);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
 		return newResponseEntity(response);
 	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e) {
-		log.info("RuntimeException occurred.", e);
+		log.error("RuntimeException occurred.", e);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
 		return newResponseEntity(response);
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
-		log.info("IllegalStateException occurred.", e);
+		log.info("IllegalArgumentException occurred.", e);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_REQUEST);
 		return newResponseEntity(response);
 	}
