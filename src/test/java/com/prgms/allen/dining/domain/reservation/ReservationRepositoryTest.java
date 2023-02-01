@@ -378,7 +378,8 @@ class ReservationRepositoryTest {
 
 	private void createReservations(Member consumer, Restaurant savedRestaurant, ReservationStatus status) {
 
-		reservationRepository.save(new Reservation(
+		reservationRepository.save(Reservation.newTestInstance(
+			null,
 			consumer,
 			savedRestaurant,
 			status,
@@ -390,7 +391,8 @@ class ReservationRepositoryTest {
 			)
 		));
 
-		reservationRepository.save(new Reservation(
+		reservationRepository.save(Reservation.newTestInstance(
+			null,
 			consumer,
 			savedRestaurant,
 			status,
@@ -402,7 +404,8 @@ class ReservationRepositoryTest {
 			)
 		));
 
-		reservationRepository.save(new Reservation(
+		reservationRepository.save(Reservation.newTestInstance(
+			null,
 			consumer,
 			savedRestaurant,
 			status,
@@ -414,7 +417,8 @@ class ReservationRepositoryTest {
 			)
 		));
 
-		reservationRepository.save(new Reservation(
+		reservationRepository.save(Reservation.newTestInstance(
+			null,
 			consumer,
 			savedRestaurant,
 			status,

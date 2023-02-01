@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.reservation.service;
 
+import static com.prgms.allen.dining.domain.reservation.policy.ReservationPolicy.*;
+
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +19,7 @@ import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
 import com.prgms.allen.dining.domain.reservation.ReserveFailException;
+import com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
@@ -26,6 +29,7 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
+import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Service
@@ -174,6 +178,41 @@ public class ReservationService {
 				visitorCount
 			);
 		};
+	}
+
+	public ReservationAvailableDatesRes getAvailableDates(Long restaurantId) {
+		Restaurant restaurant = restaurantService.findById(restaurantId);
+
+		List<LocalDate> notAvailableDates = getReserveNotAvailableDates(restaurant);
+
+		List<LocalDate> canReserveDates = getOpenDays(restaurant);
+
+		return new ReservationAvailableDatesRes(
+			filterReserveNotAvailableDates(notAvailableDates, canReserveDates));
+	}
+
+	private List<LocalDate> filterReserveNotAvailableDates(List<LocalDate> notAvailableDates,
+		List<LocalDate> canReserveDates) {
+		return canReserveDates.stream()
+			.filter(localDate -> !notAvailableDates.contains(localDate))
+			.toList();
+	}
+
+	private List<LocalDate> getOpenDays(Restaurant restaurant) {
+		LocalDate start = LocalDate.now();
+		LocalDate end = start.plusDays(MAX_RESERVE_PERIOD);
+
+		return start.datesUntil(end)
+			.filter(localDate -> !restaurant.isClosingDay(localDate))
+			.toList();
+	}
+
+	private List<LocalDate> getReserveNotAvailableDates(Restaurant restaurant) {
+		return reservationRepository.findTotalVisitorCountPerDay(restaurant, BEFORE_VISIT_STATUSES)
+			.stream()
+			.filter(proj -> restaurant.isNotReserveAvailableForDay(proj.count()))
+			.map(DateAndTotalVisitCountPerDayProj::date)
+			.toList();
 	}
 
 }

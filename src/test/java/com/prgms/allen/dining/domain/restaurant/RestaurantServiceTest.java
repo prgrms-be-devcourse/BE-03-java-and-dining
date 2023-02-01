@@ -25,11 +25,9 @@ import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuDetailRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
-import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
-import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
 class RestaurantServiceTest {
 

@@ -29,6 +29,7 @@ import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationStatusUpdateService;
+import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
@@ -106,5 +107,13 @@ public class CustomerReservationApi {
 		statusUpdateService.update(reservationId, customerId, statusUpdateReq);
 		return ResponseEntity.ok()
 			.build();
+	}
+
+	@GetMapping("/available-dates")
+	public ResponseEntity<ReservationAvailableDatesRes> getAvailableDates(@RequestParam Long restaurantId) {
+		ReservationAvailableDatesRes reservationAvailableDatesRes = reservationService.getAvailableDates(
+			restaurantId);
+
+		return ResponseEntity.ok(reservationAvailableDatesRes);
 	}
 }

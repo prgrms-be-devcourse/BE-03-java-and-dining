@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import com.prgms.allen.dining.domain.notification.FakeSlackNotifyService;
 import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
+import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;

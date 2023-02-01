@@ -126,7 +126,8 @@ public class DummyGenerator {
 	) {
 		List<Reservation> reservations = new ArrayList<>();
 		for (int i = restaurant.getOpenTime().getHour(); i <= restaurant.getLastOrderTime().getHour(); i++) {
-			reservations.add(new Reservation(
+			reservations.add(Reservation.newTestInstance(
+				null,
 				customer,
 				restaurant,
 				ReservationStatus.CONFIRMED,
