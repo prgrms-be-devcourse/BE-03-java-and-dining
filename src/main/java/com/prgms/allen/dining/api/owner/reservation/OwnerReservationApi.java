@@ -66,7 +66,7 @@ public class OwnerReservationApi {
 		@AuthenticationPrincipal JwtAuthenticationPrincipal principal,
 		@Valid @RequestBody ReservationStatusUpdateReq statusUpdateReq
 	) {
-		statusUpdateService.update(reservationId, ownerId, statusUpdateReq);
+		statusUpdateService.update(reservationId, principal.memberId(), statusUpdateReq);
 		return ResponseEntity.ok()
 			.build();
 	}

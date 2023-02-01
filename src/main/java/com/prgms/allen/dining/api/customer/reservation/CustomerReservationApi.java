@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,6 +31,7 @@ import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationStatusUpdateService;
 import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
+import com.prgms.allen.dining.security.jwt.JwtAuthenticationPrincipal;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
@@ -75,10 +77,10 @@ public class CustomerReservationApi {
 
 	@PostMapping
 	public ResponseEntity<Void> reserve(
-		@RequestParam Long customerId,
+		@AuthenticationPrincipal JwtAuthenticationPrincipal principal,
 		@RequestBody @Valid ReservationCreateReq createRequest
 	) {
-		final Long reservationId = reservationService.reserve(customerId, createRequest);
+		final Long reservationId = reservationService.reserve(principal.memberId(), createRequest);
 
 		final URI location = UriComponentsBuilder.fromPath("/customer/api/me/reservations/{reservationId}")
 			.buildAndExpand(reservationId)
@@ -101,10 +103,10 @@ public class CustomerReservationApi {
 	@PatchMapping("/{reservationId}")
 	public ResponseEntity<Void> cancel(
 		@PathVariable Long reservationId,
-		@RequestParam Long customerId,
+		@AuthenticationPrincipal JwtAuthenticationPrincipal principal,
 		@Valid @RequestBody ReservationStatusUpdateReq statusUpdateReq
 	) {
-		statusUpdateService.update(reservationId, customerId, statusUpdateReq);
+		statusUpdateService.update(reservationId, principal.memberId(), statusUpdateReq);
 		return ResponseEntity.ok()
 			.build();
 	}
