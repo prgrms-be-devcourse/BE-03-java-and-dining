@@ -43,7 +43,7 @@ public class CustomerReservationApi {
 
 	@GetMapping("/available-dates")
 	public ResponseEntity<ReservationAvailableDatesRes> getAvailableDates(@RequestParam Long restaurantId) {
-		ReservationAvailableDatesRes reservationAvailableDatesRes = reservationService.getAvailableReserveDates(
+		ReservationAvailableDatesRes reservationAvailableDatesRes = reservationService.getAvailableDates(
 			restaurantId);
 
 		return ResponseEntity.ok(reservationAvailableDatesRes);

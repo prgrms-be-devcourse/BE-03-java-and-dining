@@ -127,7 +127,7 @@ class ReservationServiceTest {
 
 		// when
 		ReservationAvailableDatesRes expect =
-			reservationService.getAvailableReserveDates(restaurant.getId());
+			reservationService.getAvailableDates(restaurant.getId());
 
 		// then
 		assertThat(expect.availableDates())

@@ -105,13 +105,13 @@ public class ReservationService {
 		return restaurant.isAvailable(totalCount.get(), numberOfPeople);
 	}
 
-	public ReservationAvailableDatesRes getAvailableReserveDates(Long restaurantId) {
+	public ReservationAvailableDatesRes getAvailableDates(Long restaurantId) {
 		Restaurant restaurant = restaurantService.findById(restaurantId);
 
 		LocalDate start = LocalDate.now();
 		LocalDate end = start.plusDays(MAX_RESERVE_PERIOD);
 
-		List<LocalDate> availableDatesByRestaurant = getAvailableDatesBy(restaurant);
+		List<LocalDate> availableDatesByRestaurant = getDatesExceptFullReserveDates(restaurant);
 
 		List<LocalDate> canReverseDates = start.datesUntil(end)
 			.filter(localDate -> !restaurant.isClosingDay(localDate))
@@ -121,7 +121,7 @@ public class ReservationService {
 		return new ReservationAvailableDatesRes(canReverseDates);
 	}
 
-	private List<LocalDate> getAvailableDatesBy(Restaurant restaurant) {
+	private List<LocalDate> getDatesExceptFullReserveDates(Restaurant restaurant) {
 		return reservationRepository.findTotalVisitorCountPerDay(restaurant, TAKEN_STATUS_LIST)
 			.stream()
 			.filter(proj -> restaurant.isAvailableForDay(proj.count()))
