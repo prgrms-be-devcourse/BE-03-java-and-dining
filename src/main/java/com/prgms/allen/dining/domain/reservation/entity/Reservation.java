@@ -90,7 +90,7 @@ public class Reservation extends BaseEntity {
 		return new Reservation(id, customer, restaurant, status, customerInput);
 	}
 
-	private static ReservationStatus checkVisitingToday(ReservationCustomerInput customerInput) {
+	public static ReservationStatus checkVisitingToday(ReservationCustomerInput customerInput) {
 		if (customerInput.checkVisitingToday()) {
 			return CONFIRMED;
 		}

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
@@ -37,15 +38,17 @@ public class ReservationService {
 	private final ReservationRepository reservationRepository;
 	private final RestaurantService restaurantService;
 	private final MemberService memberService;
+	private final SlackNotifyService slackNotifyService;
 
 	public ReservationService(
 		ReservationRepository reservationRepository,
 		RestaurantService restaurantService,
-		MemberService memberService
-	) {
+		MemberService memberService,
+		SlackNotifyService slackNotifyService) {
 		this.reservationRepository = reservationRepository;
 		this.restaurantService = restaurantService;
 		this.memberService = memberService;
+		this.slackNotifyService = slackNotifyService;
 	}
 
 	@Transactional
@@ -60,6 +63,9 @@ public class ReservationService {
 
 		Reservation newReservation = new Reservation(customer, restaurant, customerInput);
 		reservationRepository.save(newReservation);
+
+		slackNotifyService.notifyReserve(newReservation);
+
 		return newReservation.getId();
 	}
 
