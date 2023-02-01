@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 
@@ -22,9 +23,14 @@ public class CustomerReservationStatusUpdateService implements ReservationStatus
 	private static final Logger log = LoggerFactory.getLogger(CustomerReservationStatusUpdateService.class);
 
 	private final ReservationService reservationService;
+	private final SlackNotifyService slackNotifyService;
 
-	public CustomerReservationStatusUpdateService(ReservationService reservationService) {
+	public CustomerReservationStatusUpdateService(
+		ReservationService reservationService,
+		SlackNotifyService slackNotifyService
+	) {
 		this.reservationService = reservationService;
+		this.slackNotifyService = slackNotifyService;
 	}
 
 	@Override
@@ -41,6 +47,7 @@ public class CustomerReservationStatusUpdateService implements ReservationStatus
 	private void cancel(Long reservationId, Long customerId) {
 		Reservation findReservation = reservationService.findById(reservationId);
 		findReservation.cancel(MemberType.CUSTOMER, customerId);
+		slackNotifyService.notifyCancel(findReservation);
 		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
 	}
 }
