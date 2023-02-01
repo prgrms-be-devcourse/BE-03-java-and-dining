@@ -29,7 +29,6 @@ import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
-import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
 class RestaurantServiceTest {
 
@@ -244,5 +243,4 @@ class RestaurantServiceTest {
 
 		return List.of(menu1, menu2, menu3, menu4, menu5);
 	}
-
 }

@@ -24,6 +24,7 @@ import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj
 import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public class FakeReservationRepository implements ReservationRepository {
