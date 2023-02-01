@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.domain.member;
+package com.prgms.allen.dining.api.member;
 
 import java.net.URI;
 

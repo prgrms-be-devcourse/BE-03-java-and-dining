@@ -12,9 +12,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgms.allen.dining.domain.common.NotFoundResourceException;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
+import com.prgms.allen.dining.domain.reservation.ReserveFailException;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
@@ -25,8 +27,6 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
-import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
-import com.prgms.allen.dining.global.error.exception.ReserveFailException;
 
 @Service
 @Transactional(readOnly = true)

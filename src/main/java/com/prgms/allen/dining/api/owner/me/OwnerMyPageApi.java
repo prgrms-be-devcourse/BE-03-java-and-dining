@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.domain.owner.me;
+package com.prgms.allen.dining.api.owner.me;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

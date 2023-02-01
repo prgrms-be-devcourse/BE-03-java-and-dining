@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.global.error.exception;
+package com.prgms.allen.dining.domain.reservation;
 
 public class ReserveFailException extends RuntimeException {
 

@@ -7,10 +7,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
-import com.prgms.allen.dining.global.error.exception.NotificationFailedException;
-import com.prgms.allen.dining.global.error.exception.ReserveFailException;
-import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
+import com.prgms.allen.dining.domain.common.NotFoundResourceException;
+import com.prgms.allen.dining.domain.notification.NotificationFailedException;
+import com.prgms.allen.dining.domain.reservation.ReserveFailException;
+import com.prgms.allen.dining.domain.restaurant.RestaurantDuplicateCreationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

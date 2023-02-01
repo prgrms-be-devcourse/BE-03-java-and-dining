@@ -5,10 +5,10 @@ import java.text.MessageFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgms.allen.dining.domain.common.NotFoundResourceException;
 import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
 @Transactional(readOnly = true)

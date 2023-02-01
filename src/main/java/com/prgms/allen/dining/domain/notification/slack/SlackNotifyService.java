@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.notification.NotificationFailedException;
 import com.prgms.allen.dining.domain.notification.slack.dto.HeaderMessage;
 import com.prgms.allen.dining.domain.notification.slack.dto.SlackNotificationMessageRes;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
-import com.prgms.allen.dining.global.error.exception.NotificationFailedException;
 import com.slack.api.Slack;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;

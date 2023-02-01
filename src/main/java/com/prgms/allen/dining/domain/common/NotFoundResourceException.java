@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.global.error.exception;
+package com.prgms.allen.dining.domain.common;
 
 import com.prgms.allen.dining.global.error.ErrorCode;
 

@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.domain.owner.reservation;
+package com.prgms.allen.dining.api.owner.reservation;
 
 import javax.validation.Valid;
 

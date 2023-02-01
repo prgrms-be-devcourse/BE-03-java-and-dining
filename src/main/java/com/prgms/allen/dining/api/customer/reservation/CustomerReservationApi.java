@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.domain.customer.reservation;
+package com.prgms.allen.dining.api.customer.reservation;
 
 import java.net.URI;
 
