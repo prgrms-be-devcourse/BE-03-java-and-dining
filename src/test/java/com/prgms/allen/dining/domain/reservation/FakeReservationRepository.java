@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
+import com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
@@ -43,6 +46,28 @@ public class FakeReservationRepository implements ReservationRepository {
 		LocalTime visitTime,
 		List<ReservationStatus> statuses) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<DateAndTotalVisitCountPerDayProj> findTotalVisitorCountPerDay(Restaurant restaurant,
+		List<ReservationStatus> statuses) {
+		Set<LocalDate> reservedDates = reservations.stream()
+			.map(reservation -> reservation.getVisitDateTime().toLocalDate())
+			.collect(Collectors.toSet());
+
+		return reservedDates.stream()
+			.map(localDate -> new DateAndTotalVisitCountPerDayProj(localDate, getCount(localDate)))
+			.toList();
+	}
+
+	public long getCount(LocalDate localDate) {
+		return reservations.stream()
+			.filter(reservation -> reservation.getVisitDateTime()
+				.toLocalDate()
+				.equals(localDate))
+			.map(Reservation::getVisitorCount)
+			.reduce(Integer::sum)
+			.get();
 	}
 
 	@Override
