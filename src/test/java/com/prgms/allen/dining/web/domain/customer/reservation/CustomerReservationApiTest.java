@@ -280,4 +280,23 @@ class CustomerReservationApiTest {
 				))
 			);
 	}
+
+	@Test
+	@DisplayName("고객은 하나의 식당의 상세 정보를 조회할 수 있다.")
+	void testGetMyRestaurant() throws Exception {
+
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurantWith2Capacity(owner));
+
+		mockMvc.perform(
+				get("/customer/api/reservations/available-dates?restaurantId=" + restaurant.getId()))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("customer-get-available-dates-restaurant",
+				responseFields(
+					fieldWithPath("availableDates[]").type(JsonFieldType.ARRAY).description("예약 가능 날짜 리스트")
+				))
+			);
+	}
 }

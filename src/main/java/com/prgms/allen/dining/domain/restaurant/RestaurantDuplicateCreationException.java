@@ -10,6 +10,11 @@ public class RestaurantDuplicateCreationException extends RuntimeException {
 		this.errorCode = errorCode;
 	}
 
+	public RestaurantDuplicateCreationException(String message) {
+		super(message);
+		this.errorCode = ErrorCode.DUPLICATE_ERROR;
+	}
+
 	public ErrorCode getErrorCode() {
 		return this.errorCode;
 	}

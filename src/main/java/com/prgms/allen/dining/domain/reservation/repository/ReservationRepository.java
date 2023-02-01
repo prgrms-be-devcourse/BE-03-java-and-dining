@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj;
 import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -59,5 +60,16 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
 		@Param("restaurant") Restaurant restaurant,
 		@Param("date") LocalDate date,
 		@Param("statuses") List<ReservationStatus> statuses
+	);
+
+	@Query("select new com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj("
+		+ "r.customerInput.visitDate , sum(r.customerInput.visitorCount)) "
+		+ "from Reservation r "
+		+ "where r.restaurant = :restaurant "
+		+ "AND r.status IN (:statues) "
+		+ "group by r.customerInput.visitDate ")
+	List<DateAndTotalVisitCountPerDayProj> findTotalVisitorCountPerDay(
+		@Param("restaurant") Restaurant restaurant,
+		@Param("statues") List<ReservationStatus> statuses
 	);
 }

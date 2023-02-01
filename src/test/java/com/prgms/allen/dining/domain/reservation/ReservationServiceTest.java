@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +17,13 @@ import com.prgms.allen.dining.domain.notification.FakeSlackNotifyService;
 import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
+import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
+import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
 
@@ -64,5 +67,25 @@ class ReservationServiceTest {
 		// then
 		long actualCount = reservationRepository.count();
 		assertThat(actualCount).isEqualTo(1);
+	}
+
+	@Test
+	@DisplayName("휴무일과 예약이 모두 찬 날을 제외한 이용가능한 날짜 목록을 받을 수 있다.")
+	public void testGetAvailableDates() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurantWith2Capacity(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		List<Reservation> reservations = DummyGenerator.createReservationEveryHour(customer, restaurant);
+		reservationRepository.saveAll(reservations);
+
+		// when
+		ReservationAvailableDatesRes expect =
+			reservationService.getAvailableDates(restaurant.getId());
+
+		// then
+		assertThat(expect.availableDates())
+			.doesNotContain(reservations.get(0).getVisitDateTime().toLocalDate())
+			.allMatch(localDate -> !restaurant.isClosingDay(localDate));
 	}
 }

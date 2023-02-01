@@ -22,7 +22,6 @@ import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
-import com.prgms.allen.dining.global.error.ErrorCode;
 
 @Service
 @Transactional(readOnly = true)
@@ -92,7 +91,9 @@ public class RestaurantService {
 
 	private void validAlreadyHasRestaurant(Long ownerId) {
 		if (restaurantRepository.existsRestaurantByOwnerId(ownerId)) {
-			throw new RestaurantDuplicateCreationException(ErrorCode.DUPLICATE_ERROR);
+			throw new RestaurantDuplicateCreationException(
+				MessageFormat.format(
+					"Owner id: {0} try to create restaurant, but already has the restaurant", ownerId));
 		}
 	}
 
