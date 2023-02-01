@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.notification.NotificationFailedException;
@@ -40,6 +42,7 @@ public class SlackNotifyService {
 		token = value;
 	}
 
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void notifyReserve(Reservation reservation) {
 		if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
 			notifyAll(reservation, HeaderMessage.RESERVATION_CONFIRMED);
@@ -49,10 +52,12 @@ public class SlackNotifyService {
 		notifyAll(reservation, HeaderMessage.RESERVATION_ACCEPTED);
 	}
 
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void notifyConfirm(Reservation reservation) {
 		notifyAll(reservation, HeaderMessage.RESERVATION_CONFIRMED);
 	}
 
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void notifyCancel(Reservation reservation) {
 		notifyAll(reservation, HeaderMessage.RESERVATION_CANCELED);
 	}
