@@ -12,6 +12,8 @@ import com.prgms.allen.dining.domain.member.FakeMemberRepository;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.notification.FakeSlackNotifyService;
+import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
@@ -25,13 +27,14 @@ class ReservationServiceTest {
 	private final ReservationRepository reservationRepository = new FakeReservationRepository();
 	private final RestaurantRepository restaurantRepository = new FakeRestaurantRepository();
 	private final MemberRepository memberRepository = new FakeMemberRepository();
+	private SlackNotifyService slackNotifyService = new FakeSlackNotifyService();
 	private final MemberService memberService = new MemberService(memberRepository);
 	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
 	private final ReservationService reservationService = new ReservationService(
 		reservationRepository,
 		restaurantService,
-		memberService
-	);
+		memberService,
+		slackNotifyService);
 
 	@Test
 	@DisplayName("고객은 식당의 예약을 요청할 수 있다.")

@@ -33,8 +33,10 @@ public class CustomerReservationApi {
 	private final ReservationService reservationService;
 	private final ReservationFindService reservationFindService;
 
-	public CustomerReservationApi(ReservationService reservationService,
-		ReservationFindService reservationFindService) {
+	public CustomerReservationApi(
+		ReservationService reservationService,
+		ReservationFindService reservationFindService
+	) {
 		this.reservationService = reservationService;
 		this.reservationFindService = reservationFindService;
 	}
