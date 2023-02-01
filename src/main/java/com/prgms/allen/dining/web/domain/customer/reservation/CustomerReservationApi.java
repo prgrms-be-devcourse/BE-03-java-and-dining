@@ -5,6 +5,7 @@ import java.net.URI;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.prgms.allen.dining.domain.reservation.ReservationService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 
 @RestController
 @RequestMapping("/customer/api/reservations")
@@ -37,5 +39,13 @@ public class CustomerReservationApi {
 			.toUri();
 		return ResponseEntity.created(location)
 			.build();
+	}
+
+	@GetMapping("/available-dates")
+	public ResponseEntity<ReservationAvailableDatesRes> getAvailableDates(@RequestParam Long restaurantId) {
+		ReservationAvailableDatesRes reservationAvailableDatesRes = reservationService.getAvailableReserveDates(
+			restaurantId);
+
+		return ResponseEntity.ok(reservationAvailableDatesRes);
 	}
 }
