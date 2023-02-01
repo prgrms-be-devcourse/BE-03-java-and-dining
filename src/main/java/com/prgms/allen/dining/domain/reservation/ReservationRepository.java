@@ -37,11 +37,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 		+ "from Reservation r "
 		+ "where r.restaurant = :restaurant "
 		+ "AND r.status IN (:statues) "
-		+ "group by r.customerInput.visitDate "
-		+ "order by r.customerInput.visitDate ")
+		+ "group by r.customerInput.visitDate ")
 	List<DateAndTotalVisitCountPerDayProj> findTotalVisitorCountPerDay(
 		@Param("restaurant") Restaurant restaurant,
 		@Param("statues") List<ReservationStatus> statuses
 	);
-
 }
