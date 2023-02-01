@@ -11,7 +11,7 @@ import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class MemberService {
 
 	private final MemberRepository memberRepository;
@@ -20,12 +20,12 @@ public class MemberService {
 		this.memberRepository = memberRepository;
 	}
 
-	@Transactional
 	public Long signup(MemberSignupReq signupReq) {
 		Member savedMember = memberRepository.save(signupReq.toEntity());
 		return savedMember.getId();
 	}
 
+	@Transactional(readOnly = true)
 	public Member findOwnerById(long ownerId) {
 		return memberRepository.findByIdAndMemberType(ownerId, MemberType.OWNER)
 			.orElseThrow(() -> new NotFoundResourceException(
@@ -33,10 +33,21 @@ public class MemberService {
 			));
 	}
 
+	@Transactional(readOnly = true)
 	public Member findCustomerById(Long customerId) {
 		return memberRepository.findByIdAndMemberType(customerId, MemberType.CUSTOMER)
 			.orElseThrow(() -> new NotFoundResourceException(
 				MessageFormat.format("Cannot find Restaurant entity for customer id = {0}", customerId)
 			));
+	}
+
+	@Transactional(readOnly = true)
+	public Member login(String nickname, String password) {
+		Member member = memberRepository.findByNickname(nickname)
+			.orElseThrow(() -> new NotFoundResourceException(
+				MessageFormat.format("Cannot find Restaurant entity for customer nickname = {0}", nickname)
+			));
+		member.checkPassword(password);
+		return member;
 	}
 }

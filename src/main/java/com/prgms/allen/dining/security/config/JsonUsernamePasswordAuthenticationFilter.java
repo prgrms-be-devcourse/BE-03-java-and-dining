@@ -8,13 +8,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prgms.allen.dining.security.jwt.JwtAuthenticationToken;
 
 public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -59,7 +59,7 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
 			);
 		}
 
-		UsernamePasswordAuthenticationToken unauthenticatedToken = UsernamePasswordAuthenticationToken.unauthenticated(
+		JwtAuthenticationToken unauthenticatedToken = JwtAuthenticationToken.unauthenticated(
 			nickname,
 			password
 		);
