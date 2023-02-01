@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.reservation;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -7,7 +9,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -41,7 +43,7 @@ public class ReservationRepositoryTest {
 	private LocalDate reserveDate = LocalDate.of(
 		LocalDate.now().getYear(),
 		LocalDate.now().getMonth(),
-		LocalDate.now().getDayOfMonth() + 1
+		LocalDate.now().plusDays(1L).getDayOfMonth()
 	);
 
 	private LocalTime reserveTime = LocalTime.of(13, 0);
@@ -61,8 +63,27 @@ public class ReservationRepositoryTest {
 			List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING));
 
 		// then
-		Assertions.assertThat(currentReservedCount.get())
+		assertThat(currentReservedCount.get())
 			.isEqualTo(VISITOR_COUNT);
+	}
+
+	@Test
+	void countTotalVisitorCountPerDay() {
+		// given
+		int expect = 8;
+		Member owner = createOwner();
+		Member customer = createCustomer();
+		Restaurant restaurant = createRestaurant(owner);
+		createReservations(customer, restaurant, ReservationStatus.CONFIRMED);
+
+		// when
+		List<DateAndTotalVisitCountPerDayProj> actual = reservationRepository.findTotalVisitorCountPerDay(restaurant,
+			List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING));
+
+		// then
+		assertThat(actual.get(0).count())
+			.isEqualTo(expect);
+
 	}
 
 	private Reservation createReservation(ReservationStatus status, Member consumer, Restaurant savedRestaurant) {
@@ -115,6 +136,57 @@ public class ReservationRepositoryTest {
 			"01012341234",
 			"qwer1234!",
 			MemberType.OWNER
+		));
+	}
+
+	private void createReservations(Member consumer, Restaurant savedRestaurant, ReservationStatus status) {
+
+		reservationRepository.save(new Reservation(
+			consumer,
+			savedRestaurant,
+			status,
+			new ReservationCustomerInput(
+				reserveDate,
+				LocalTime.of(16, 0),
+				2,
+				"단무지는 빼주세요"
+			)
+		));
+
+		reservationRepository.save(new Reservation(
+			consumer,
+			savedRestaurant,
+			status,
+			new ReservationCustomerInput(
+				reserveDate,
+				LocalTime.of(16, 0),
+				2,
+				"단무지는 빼주세요"
+			)
+		));
+
+		reservationRepository.save(new Reservation(
+			consumer,
+			savedRestaurant,
+			status,
+			new ReservationCustomerInput(
+				reserveDate,
+				LocalTime.of(16, 0),
+				2,
+				"단무지는 빼주세요"
+			)
+		));
+
+		reservationRepository.save(new Reservation(
+			consumer,
+			savedRestaurant,
+			status,
+			new ReservationCustomerInput(
+				reserveDate,
+				LocalTime.of(16, 0),
+				2,
+				"단무지는 빼주세요"
+			)
 		));
 	}
 }
