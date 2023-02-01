@@ -14,7 +14,7 @@ import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.notification.slack.dto.HeaderMessage;
 import com.prgms.allen.dining.domain.notification.slack.dto.SlackNotificationMessageRes;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
-import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
+import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.global.error.exception.NotificationFailedException;
 import com.slack.api.Slack;
 import com.slack.api.methods.SlackApiException;
@@ -31,8 +31,8 @@ public class SlackNotifyService {
 	private static final String CUSTOMER_PHONE_PREFIX = "*예약자 전화번호:*\n";
 	private static final String VISITOR_COUNT_PREFIX = "*예약자 인원수:*\n";
 	private static final String VISIT_DATE_TIME_PREFIX = "*예약 날짜:*\n";
-	private static final String customerChannel = "#03-allen-customer-java-and-dining";
-	private static final String ownerChannel = "#03-allen-owner-java-and-dining";
+	private static final String CUSTOMER_CHANNEL = "#03-allen-customer-java-and-dining";
+	private static final String OWNER_CHANNEL = "#03-allen-owner-java-and-dining";
 	private static String token;
 
 	@Value(value = "${slack.token}")
@@ -41,16 +41,12 @@ public class SlackNotifyService {
 	}
 
 	public void notifyReserve(Reservation reservation) {
-		if (checkVisitingToday(reservation.getCustomerInput())) {
+		if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
 			notifyAll(reservation, HeaderMessage.RESERVATION_CONFIRMED);
 			return;
 		}
 
 		notifyAll(reservation, HeaderMessage.RESERVATION_ACCEPTED);
-	}
-
-	private boolean checkVisitingToday(ReservationCustomerInput customerInput) {
-		return customerInput.checkVisitingToday();
 	}
 
 	public void notifyConfirm(Reservation reservation) {
@@ -91,8 +87,8 @@ public class SlackNotifyService {
 
 	private String getChannelBy(MemberType memberType) {
 		return switch (memberType) {
-			case OWNER -> ownerChannel;
-			case CUSTOMER -> customerChannel;
+			case OWNER -> OWNER_CHANNEL;
+			case CUSTOMER -> CUSTOMER_CHANNEL;
 		};
 	}
 
