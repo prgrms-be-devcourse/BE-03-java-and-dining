@@ -6,28 +6,45 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.prgms.allen.dining.domain.member.MemberService;
+import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.security.jwt.JwtAuthenticationProvider;
+import com.prgms.allen.dining.security.jwt.JwtProvider;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-	static final String LOGIN_REQUEST_URL = "/members/api/login";
+	static final String LOGIN_REQUEST_URL = "/api/members/login";
+	static final String SIGNUP_REQUEST_URL = "/api/members/signup";
+	static final String OWNER_API_URL_PREFIX = "/owner/api/**";
+	static final String CUSTOMER_API_URL_PREFIX = "/customer/api/**";
+	static final String CUSTOMER_RESTAURANT_API_URL_PREFIX = "/customer/api/restaurants/**";
+	static final String RESERVATION_AVAILABLE_TIMES_API_URL_PREFIX = "/customer/api/reservations/available-times";
+	static final String[] ANONYMOUS_AND_CUSTOMER_API_URL_PREFIX = {
+		CUSTOMER_RESTAURANT_API_URL_PREFIX,
+		RESERVATION_AVAILABLE_TIMES_API_URL_PREFIX
+	};
 
-	private final UserDetailsService userDetailsService;
+	private final MemberService memberService;
 	private final LoginSuccessHandler loginSuccessHandler;
 	private final LoginFailureHandler loginFailureHandler;
+	private final JwtProvider jwtProvider;
 
 	public WebSecurityConfig(
-		UserDetailsService userDetailsService,
+		MemberService memberService,
 		LoginSuccessHandler loginSuccessHandler,
-		LoginFailureHandler loginFailureHandler
+		LoginFailureHandler loginFailureHandler,
+		JwtProvider jwtProvider
 	) {
-		this.userDetailsService = userDetailsService;
+		this.memberService = memberService;
 		this.loginSuccessHandler = loginSuccessHandler;
 		this.loginFailureHandler = loginFailureHandler;
+		this.jwtProvider = jwtProvider;
 	}
 
 	@Bean
@@ -35,17 +52,38 @@ public class WebSecurityConfig {
 		http
 			.httpBasic().disable()
 			.csrf().disable()
-			.formLogin().disable();
+			.headers().disable()
+			.formLogin().disable()
+			.rememberMe().disable()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		http
-			.authorizeHttpRequests()
-			.antMatchers(LOGIN_REQUEST_URL).permitAll()
-			.and()
+			.addFilterBefore(
+				jwtAuthenticationFilter(),
+				UsernamePasswordAuthenticationFilter.class
+			)
 			.addFilterBefore(
 				jsonUsernamePasswordAuthenticationFilter(authenticationManager()),
-				UsernamePasswordAuthenticationFilter.class);
+				UsernamePasswordAuthenticationFilter.class
+			);
+
+		http
+			.authorizeRequests()
+			.antMatchers(LOGIN_REQUEST_URL, SIGNUP_REQUEST_URL)
+			.permitAll()
+			.antMatchers(OWNER_API_URL_PREFIX)
+			.hasRole(MemberType.OWNER.toString())
+			.antMatchers(ANONYMOUS_AND_CUSTOMER_API_URL_PREFIX)
+			.access("hasRole('" + MemberType.CUSTOMER + "') or isAnonymous()")
+			.antMatchers(CUSTOMER_API_URL_PREFIX)
+			.hasAnyRole(MemberType.CUSTOMER.toString());
 
 		return http.build();
+	}
+
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter() {
+		return new JwtAuthenticationFilter(jwtProvider);
 	}
 
 	@Bean
@@ -61,8 +99,11 @@ public class WebSecurityConfig {
 
 	@Bean
 	public AuthenticationManager authenticationManager() {
-		return new ProviderManager(
-			new AuthenticationProviderImpl(userDetailsService)
-		);
+		return new ProviderManager(jwtAuthenticationProvider());
+	}
+
+	@Bean
+	public JwtAuthenticationProvider jwtAuthenticationProvider() {
+		return new JwtAuthenticationProvider(memberService, jwtProvider);
 	}
 }
