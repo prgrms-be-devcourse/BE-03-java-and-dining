@@ -1,6 +1,7 @@
 package com.prgms.allen.dining.domain.restaurant.entity;
 
-import java.time.DayOfWeek;
+import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -189,7 +190,8 @@ public class Restaurant {
 
 	private void validateOwnerType(Member owner) {
 		Assert.notNull(owner, "Owner must not be empty");
-		Assert.isTrue(MemberType.OWNER.equals(owner.getMemberType()), "No Authorization");
+		Assert.isTrue(MemberType.OWNER.equals(owner.getMemberType()),
+			MessageFormat.format("member id: {0} is not owner, actually type is customer", owner.getId()));
 	}
 
 	private void validateName(String name) {
@@ -198,12 +200,12 @@ public class Restaurant {
 	}
 
 	private void validateCapacity(int capacity) {
-		Assert.isTrue(capacity >= 2, "Capacity must over than 2");
+		Assert.isTrue(capacity >= 2, "Capacity must over than 1");
 	}
 
 	private void validatePhone(String phone) {
 		Assert.hasLength(phone, "Phone must be not empty.");
-		Assert.isTrue(phone.length() >= 9 && phone.length() <= 11, "Name must be between 2 and 5.");
+		Assert.isTrue(phone.length() >= 9 && phone.length() <= 11, "Phone must between 9 and 11");
 		Assert.isTrue(Pattern.matches("^[0-9]+$", phone), "Phone is invalid format");
 	}
 

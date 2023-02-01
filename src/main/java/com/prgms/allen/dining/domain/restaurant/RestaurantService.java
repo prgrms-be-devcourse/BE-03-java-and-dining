@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuDetailRes;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuSimpleRes;
@@ -23,7 +24,6 @@ import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
-import com.prgms.allen.dining.global.error.ErrorCode;
 import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
 
@@ -97,7 +97,9 @@ public class RestaurantService {
 
 	private void validAlreadyHasRestaurant(Long ownerId) {
 		if (restaurantRepository.existsRestaurantByOwnerId(ownerId)) {
-			throw new RestaurantDuplicateCreationException(ErrorCode.DUPLICATE_ERROR);
+			throw new RestaurantDuplicateCreationException(
+				MessageFormat.format(
+					"Owner id: {0} try to create restaurant, but already has the restaurant", ownerId));
 		}
 	}
 
