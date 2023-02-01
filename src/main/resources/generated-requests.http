@@ -32,7 +32,7 @@ Content-Type: application/json
 {
   "restaurantId": 3,
   "reservationCustomerInput": {
-    "visitDateTime": "2023-01-20T16:00:00",
+    "visitDateTime": "2023-02-28T16:00:00",
     "visitorCount": 2,
     "memo": "단무지는 빼주세요~"
   }
@@ -101,4 +101,4 @@ GET http://localhost:8080/customer/api/restaurants/2/menu
 
 
 ### 식당 예약 가능 날짜 조회 API
-GET http://localhost:8080/customer/api/restaurants/3/available-dates
+GET http://localhost:8080/customer/api/reservations/available-dates?restaurantId=3
