@@ -2159,8 +2159,10 @@
                 <ul class="sectlevel2">
                     <li><a href="#_예약">예약</a>
                         <ul class="sectlevel3">
-                            <li><a href="#_예약_요청">예약 요청</a></li>
+                            <li><a href="#_예약_가능_날짜_조회">예약 가능 날짜 조회</a></li>
                             <li><a href="#_예약_가능_시간_조회">예약 가능 시간 조회</a></li>
+                            <li><a href="#_예약_요청">예약 요청</a></li>
+                            <li><a href="#_예약_취소">예약 취소</a></li>
                         </ul>
                     </li>
                     <li><a href="#_식당">식당</a>
@@ -2271,7 +2273,7 @@ Host: localhost:8080
                         <div class="listingblock">
                             <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
-Location: /api/members/50</code></pre>
+Location: /api/members/74</code></pre>
                             </div>
                         </div>
                     </div>
@@ -2285,17 +2287,97 @@ Location: /api/members/50</code></pre>
             <div class="sect2">
                 <h3 id="_예약">예약</h3>
                 <div class="sect3">
+                    <h4 id="_예약_가능_날짜_조회">예약 가능 날짜 조회</h4>
+                    <div class="sect4">
+                        <h5 id="_예약_가능_날짜_조회_http_request">HTTP request</h5>
+                        <div class="listingblock">
+                            <div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /customer/api/reservations/available-dates?restaurantId=8 HTTP/1.1
+Host: localhost:8080</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sect4">
+                        <h5 id="_예약_가능_날짜_조회_http_response">HTTP response</h5>
+                        <div class="listingblock">
+                            <div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 410
+
+{"availableDates":["2023-02-01","2023-02-02","2023-02-03","2023-02-04","2023-02-05","2023-02-06","2023-02-07","2023-02-08","2023-02-09","2023-02-10","2023-02-11","2023-02-12","2023-02-13","2023-02-14","2023-02-15","2023-02-16","2023-02-17","2023-02-18","2023-02-19","2023-02-20","2023-02-21","2023-02-22","2023-02-23","2023-02-24","2023-02-25","2023-02-26","2023-02-27","2023-02-28","2023-03-01","2023-03-02"]}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sect3">
+                    <h4 id="_예약_가능_시간_조회">예약 가능 시간 조회</h4>
+                    <div class="sect4">
+                        <h5 id="_예약_가능_시간_조회_http_request">HTTP request</h5>
+                        <div class="listingblock">
+                            <div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /customer/api/reservations/available-times?restaurantId=6&amp;date=2023-02-02&amp;visitorCount=2 HTTP/1.1
+Host: localhost:8080</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sect4">
+                        <h5 id="_예약_가능_시간_조회_request_parameters">Request parameters</h5>
+                        <table class="tableblock frame-all grid-all stretch">
+                            <colgroup>
+                                <col style="width: 50%;">
+                                <col style="width: 50%;">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th class="tableblock halign-left valign-top">Parameter</th>
+                                <th class="tableblock halign-left valign-top">Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">
+                                    <code>restaurantId</code></p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 식별자</p></td>
+                            </tr>
+                            <tr>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock"><code>date</code>
+                                </p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">방문 날짜</p></td>
+                            </tr>
+                            <tr>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">
+                                    <code>visitorCount</code></p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">방문객 수</p></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="sect4">
+                        <h5 id="_예약_가능_시간_조회_http_response">HTTP response</h5>
+                        <div class="listingblock">
+                            <div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 185
+
+{"availableTimes":["09:00:00","10:00:00","11:00:00","12:00:00","13:00:00","14:00:00","15:00:00","16:00:00","17:00:00","18:00:00","19:00:00","20:00:00","21:00:00","22:00:00","23:00:00"]}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sect3">
                     <h4 id="_예약_요청">예약 요청</h4>
                     <div class="sect4">
                         <h5 id="_예약_요청_http_request">HTTP request</h5>
                         <div class="listingblock">
                             <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /customer/api/reservations?customerId=3 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /customer/api/reservations?customerId=23 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 131
+Content-Length: 132
 Host: localhost:8080
 
-{"restaurantId":5,"reservationCustomerInput":{"visitDateTime":"2023-01-28T16:00:00","visitorCount":2,"memo":"가지 빼주세요"}}</code></pre>
+{"restaurantId":25,"reservationCustomerInput":{"visitDateTime":"2023-02-02T09:00:00","visitorCount":2,"memo":"가지 빼주세요"}}</code></pre>
                             </div>
                         </div>
                     </div>
@@ -2351,24 +2433,51 @@ Host: localhost:8080
                         <div class="listingblock">
                             <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
-Location: /customer/api/me/reservations/6</code></pre>
+Location: /customer/api/me/reservations/26</code></pre>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="sect3">
-                    <h4 id="_예약_가능_시간_조회">예약 가능 시간 조회</h4>
+                    <h4 id="_예약_취소">예약 취소</h4>
                     <div class="sect4">
-                        <h5 id="_예약_가능_시간_조회_http_request">HTTP request</h5>
+                        <h5 id="_예약_취소_http_request">HTTP request</h5>
                         <div class="listingblock">
                             <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /customer/api/reservations/available-times?restaurantId=2&amp;date=2023-01-28&amp;visitorCount=2 HTTP/1.1
-Host: localhost:8080</code></pre>
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /customer/api/reservations/30?customerId=27 HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 19
+Host: localhost:8080
+
+{"status":"cancel"}</code></pre>
                             </div>
                         </div>
                     </div>
                     <div class="sect4">
-                        <h5 id="_예약_가능_시간_조회_request_parameters">Request parameters</h5>
+                        <h5 id="_예약_취소_path_parameters">Path parameters</h5>
+                        <table class="tableblock frame-all grid-all stretch">
+                            <caption class="title">Table 1. /customer/api/reservations/{reservationId}</caption>
+                            <colgroup>
+                                <col style="width: 50%;">
+                                <col style="width: 50%;">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th class="tableblock halign-left valign-top">Parameter</th>
+                                <th class="tableblock halign-left valign-top">Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">
+                                    <code>reservationId</code></p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">예약 식별자</p></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="sect4">
+                        <h5 id="_예약_취소_request_parameters">Request parameters</h5>
                         <table class="tableblock frame-all grid-all stretch">
                             <colgroup>
                                 <col style="width: 50%;">
@@ -2383,31 +2492,44 @@ Host: localhost:8080</code></pre>
                             <tbody>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
-                                    <code>restaurantId</code></p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 식별자</p></td>
-                            </tr>
-                            <tr>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock"><code>date</code>
-                                </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">방문 날짜</p></td>
-                            </tr>
-                            <tr>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">
-                                    <code>visitorCount</code></p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">방문객 수</p></td>
+                                    <code>customerId</code></p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">고객 식별자</p></td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="sect4">
-                        <h5 id="_예약_가능_시간_조회_http_response">HTTP response</h5>
+                        <h5 id="_예약_취소_request_fields">Request fields</h5>
+                        <table class="tableblock frame-all grid-all stretch">
+                            <colgroup>
+                                <col style="width: 33.3333%;">
+                                <col style="width: 33.3333%;">
+                                <col style="width: 33.3334%;">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th class="tableblock halign-left valign-top">Path</th>
+                                <th class="tableblock halign-left valign-top">Type</th>
+                                <th class="tableblock halign-left valign-top">Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code>
+                                </p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
+                                </p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">변경할 상태</p></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="sect4">
+                        <h5 id="_예약_취소_http_response">HTTP response</h5>
                         <div class="listingblock">
                             <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 185
-
-{"availableTimes":["09:00:00","10:00:00","11:00:00","12:00:00","13:00:00","14:00:00","15:00:00","16:00:00","17:00:00","18:00:00","19:00:00","20:00:00","21:00:00","22:00:00","23:00:00"]}</code></pre>
+                                <pre class="highlightjs highlight nowrap"><code class="language-http hljs"
+                                                                                data-lang="http">HTTP/1.1 200 OK</code></pre>
                             </div>
                         </div>
                     </div>
@@ -2434,7 +2556,7 @@ Host: localhost:8080</code></pre>
 Content-Type: application/json
 Content-Length: 606
 
-{"content":[{"foodType":"KOREAN","restaurantName":"유명 레스토랑","location":"서울특별시 강남구 어딘가로 123 무슨빌딩 1층"},{"foodType":"KOREAN","restaurantName":"유명 레스토랑","location":"서울특별시 강남구 어딘가로 123 무슨빌딩 1층"},{"foodType":"KOREAN","restaurantName":"유명 레스토랑","location":"서울특별시 강남구 어딘가로 123 무슨빌딩 1층"}],"pageable":"INSTANCE","last":true,"totalPages":1,"totalElements":3,"size":3,"number":0,"sort":{"empty":true,"sorted":false,"unsorted":true},"first":true,"numberOfElements":3,"empty":false}</code></pre>
+{"content":[{"foodType":"KOREAN","restaurantName":"유명 레스토랑","location":"서울특별시 강남구 어딘가로 123 무슨빌딩 1층"},{"foodType":"KOREAN","restaurantName":"유명 레스토랑","location":"서울특별시 강남구 어딘가로 123 무슨빌딩 1층"},{"foodType":"KOREAN","restaurantName":"유명 레스토랑","location":"서울특별시 강남구 어딘가로 123 무슨빌딩 1층"}],"pageable":"INSTANCE","totalPages":1,"totalElements":3,"last":true,"size":3,"number":0,"sort":{"empty":true,"unsorted":true,"sorted":false},"numberOfElements":3,"first":true,"empty":false}</code></pre>
                             </div>
                         </div>
                     </div>
@@ -2582,7 +2704,7 @@ Content-Length: 606
                         <h5 id="_식당_단건_조회_http_request">HTTP request</h5>
                         <div class="listingblock">
                             <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /customer/api/restaurants/17 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /customer/api/restaurants/41 HTTP/1.1
 Host: localhost:8080</code></pre>
                             </div>
                         </div>
@@ -2710,7 +2832,7 @@ Content-Length: 326
                         <h5 id="_메뉴_조회_http_request">HTTP request</h5>
                         <div class="listingblock">
                             <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /customer/api/restaurants/39/menu HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /customer/api/restaurants/63/menu HTTP/1.1
 Host: localhost:8080</code></pre>
                             </div>
                         </div>
@@ -2723,7 +2845,7 @@ Host: localhost:8080</code></pre>
 Content-Type: application/json
 Content-Length: 595
 
-{"content":[{"name":"라면","price":1500,"description":"너구리 한마리 몰고가세용~"},{"name":"감자칩","price":1500,"description":"감자칩의 근본 포카칩"},{"name":"계란찜","price":1500,"description":"닭발과 최강 조합"},{"name":"짜장면","price":1500,"description":"오늘은 내가 요리사~"},{"name":"파스타","price":1500,"description":"봉골레 파스타 하나!"}],"pageable":"INSTANCE","last":true,"totalPages":1,"totalElements":5,"size":5,"number":0,"sort":{"empty":true,"sorted":false,"unsorted":true},"first":true,"numberOfElements":5,"empty":false}</code></pre>
+{"content":[{"name":"라면","price":1500,"description":"너구리 한마리 몰고가세용~"},{"name":"감자칩","price":1500,"description":"감자칩의 근본 포카칩"},{"name":"계란찜","price":1500,"description":"닭발과 최강 조합"},{"name":"짜장면","price":1500,"description":"오늘은 내가 요리사~"},{"name":"파스타","price":1500,"description":"봉골레 파스타 하나!"}],"pageable":"INSTANCE","totalPages":1,"totalElements":5,"last":true,"size":5,"number":0,"sort":{"empty":true,"unsorted":true,"sorted":false},"numberOfElements":5,"first":true,"empty":false}</code></pre>
                             </div>
                         </div>
                     </div>
@@ -2884,7 +3006,7 @@ Host: localhost:8080</code></pre>
 Content-Type: application/json
 Content-Length: 471
 
-{"content":[{"foodType":"KOREAN","restaurantName":"유명 레스토랑","location":"서울특별시 강남구 어딘가로 123 무슨빌딩 1층"},{"foodType":"KOREAN","restaurantName":"유명 레스토랑","location":"서울특별시 강남구 어딘가로 123 무슨빌딩 1층"}],"pageable":"INSTANCE","last":true,"totalPages":1,"totalElements":2,"size":2,"number":0,"sort":{"empty":true,"sorted":false,"unsorted":true},"first":true,"numberOfElements":2,"empty":false}</code></pre>
+{"content":[{"foodType":"KOREAN","restaurantName":"유명 레스토랑","location":"서울특별시 강남구 어딘가로 123 무슨빌딩 1층"},{"foodType":"KOREAN","restaurantName":"유명 레스토랑","location":"서울특별시 강남구 어딘가로 123 무슨빌딩 1층"}],"pageable":"INSTANCE","totalPages":1,"totalElements":2,"last":true,"size":2,"number":0,"sort":{"empty":true,"unsorted":true,"sorted":false},"numberOfElements":2,"first":true,"empty":false}</code></pre>
                             </div>
                         </div>
                     </div>
@@ -3042,7 +3164,7 @@ Content-Length: 471
                             <h6 id="_예약_확정으로_변경_http_request">HTTP request</h6>
                             <div class="listingblock">
                                 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /owner/api/reservations/54?ownerId=52 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /owner/api/reservations/78?ownerId=76 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Content-Length: 20
 Host: localhost:8080
@@ -3050,6 +3172,51 @@ Host: localhost:8080
 {"status":"confirm"}</code></pre>
                                 </div>
                             </div>
+                        </div>
+                        <div class="sect5">
+                            <h6 id="_예약_확정으로_변경_path_parameters">Path parameters</h6>
+                            <table class="tableblock frame-all grid-all stretch">
+                                <caption class="title">Table 1. /owner/api/reservations/{reservationId}</caption>
+                                <colgroup>
+                                    <col style="width: 50%;">
+                                    <col style="width: 50%;">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th class="tableblock halign-left valign-top">Parameter</th>
+                                    <th class="tableblock halign-left valign-top">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock"><code>reservationId</code>
+                                    </p></td>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock">예약 식별자</p></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="sect5">
+                            <h6 id="_예약_확정으로_변경_request_parameters">Request parameters</h6>
+                            <table class="tableblock frame-all grid-all stretch">
+                                <colgroup>
+                                    <col style="width: 50%;">
+                                    <col style="width: 50%;">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th class="tableblock halign-left valign-top">Parameter</th>
+                                    <th class="tableblock halign-left valign-top">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock">
+                                        <code>ownerId</code></p></td>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock">점주 식별자</p></td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="sect5">
                             <h6 id="_예약_확정으로_변경_request_fields">Request fields</h6>
@@ -3093,7 +3260,7 @@ Host: localhost:8080
                             <h6 id="_예약_취소로_변경_http_request">HTTP request</h6>
                             <div class="listingblock">
                                 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /owner/api/reservations/66?ownerId=64 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /owner/api/reservations/110?ownerId=108 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Content-Length: 19
 Host: localhost:8080
@@ -3101,6 +3268,51 @@ Host: localhost:8080
 {"status":"cancel"}</code></pre>
                                 </div>
                             </div>
+                        </div>
+                        <div class="sect5">
+                            <h6 id="_예약_취소로_변경_path_parameters">Path parameters</h6>
+                            <table class="tableblock frame-all grid-all stretch">
+                                <caption class="title">Table 1. /owner/api/reservations/{reservationId}</caption>
+                                <colgroup>
+                                    <col style="width: 50%;">
+                                    <col style="width: 50%;">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th class="tableblock halign-left valign-top">Parameter</th>
+                                    <th class="tableblock halign-left valign-top">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock"><code>reservationId</code>
+                                    </p></td>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock">예약 식별자</p></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="sect5">
+                            <h6 id="_예약_취소로_변경_request_parameters">Request parameters</h6>
+                            <table class="tableblock frame-all grid-all stretch">
+                                <colgroup>
+                                    <col style="width: 50%;">
+                                    <col style="width: 50%;">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th class="tableblock halign-left valign-top">Parameter</th>
+                                    <th class="tableblock halign-left valign-top">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock">
+                                        <code>ownerId</code></p></td>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock">점주 식별자</p></td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="sect5">
                             <h6 id="_예약_취소로_변경_request_fields">Request fields</h6>
@@ -3144,7 +3356,7 @@ Host: localhost:8080
                             <h6 id="_예약_방문완료로_변경_http_request">HTTP request</h6>
                             <div class="listingblock">
                                 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /owner/api/reservations/58?ownerId=56 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /owner/api/reservations/102?ownerId=100 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Content-Length: 18
 Host: localhost:8080
@@ -3152,6 +3364,51 @@ Host: localhost:8080
 {"status":"visit"}</code></pre>
                                 </div>
                             </div>
+                        </div>
+                        <div class="sect5">
+                            <h6 id="_예약_방문완료로_변경_path_parameters">Path parameters</h6>
+                            <table class="tableblock frame-all grid-all stretch">
+                                <caption class="title">Table 1. /owner/api/reservations/{reservationId}</caption>
+                                <colgroup>
+                                    <col style="width: 50%;">
+                                    <col style="width: 50%;">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th class="tableblock halign-left valign-top">Parameter</th>
+                                    <th class="tableblock halign-left valign-top">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock"><code>reservationId</code>
+                                    </p></td>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock">예약 식별자</p></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="sect5">
+                            <h6 id="_예약_방문완료로_변경_request_parameters">Request parameters</h6>
+                            <table class="tableblock frame-all grid-all stretch">
+                                <colgroup>
+                                    <col style="width: 50%;">
+                                    <col style="width: 50%;">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th class="tableblock halign-left valign-top">Parameter</th>
+                                    <th class="tableblock halign-left valign-top">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock">
+                                        <code>ownerId</code></p></td>
+                                    <td class="tableblock halign-left valign-top"><p class="tableblock">점주 식별자</p></td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="sect5">
                             <h6 id="_예약_방문완료로_변경_request_fields">Request fields</h6>
@@ -3191,53 +3448,11 @@ Host: localhost:8080
                     </div>
                     <div class="sect4">
                         <h5 id="_예약_노쇼로_변경">예약 노쇼로 변경</h5>
-                        <div class="sect5">
-                            <h6 id="_예약_노쇼로_변경_http_request">HTTP request</h6>
-                            <div class="listingblock">
-                                <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PATCH /owner/api/reservations/62?ownerId=60 HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Content-Length: 20
-Host: localhost:8080
-
-{"status":"no-show"}</code></pre>
-                                </div>
-                            </div>
+                        <div class="paragraph">
+                            <p>operation::owner-reservation-update-status-noShow[snippets='http-request,</p>
                         </div>
-                        <div class="sect5">
-                            <h6 id="_예약_노쇼로_변경_request_fields">Request fields</h6>
-                            <table class="tableblock frame-all grid-all stretch">
-                                <colgroup>
-                                    <col style="width: 33.3333%;">
-                                    <col style="width: 33.3333%;">
-                                    <col style="width: 33.3334%;">
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th class="tableblock halign-left valign-top">Path</th>
-                                    <th class="tableblock halign-left valign-top">Type</th>
-                                    <th class="tableblock halign-left valign-top">Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td class="tableblock halign-left valign-top"><p class="tableblock">
-                                        <code>status</code></p></td>
-                                    <td class="tableblock halign-left valign-top"><p class="tableblock">
-                                        <code>String</code></p></td>
-                                    <td class="tableblock halign-left valign-top"><p class="tableblock">변경할 상태</p></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="sect5">
-                            <h6 id="_예약_노쇼로_변경_http_response">HTTP response</h6>
-                            <div class="listingblock">
-                                <div class="content">
-                                    <pre class="highlightjs highlight nowrap"><code class="language-http hljs"
-                                                                                    data-lang="http">HTTP/1.1 200 OK</code></pre>
-                                </div>
-                            </div>
+                        <div class="paragraph">
+                            <p>path-parameters,request-parameters,request-fields,http-response']</p>
                         </div>
                     </div>
                 </div>
@@ -3250,7 +3465,7 @@ Host: localhost:8080
                         <h5 id="_식당_등록_http_request">HTTP request</h5>
                         <div class="listingblock">
                             <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /owner/api/restaurants?ownerId=67 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /owner/api/restaurants?ownerId=44 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Content-Length: 446
 Host: localhost:8080
@@ -3280,100 +3495,108 @@ Host: localhost:8080
                                     <code>foodType</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">음식 종류</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">food type</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 이름</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant name</p>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>capacity</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 단위시간 최대 수용 인원</p>
-                                </td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant
+                                    capacity</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>openTime</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 오픈 시간</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant open
+                                    time</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>lastOrderTime</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 라스트 오더 시간</p>
-                                </td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant last
+                                    order time</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>location</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 주소</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant
+                                    location</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>description</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 설명</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant
+                                    description</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>phone</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 전화번호</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant phone</p>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>menuList</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 리스트</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">menu list</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>menuList[].name</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 름이</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">menu name</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>menuList[].price</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 가격</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">menu price</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>menuList[].description</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 설명</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">menu description</p>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>closingDays</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">휴무일 리스트</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">closing days</p>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>closingDays[].dayOfWeek</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">휴무 요일</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">closing day of
+                                    week</p></td>
                             </tr>
                             </tbody>
                         </table>
@@ -3383,7 +3606,7 @@ Host: localhost:8080
                         <div class="listingblock">
                             <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
-Location: /owner/api/restaurants/68</code></pre>
+Location: /owner/api/restaurants/45</code></pre>
                             </div>
                         </div>
                     </div>
@@ -3394,7 +3617,7 @@ Location: /owner/api/restaurants/68</code></pre>
                         <h5 id="_식당_단건_조회_2_http_request">HTTP request</h5>
                         <div class="listingblock">
                             <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /owner/api/restaurants/70?ownerId=69 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /owner/api/restaurants/47?ownerId=46 HTTP/1.1
 Host: localhost:8080</code></pre>
                             </div>
                         </div>
@@ -3432,93 +3655,100 @@ Content-Length: 340
                                     <code>foodType</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">음식 종류</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">food type</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 이름</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant name</p>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>capacity</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 단위시간 최대 수용 인원</p>
-                                </td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant
+                                    capacity</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>openTime</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 오픈 시간</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant open
+                                    time</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>lastOrderTime</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 라스트 오더 시간</p>
-                                </td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant last
+                                    order time</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>location</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 주소</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant
+                                    location</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>description</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 설명</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant
+                                    description</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>phone</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">식당 전화번호</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">restaurant phone</p>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>menuList</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 리스트</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">menu list</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>menuList[].name</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 이름</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">menu name</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>menuList[].price</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 가격</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">menu price</p></td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock">
                                     <code>closingDays</code></p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">휴무일 리스트</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">closing days</p>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>closingDays[].dayOfWeek</code>
                                 </p></td>
                                 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code>
                                 </p></td>
-                                <td class="tableblock halign-left valign-top"><p class="tableblock">휴무 요일</p></td>
+                                <td class="tableblock halign-left valign-top"><p class="tableblock">closing day of
+                                    week</p></td>
                             </tr>
                             </tbody>
                         </table>
@@ -3531,7 +3761,7 @@ Content-Length: 340
 <div id="footer">
     <div id="footer-text">
         Version 0.0.1-SNAPSHOT<br>
-        Last updated 2023-01-27 16:03:00 +0900
+        Last updated 2023-02-01 22:21:08 +0900
     </div>
 </div>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css" rel="stylesheet">

@@ -85,7 +85,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hb
 {
   "restaurantId": 3,
   "reservationCustomerInput": {
-    "visitDateTime": "2023-02-03T20:00:00",
+    "visitDateTime": "2023-02-28T22:00:00",
     "visitorCount": 2,
     "memo": "단무지는 빼주세요~"
   }
@@ -139,6 +139,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hb
 ### 레스토랑 목록 paging조회
 GET http://localhost:8080/customer/api/restaurants?page=0&size=3
 
+### 구매자의 예약을 확인하는 API
+GET http://localhost:8080/customer/api/reservations?status=PLANNED
+
+### 구매자의 예약을 상세 조회하는 API
+GET http://localhost:8080/customer/api/reservations/4
 
 ### 고객이 식당의 상세정보를 조회
 GET http://localhost:8080/customer/api/restaurants/3
@@ -155,3 +160,11 @@ GET http://localhost:8080/customer/api/restaurants/search?page=0&size=5&restaura
 
 ### 레스토랑 메뉴 조회 API
 GET http://localhost:8080/customer/api/restaurants/3/menu
+
+### 점주의 예약 상세 조회
+GET http://localhost:8080/owner/api/reservations/5
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hbWUiOiJpQW1Pd25lciIsImlkIjoyLCJyb2xlIjoiUk9MRV9PV05FUiIsImV4cCI6MTY3NTI1NTE1MX0.F4GR6JbnjE_n2xZ3ebmb0RigGy7iC_CfxuVX3i5ulXU
+
+
+### 식당 예약 가능 날짜 조회 API
+GET http://localhost:8080/customer/api/reservations/available-dates?restaurantId=3

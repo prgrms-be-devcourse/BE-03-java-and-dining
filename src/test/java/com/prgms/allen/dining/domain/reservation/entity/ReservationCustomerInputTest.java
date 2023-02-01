@@ -1,5 +1,6 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
@@ -7,7 +8,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,29 +30,29 @@ class ReservationCustomerInputTest {
 			// given
 			LocalDateTime visitAt = LocalDateTime.now()
 				.plusDays(daysAfterToday)
-				.plusHours(1L)
 				.truncatedTo(ChronoUnit.HOURS);
 
 			// when
-			ReservationCustomerInput reservationCustomerInput = new ReservationCustomerInput(visitAt,
-				VALID_VISITOR_COUNT, VALID_MEMO);
+			ReservationCustomerInput reservationCustomerInput = new FakeReservationCustomerInput(
+				visitAt.toLocalDate(),
+				visitAt.toLocalTime(),
+				VALID_VISITOR_COUNT
+			);
 
 			// then
 			LocalDate actualVisitDate = visitAt.toLocalDate();
 			LocalTime actualVisitTime = visitAt.toLocalTime();
-			Assertions.assertThat(reservationCustomerInput.getVisitDate())
-				.isEqualTo(actualVisitDate);
-			Assertions.assertThat(reservationCustomerInput.getVisitTime())
-				.isEqualTo(actualVisitTime);
-			Assertions.assertThat(reservationCustomerInput.getVisitorCount())
-				.isEqualTo(VALID_VISITOR_COUNT);
-			Assertions.assertThat(reservationCustomerInput.getCustomerMemo())
-				.isEqualTo(VALID_MEMO);
+
+			assertAll(
+				() -> assertThat(reservationCustomerInput.getVisitDate()).isEqualTo(actualVisitDate),
+				() -> assertThat(reservationCustomerInput.getVisitTime()).isEqualTo(actualVisitTime),
+				() -> assertThat(reservationCustomerInput.getVisitorCount()).isEqualTo(VALID_VISITOR_COUNT)
+			);
 		}
 
 		@ParameterizedTest
 		@ValueSource(longs = {0L, 30L})
-		@DisplayName("예약일보다 일찍, 혹은 예야일로부터 30일을 넘겨서 날짜를 잡으면 예약에 실패한다.")
+		@DisplayName("예약일보다 일찍, 혹은 예약일로부터 30일을 넘겨서 날짜를 잡으면 예약에 실패한다.")
 		void fail_by_invalid_day(long invalidDay) {
 			// given
 			LocalDateTime visitAt = LocalDateTime.now()

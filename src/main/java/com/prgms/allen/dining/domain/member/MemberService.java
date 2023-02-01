@@ -5,13 +5,13 @@ import java.text.MessageFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.prgms.allen.dining.domain.common.NotFoundResourceException;
 import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class MemberService {
 
 	private final MemberRepository memberRepository;
@@ -20,32 +20,30 @@ public class MemberService {
 		this.memberRepository = memberRepository;
 	}
 
+	@Transactional
 	public Long signup(MemberSignupReq signupReq) {
 		Member savedMember = memberRepository.save(signupReq.toEntity());
 		return savedMember.getId();
 	}
 
-	@Transactional(readOnly = true)
-	public Member findOwnerById(long ownerId) {
+	public Member findOwnerById(Long ownerId) {
 		return memberRepository.findByIdAndMemberType(ownerId, MemberType.OWNER)
 			.orElseThrow(() -> new NotFoundResourceException(
-				MessageFormat.format("Cannot find Restaurant entity for owner id = {0}", ownerId)
+				MessageFormat.format("Cannot find Owner entity for owner id = {0}", ownerId)
 			));
 	}
 
-	@Transactional(readOnly = true)
 	public Member findCustomerById(Long customerId) {
 		return memberRepository.findByIdAndMemberType(customerId, MemberType.CUSTOMER)
 			.orElseThrow(() -> new NotFoundResourceException(
-				MessageFormat.format("Cannot find Restaurant entity for customer id = {0}", customerId)
+				MessageFormat.format("Cannot find Customer entity for customer id = {0}", customerId)
 			));
 	}
 
-	@Transactional(readOnly = true)
 	public Member login(String nickname, String password) {
 		Member member = memberRepository.findByNickname(nickname)
 			.orElseThrow(() -> new NotFoundResourceException(
-				MessageFormat.format("Cannot find Restaurant entity for customer nickname = {0}", nickname)
+				MessageFormat.format("Cannot find Member entity for member nickname = {0}", nickname)
 			));
 		member.checkPassword(password);
 		return member;

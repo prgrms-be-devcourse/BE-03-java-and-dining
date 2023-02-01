@@ -7,25 +7,33 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.prgms.allen.dining.global.error.exception.NotFoundResourceException;
-import com.prgms.allen.dining.global.error.exception.ReserveFailException;
-import com.prgms.allen.dining.global.error.exception.RestaurantDuplicateCreationException;
+import com.prgms.allen.dining.domain.common.NotFoundResourceException;
+import com.prgms.allen.dining.domain.notification.NotificationFailedException;
+import com.prgms.allen.dining.domain.reservation.ReserveFailException;
+import com.prgms.allen.dining.domain.restaurant.RestaurantDuplicateCreationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorResponse> handleException(Exception e) {
+		log.error("Unchecked exception occurred.", e);
+		ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+		return newResponseEntity(response);
+	}
+
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e) {
-		log.info("RuntimeException occurred.", e);
+		log.error("RuntimeException occurred.", e);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
 		return newResponseEntity(response);
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
-		log.info("IllegalStateException occurred.", e);
+		log.info("IllegalArgumentException occurred.", e);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_REQUEST);
 		return newResponseEntity(response);
 	}
@@ -62,6 +70,13 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleRestaurantDuplicateCreationException(
 		RestaurantDuplicateCreationException e) {
 		log.info("RestaurantDuplicateCreationException occurred.", e);
+		ErrorResponse response = new ErrorResponse(e.getErrorCode());
+		return newResponseEntity(response);
+	}
+
+	@ExceptionHandler(NotificationFailedException.class)
+	public ResponseEntity<ErrorResponse> handleNotificationFailedException(NotificationFailedException e) {
+		log.info("NotificationFailedException occurred.", e);
 		ErrorResponse response = new ErrorResponse(e.getErrorCode());
 		return newResponseEntity(response);
 	}
