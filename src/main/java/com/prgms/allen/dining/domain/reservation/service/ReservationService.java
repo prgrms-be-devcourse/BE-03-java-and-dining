@@ -44,7 +44,8 @@ public class ReservationService {
 		ReservationRepository reservationRepository,
 		RestaurantService restaurantService,
 		MemberService memberService,
-		SlackNotifyService slackNotifyService) {
+		SlackNotifyService slackNotifyService
+	) {
 		this.reservationRepository = reservationRepository;
 		this.restaurantService = restaurantService;
 		this.memberService = memberService;
