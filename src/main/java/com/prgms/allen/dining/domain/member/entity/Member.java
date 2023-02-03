@@ -118,4 +118,14 @@ public class Member {
 	public boolean matchesId(Long id) {
 		return this.id.equals(id);
 	}
+
+	public void checkPassword(String requestPassword) {
+		if (!password.equals(requestPassword)) {
+			throw new IllegalArgumentException(
+				String.format("Member %s's password %s is not matched. Request password is %s",
+					nickname,
+					password,
+					requestPassword));
+		}
+	}
 }

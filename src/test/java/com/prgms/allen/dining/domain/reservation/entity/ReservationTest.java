@@ -18,7 +18,7 @@ import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.FakeReservationRepository;
-import com.prgms.allen.dining.domain.reservation.ReservationRepository;
+import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
@@ -115,6 +115,33 @@ class ReservationTest {
 	}
 
 	@Test
+	@DisplayName("고객은 자신의 예약을 취소할 수 있다.")
+	void cancel_reservation_by_customer() {
+		// given
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+
+		ReservationCustomerInput customerInput = new FakeReservationCustomerInput(
+			LocalDate.now()
+				.plusDays(1),
+			LocalTime.now()
+				.truncatedTo(ChronoUnit.HOURS),
+			2
+		);
+
+		Reservation reservation = reservationRepository.save(
+			DummyGenerator.createReservation(customer, restaurant, ReservationStatus.PENDING, customerInput)
+		);
+
+		// when
+		reservation.cancel(MemberType.CUSTOMER, customer.getId());
+
+		// then
+		assertThat(reservation.getStatus()).isSameAs(ReservationStatus.CANCELLED);
+	}
+
+	@Test
 	@DisplayName("점주는 확정 대기중인 예약을 확정할 수 있다.")
 	void confirm_reservation() {
 		// given
@@ -201,7 +228,7 @@ class ReservationTest {
 		);
 
 		// when
-		reservation.cancel(owner.getId());
+		reservation.cancel(MemberType.OWNER, owner.getId());
 
 		// then
 		assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.CANCELLED);
@@ -223,7 +250,7 @@ class ReservationTest {
 
 		// when & then
 		assertThrows(IllegalStateException.class, () ->
-			reservation.cancel(owner.getId())
+			reservation.cancel(MemberType.OWNER, owner.getId())
 		);
 	}
 

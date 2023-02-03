@@ -23,9 +23,31 @@ Content-Type: application/json
   "memberType": "OWNER"
 }
 
-### [점주 - 식당] 식당 등록 API
-POST http://localhost:8080/owner/api/restaurants?ownerId=2
+
+### [회원 - 로그인] 점주 로그인 API
+POST http://localhost:8080/api/members/login
 Content-Type: application/json
+
+{
+  "nickname": "iAmOwner",
+  "password": "password123!"
+}
+
+
+### [회원 - 로그인] 고객 로그인 API
+POST http://localhost:8080/api/members/login
+Content-Type: application/json
+
+{
+  "nickname": "iAmCustomer",
+  "password": "password123!"
+}
+
+
+### [점주 - 식당] 식당 등록 API
+POST http://localhost:8080/owner/api/restaurants
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hbWUiOiJpQW1Pd25lciIsImlkIjoyLCJyb2xlIjoiT1dORVIiLCJleHAiOjE2NzUyNTY0MDV9.Wboj2k4t2rfctY7p_j5JQrEe6fDKmvYY-0ZpY4vLX18
 
 {
   "foodType": "KOREAN",
@@ -56,13 +78,14 @@ Content-Type: application/json
 }
 
 ### [고객 - 예약] 예약을 요청하는 API
-POST http://localhost:8080/customer/api/reservations?customerId=1
+POST http://localhost:8080/customer/api/reservations
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hbWUiOiJpQW1DdXN0b21lciIsImlkIjoxLCJyb2xlIjoiUk9MRV9DVVNUT01FUiIsImV4cCI6MTY3NTI1NTI2MH0.F2W_hA0X67u_Luk_Yrp5_1Ej6neg95Md9EEzLWhcoxs
 
 {
   "restaurantId": 3,
   "reservationCustomerInput": {
-    "visitDateTime": "2023-01-31T22:00:00",
+    "visitDateTime": "2023-02-28T22:00:00",
     "visitorCount": 2,
     "memo": "단무지는 빼주세요~"
   }
@@ -70,12 +93,13 @@ Content-Type: application/json
 
 
 ### [예약] 날짜와 인원수를 통해 식당의 예약가능 시간들을 조회하는 API
-GET http://localhost:8080/customer/api/reservations/available-times?restaurantId=3&date=2023-01-29&visitorCount=2
+GET http://localhost:8080/customer/api/reservations/available-times?restaurantId=3&date=2023-02-02&visitorCount=2
 
 
 ### [점주 - 예약] 예약을 확정하는 API
-PATCH http://localhost:8080/owner/api/reservations/4?ownerId=2
+PATCH http://localhost:8080/owner/api/reservations/5
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hbWUiOiJpQW1Pd25lciIsImlkIjoyLCJyb2xlIjoiUk9MRV9PV05FUiIsImV4cCI6MTY3NTI1NTE1MX0.F4GR6JbnjE_n2xZ3ebmb0RigGy7iC_CfxuVX3i5ulXU
 
 {
   "status": "confirm"
@@ -83,8 +107,9 @@ Content-Type: application/json
 
 
 ### [점주 - 예약] 예약을 취소하는 API
-PATCH http://localhost:8080/owner/api/reservations/4?ownerId=2
+PATCH http://localhost:8080/owner/api/reservations/4
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hbWUiOiJpQW1Pd25lciIsImlkIjoyLCJyb2xlIjoiUk9MRV9PV05FUiIsImV4cCI6MTY3NTI1NTE1MX0.F4GR6JbnjE_n2xZ3ebmb0RigGy7iC_CfxuVX3i5ulXU
 
 {
   "status": "cancel"
@@ -92,8 +117,9 @@ Content-Type: application/json
 
 
 ### [점주 - 예약] 예약을 방문완료로 변경하는 API
-PATCH http://localhost:8080/owner/api/reservations/4?ownerId=2
+PATCH http://localhost:8080/owner/api/reservations/5
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hbWUiOiJpQW1Pd25lciIsImlkIjoyLCJyb2xlIjoiUk9MRV9PV05FUiIsImV4cCI6MTY3NTI1NTE1MX0.F4GR6JbnjE_n2xZ3ebmb0RigGy7iC_CfxuVX3i5ulXU
 
 {
   "status": "visit"
@@ -101,11 +127,12 @@ Content-Type: application/json
 
 
 ### [점주 - 예약] 예약을 노쇼로 변경하는 API
-PATCH http://localhost:8080/owner/api/reservations/4?ownerId=2
+PATCH http://localhost:8080/owner/api/reservations/5
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hbWUiOiJpQW1Pd25lciIsImlkIjoyLCJyb2xlIjoiUk9MRV9PV05FUiIsImV4cCI6MTY3NTI1NTE1MX0.F4GR6JbnjE_n2xZ3ebmb0RigGy7iC_CfxuVX3i5ulXU
 
 {
-  "status": "noSHow"
+  "status": "no-show"
 }
 
 
@@ -113,22 +140,31 @@ Content-Type: application/json
 GET http://localhost:8080/customer/api/restaurants?page=0&size=3
 
 ### 구매자의 예약을 확인하는 API
-GET http://localhost:8080/customer/api/reservations?status=PLANNED&customerId=1
+GET http://localhost:8080/customer/api/reservations?status=PLANNED
 
 ### 구매자의 예약을 상세 조회하는 API
-GET http://localhost:8080/customer/api/reservations/4?customerId=1
+GET http://localhost:8080/customer/api/reservations/4
 
 ### 고객이 식당의 상세정보를 조회
-GET http://localhost:8080/customer/api/restaurants/2
+GET http://localhost:8080/customer/api/restaurants/3
+
 
 ### 점주의 식당 상세정보 조회
-GET http://localhost:8080/owner/api/restaurants/2?ownerId=1
+GET http://localhost:8080/owner/api/restaurants/3
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hbWUiOiJpQW1Pd25lciIsImlkIjoyLCJyb2xlIjoiUk9MRV9PV05FUiIsImV4cCI6MTY3NTI1NTE1MX0.F4GR6JbnjE_n2xZ3ebmb0RigGy7iC_CfxuVX3i5ulXU
+
 
 ### 레스토랑 명으로 N건 조회 API
-GET http://localhost:8080/customer/api/restaurants/search?page=0&size=5&restaurantName=짱구
+GET http://localhost:8080/customer/api/restaurants/search?page=0&size=5&restaurantName=레스토
+
 
 ### 레스토랑 메뉴 조회 API
-GET http://localhost:8080/customer/api/restaurants/2/menu
+GET http://localhost:8080/customer/api/restaurants/3/menu
 
 ### 점주의 예약 상세 조회
 GET http://localhost:8080/owner/api/reservations/5
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZWFtLWFsbGVuIiwibmlja25hbWUiOiJpQW1Pd25lciIsImlkIjoyLCJyb2xlIjoiUk9MRV9PV05FUiIsImV4cCI6MTY3NTI1NTE1MX0.F4GR6JbnjE_n2xZ3ebmb0RigGy7iC_CfxuVX3i5ulXU
+
+
+### 식당 예약 가능 날짜 조회 API
+GET http://localhost:8080/customer/api/reservations/available-dates?restaurantId=3

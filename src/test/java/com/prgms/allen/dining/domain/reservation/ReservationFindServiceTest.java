@@ -22,6 +22,8 @@ import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.notification.FakeSlackNotifyService;
+import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
 import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForCustomer;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationDetailResForOwner;
@@ -31,6 +33,9 @@ import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
+import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
+import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
@@ -46,11 +51,13 @@ class ReservationFindServiceTest {
 	private final RestaurantRepository restaurantRepository = new FakeRestaurantRepository();
 	private final MemberRepository memberRepository = new FakeMemberRepository();
 	private final MemberService memberService = new MemberService(memberRepository);
+	private final SlackNotifyService slackNotifyService = new FakeSlackNotifyService();
 	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
 	private final ReservationService reservationService = new ReservationService(
 		reservationRepository,
 		restaurantService,
-		memberService
+		memberService,
+		slackNotifyService
 	);
 	private final ReservationFindService reservationFindService = new ReservationFindService(
 		reservationRepository,

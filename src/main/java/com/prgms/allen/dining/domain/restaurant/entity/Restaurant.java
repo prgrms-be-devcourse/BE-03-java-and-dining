@@ -1,6 +1,8 @@
 package com.prgms.allen.dining.domain.restaurant.entity;
 
 import java.time.LocalDateTime;
+import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,6 +171,21 @@ public class Restaurant {
 		return this.menu.subList(0, 4);
 	}
 
+	public boolean isAvailable(int totalCount, int requestCount) {
+		return this.capacity - totalCount >= requestCount;
+	}
+
+	public boolean isNotReserveAvailableForDay(long totalCount) {
+		long availableTotalCapacity = (long)(this.lastOrderTime.getHour() - this.openTime.getHour() + 1) * capacity;
+		return availableTotalCapacity - totalCount < 2;
+	}
+
+	public boolean isClosingDay(LocalDate requestDate) {
+		return this.closingDays.stream()
+			.map(ClosingDay::getDayOfWeek)
+			.anyMatch(dayOfWeek -> dayOfWeek.equals(requestDate.getDayOfWeek()));
+	}
+
 	public void validate(Member owner, String name, int capacity, String phone, LocalTime openTime,
 		LocalTime lastOrderTime, String location) {
 		validateOwnerType(owner);
@@ -181,7 +198,8 @@ public class Restaurant {
 
 	private void validateOwnerType(Member owner) {
 		Assert.notNull(owner, "Owner must not be empty");
-		Assert.isTrue(MemberType.OWNER.equals(owner.getMemberType()), "No Authorization");
+		Assert.isTrue(MemberType.OWNER.equals(owner.getMemberType()),
+			MessageFormat.format("member id: {0} is not owner, actually type is customer", owner.getId()));
 	}
 
 	private void validateName(String name) {
@@ -190,12 +208,12 @@ public class Restaurant {
 	}
 
 	private void validateCapacity(int capacity) {
-		Assert.isTrue(capacity >= 2, "Capacity must over than 2");
+		Assert.isTrue(capacity >= 2, "Capacity must over than 1");
 	}
 
 	private void validatePhone(String phone) {
 		Assert.hasLength(phone, "Phone must be not empty.");
-		Assert.isTrue(phone.length() >= 9 && phone.length() <= 11, "Name must be between 2 and 5.");
+		Assert.isTrue(phone.length() >= 9 && phone.length() <= 11, "Phone must between 9 and 11");
 		Assert.isTrue(Pattern.matches("^[0-9]+$", phone), "Phone is invalid format");
 	}
 
