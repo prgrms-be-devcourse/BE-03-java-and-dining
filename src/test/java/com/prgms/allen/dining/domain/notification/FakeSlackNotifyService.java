@@ -5,8 +5,12 @@ import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 
 public class FakeSlackNotifyService extends SlackNotifyService {
 
-	@Override
-	public void setToken(String value) {
+	public FakeSlackNotifyService(String token, String customerChannel, String ownerChannel) {
+		super(token, customerChannel, ownerChannel);
+	}
+
+	public FakeSlackNotifyService() {
+		super(null, null, null);
 	}
 
 	@Override
