@@ -11,6 +11,8 @@ on:
       - '**/build.gradle*'
       - '**/settings.gradle*'
       - '**/application*.yml'
+      - '**/release.yml'
+      - 'dockerfile'
       - '**.sql'
 
 
