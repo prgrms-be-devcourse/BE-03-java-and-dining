@@ -13,7 +13,6 @@ on:
       - '**/application*.yml'
       - '**.sql'
 
-
 jobs:
   build:
     runs-on: ubuntu-latest

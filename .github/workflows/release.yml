@@ -1,12 +1,13 @@
 name: springboot-gradle-docker-ec2-cd
 
 on:
-  push:
-    branches:
-      - release
+  pull_request:
+    branches: [ release ]
+    types: [ closed ]
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest # ubuntu 22.04 위에서 실행할거임
 
     steps:
@@ -44,6 +45,12 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew bootJar
 
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: '**/test-results/**/*.xml'
+
       # Spring 어플리케이션 Docker Image 빌드 & 도커 허브로 도커이미지 푸시
       - name: Build Docker Image For Spring
         run: |
@@ -76,4 +83,3 @@ jobs:
             docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/${APP_NAME}
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${APP_NAME}
             docker-compose up -d
-
