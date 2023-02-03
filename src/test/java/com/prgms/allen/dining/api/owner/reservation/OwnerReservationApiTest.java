@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.domain.owner.reservation;
+package com.prgms.allen.dining.api.owner.reservation;
 
 import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;

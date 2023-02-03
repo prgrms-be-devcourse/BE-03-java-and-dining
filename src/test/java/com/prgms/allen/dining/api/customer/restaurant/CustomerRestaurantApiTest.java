@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.domain.customer.restaurant;
+package com.prgms.allen.dining.api.customer.restaurant;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -28,7 +28,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
-import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;

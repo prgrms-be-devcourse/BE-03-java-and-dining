@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.web.domain.owner.restaurant;
+package com.prgms.allen.dining.api.owner.restaurant;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
