@@ -54,11 +54,11 @@ public class CustomerReservationApi {
 	@GetMapping
 	public ResponseEntity<Page<ReservationSimpleResForCustomer>> getReservations(
 		@RequestParam VisitStatus status,
-		@RequestParam Long customerId,
+		@AuthenticationPrincipal JwtAuthenticationPrincipal principal,
 		Pageable pageable
 	) {
 		return ResponseEntity.ok(reservationFindService.getReservations(
-			customerId,
+			principal.memberId(),
 			status,
 			pageable
 		));
@@ -67,11 +67,11 @@ public class CustomerReservationApi {
 	@GetMapping("/{reservationId}")
 	public ResponseEntity<ReservationDetailResForCustomer> getReservationDetail(
 		@PathVariable Long reservationId,
-		@RequestParam Long customerId
+		@AuthenticationPrincipal JwtAuthenticationPrincipal principal
 	) {
 		return ResponseEntity.ok(reservationFindService.getReservationDetail(
 			reservationId,
-			customerId
+			principal.memberId()
 		));
 	}
 

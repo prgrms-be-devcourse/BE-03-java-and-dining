@@ -21,13 +21,15 @@ public class WebSecurityConfig {
 
 	static final String LOGIN_REQUEST_URL = "/api/members/login";
 	static final String SIGNUP_REQUEST_URL = "/api/members/signup";
-	static final String OWNER_API_URL_PREFIX = "/owner/api/**";
+	static final String OWNER_API_URL_PREFIX = "/owner/api/restaurants/**";
 	static final String CUSTOMER_API_URL_PREFIX = "/customer/api/**";
 	static final String CUSTOMER_RESTAURANT_API_URL_PREFIX = "/customer/api/restaurants/**";
 	static final String RESERVATION_AVAILABLE_TIMES_API_URL_PREFIX = "/customer/api/reservations/available-times";
+	static final String RESERVATION_AVAILABLE_DATES_API_URL_PREFIX = "/customer/api/reservations/available-dates";
 	static final String[] ANONYMOUS_AND_CUSTOMER_API_URL_PREFIX = {
 		CUSTOMER_RESTAURANT_API_URL_PREFIX,
-		RESERVATION_AVAILABLE_TIMES_API_URL_PREFIX
+		RESERVATION_AVAILABLE_TIMES_API_URL_PREFIX,
+		RESERVATION_AVAILABLE_DATES_API_URL_PREFIX
 	};
 
 	private final MemberService memberService;

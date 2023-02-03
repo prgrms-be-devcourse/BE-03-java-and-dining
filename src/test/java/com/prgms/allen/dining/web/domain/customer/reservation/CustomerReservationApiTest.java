@@ -42,6 +42,8 @@ import com.prgms.allen.dining.domain.reservation.repository.ReservationRepositor
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
+import com.prgms.allen.dining.generator.JwtGenerator;
+import com.prgms.allen.dining.security.config.HeaderValue;
 
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc
@@ -62,6 +64,9 @@ class CustomerReservationApiTest {
 
 	@Autowired
 	private RestaurantRepository restaurantRepository;
+
+	@Autowired
+	private JwtGenerator jwtGenerator;
 
 	@Test
 	@DisplayName("고객은 식당 예약을 요청할 수 있다.")
@@ -84,20 +89,18 @@ class CustomerReservationApiTest {
 		);
 
 		// when & then
-		mockMvc.perform(post("/customer/api/reservations?customerId=" + customer.getId())
+		mockMvc.perform(post("/customer/api/reservations")
+				.header(HeaderValue.AUTHORIZATION.getValue(), jwtGenerator.getToken(customer))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(reservationCreateReq)))
 			.andExpect(status().isCreated())
 			.andDo(print())
 			.andDo(document("customer-reserve",
-					requestParameters(
-						parameterWithName("customerId").description("고객 식별자")
-					),
-					requestFields(
-						fieldWithPath("restaurantId").description("식당 상태"),
-						fieldWithPath("reservationCustomerInput.visitDateTime").description("방문할 날짜와 시간"),
-						fieldWithPath("reservationCustomerInput.visitorCount").description("방문 인원수"),
-						fieldWithPath("reservationCustomerInput.memo").description("예약자 메모")
+				requestFields(
+					fieldWithPath("restaurantId").description("식당 상태"),
+					fieldWithPath("reservationCustomerInput.visitDateTime").description("방문할 날짜와 시간"),
+					fieldWithPath("reservationCustomerInput.visitorCount").description("방문 인원수"),
+					fieldWithPath("reservationCustomerInput.memo").description("예약자 메모")
 					)
 				)
 			);
@@ -111,8 +114,14 @@ class CustomerReservationApiTest {
 		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
 
 		// when & then
-		mockMvc.perform(get("/customer/api/reservations/available-times?restaurantId=" + restaurant.getId()
-				+ "&date=" + LocalDate.now().plusDays(1L) + "&visitorCount=" + 2)
+		String restaurantId = String.valueOf(restaurant.getId());
+		String date = LocalDate.now().plusDays(1L).toString();
+		String visitorCount = "2";
+
+		mockMvc.perform(get("/customer/api/reservations/available-times")
+				.param("restaurantId", restaurantId)
+				.param("date", date)
+				.param("visitorCount", visitorCount)
 			)
 			.andExpect(status().isOk())
 			.andDo(print())
@@ -152,9 +161,9 @@ class CustomerReservationApiTest {
 		// when && then
 		mockMvc.perform(get("/customer/api/reservations")
 				.param("status", status)
-				.param("customerId", customer.getId().toString())
 				.param("page", page)
 				.param("size", size)
+				.header(HeaderValue.AUTHORIZATION.getValue(), jwtGenerator.getToken(customer))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andDo(print())
@@ -162,7 +171,6 @@ class CustomerReservationApiTest {
 				document("reservation-getAllByCustomer",
 					requestParameters(
 						parameterWithName("status").description("조회할 상태"),
-						parameterWithName("customerId").description("조회하는 구매자 아이디"),
 						parameterWithName("page").description("페이지 번호"),
 						parameterWithName("size").description("한 페이지 당 조회 개수")
 					),
@@ -208,7 +216,7 @@ class CustomerReservationApiTest {
 
 		// when & then
 		mockMvc.perform(get("/customer/api/reservations/{reservationId}", reservation.getId())
-				.param("customerId", customer.getId().toString())
+				.header(HeaderValue.AUTHORIZATION.getValue(), jwtGenerator.getToken(customer))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andDo(print())
@@ -216,9 +224,6 @@ class CustomerReservationApiTest {
 				document("reservation-getAllByCustomer",
 					pathParameters(
 						parameterWithName("reservationId").description("조회할 상태")
-					),
-					requestParameters(
-						parameterWithName("customerId").description("조회하는 구매자 아이디")
 					),
 					responseFields(
 						fieldWithPath("reservationInfoResForCustomer").type(JsonFieldType.OBJECT).description("예약 정보"),
@@ -263,7 +268,7 @@ class CustomerReservationApiTest {
 
 		// when & then
 		mockMvc.perform(patch("/customer/api/reservations/{reservationId}?", reservation.getId())
-				.param("customerId", customer.getId().toString())
+				.header(HeaderValue.AUTHORIZATION.getValue(), jwtGenerator.getToken(customer))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
@@ -272,9 +277,6 @@ class CustomerReservationApiTest {
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
 				),
-				requestParameters(
-					parameterWithName("customerId").description("고객 식별자")
-				),
 				requestFields(
 					fieldWithPath("status").description("변경할 상태")
 				))
@@ -282,8 +284,8 @@ class CustomerReservationApiTest {
 	}
 
 	@Test
-	@DisplayName("고객은 하나의 식당의 상세 정보를 조회할 수 있다.")
-	void testGetMyRestaurant() throws Exception {
+	@DisplayName("고객은 예약하려는 식당의 예약 가능한 날짜들을 조회할 수 있다.")
+	void get_reservation_available_dates() throws Exception {
 
 		Member owner = memberRepository.save(DummyGenerator.OWNER);
 

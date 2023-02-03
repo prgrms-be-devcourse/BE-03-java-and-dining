@@ -37,6 +37,8 @@ import com.prgms.allen.dining.domain.reservation.repository.ReservationRepositor
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
+import com.prgms.allen.dining.generator.JwtGenerator;
+import com.prgms.allen.dining.security.config.HeaderValue;
 
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc
@@ -57,6 +59,9 @@ class OwnerReservationApiTest {
 
 	@Autowired
 	private RestaurantRepository restaurantRepository;
+
+	@Autowired
+	private JwtGenerator jwtGenerator;
 
 	@Test
 	@DisplayName("점주는 확정 대기 중인 예약을 확정할 수 있다.")
@@ -80,7 +85,7 @@ class OwnerReservationApiTest {
 
 		// when & then
 		mockMvc.perform(patch("/owner/api/reservations/{reservationId}", reservation.getId())
-				.param("ownerId", owner.getId().toString())
+				.header(HeaderValue.AUTHORIZATION.getValue(), jwtGenerator.getToken(owner))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
@@ -88,9 +93,6 @@ class OwnerReservationApiTest {
 			.andDo(document("owner-reservation-update-status-confirm",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
-				),
-				requestParameters(
-					parameterWithName("ownerId").description("점주 식별자")
 				),
 				requestFields(
 					fieldWithPath("status").description("변경할 상태")
@@ -118,7 +120,7 @@ class OwnerReservationApiTest {
 
 		// when & then
 		mockMvc.perform(patch("/owner/api/reservations/{reservationId}", reservation.getId())
-				.param("ownerId", owner.getId().toString())
+				.header(HeaderValue.AUTHORIZATION.getValue(), jwtGenerator.getToken(owner))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
@@ -126,9 +128,6 @@ class OwnerReservationApiTest {
 			.andDo(document("owner-reservation-update-status-cancel",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
-				),
-				requestParameters(
-					parameterWithName("ownerId").description("점주 식별자")
 				),
 				requestFields(
 					fieldWithPath("status").description("변경할 상태")
@@ -158,7 +157,7 @@ class OwnerReservationApiTest {
 
 		// when & then
 		mockMvc.perform(patch("/owner/api/reservations/{reservationId}", reservation.getId())
-				.param("ownerId", owner.getId().toString())
+				.header(HeaderValue.AUTHORIZATION.getValue(), jwtGenerator.getToken(owner))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
@@ -166,9 +165,6 @@ class OwnerReservationApiTest {
 			.andDo(document("owner-reservation-update-status-visit",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
-				),
-				requestParameters(
-					parameterWithName("ownerId").description("점주 식별자")
 				),
 				requestFields(
 					fieldWithPath("status").description("변경할 상태")
@@ -198,7 +194,7 @@ class OwnerReservationApiTest {
 
 		// when & then
 		mockMvc.perform(patch("/owner/api/reservations/{reservationId}", reservation.getId())
-				.param("ownerId", owner.getId().toString())
+				.header(HeaderValue.AUTHORIZATION.getValue(), jwtGenerator.getToken(owner))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(statusUpdateReq)))
 			.andExpect(status().isOk())
@@ -206,9 +202,6 @@ class OwnerReservationApiTest {
 			.andDo(document("owner-reservation-update-status-noShow",
 				pathParameters(
 					parameterWithName("reservationId").description("예약 식별자")
-				),
-				requestParameters(
-					parameterWithName("ownerId").description("점주 식별자")
 				),
 				requestFields(
 					fieldWithPath("status").description("변경할 상태")
@@ -246,7 +239,7 @@ class OwnerReservationApiTest {
 			.andExpect(status().isOk())
 			.andDo(print())
 			.andDo(
-				document("reservation-getAllByCustomer",
+				document("owner-reservation-get-by-reservationStatus",
 					requestParameters(
 						parameterWithName("reservationStatus").description("조회할 상태"),
 						parameterWithName("restaurantId").description("조회하려는 레스토랑의 아이디"),

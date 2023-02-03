@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -38,6 +39,7 @@ public class OwnerReservationApi {
 		this.statusUpdateService = statusUpdateService;
 	}
 
+	@PreAuthorize("hasRole('OWNER') or isAnonymous()")
 	@GetMapping
 	public ResponseEntity<Page<ReservationSimpleResForOwner>> getOwnerReservations(
 		@RequestParam ReservationStatus reservationStatus,
@@ -51,6 +53,7 @@ public class OwnerReservationApi {
 		));
 	}
 
+	@PreAuthorize("hasRole('OWNER') or isAnonymous()")
 	@GetMapping("/{reservationId}")
 	public ResponseEntity<ReservationDetailResForOwner> getReservationDetail(
 		@PathVariable Long reservationId
@@ -60,6 +63,7 @@ public class OwnerReservationApi {
 		));
 	}
 
+	@PreAuthorize("hasRole('OWNER')")
 	@PatchMapping("/{reservationId}")
 	public ResponseEntity<Void> updateStatus(
 		@PathVariable Long reservationId,
