@@ -101,6 +101,48 @@ class OwnerReservationApiTest {
 	}
 
 	@Test
+	@DisplayName("점주는 예약을 상세 조회할 수 있다.")
+	void getReservationDetail() throws Exception {
+		// given
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		Member owner = memberRepository.save(DummyGenerator.OWNER);
+		Restaurant restaurant = restaurantRepository.save(DummyGenerator.createRestaurant(owner));
+		ReservationCustomerInput customerInput = new ReservationCustomerInput(
+			LocalDate.now()
+				.plusDays(1),
+			LocalTime.now()
+				.truncatedTo(ChronoUnit.HOURS),
+			2
+		);
+		Reservation reservation = reservationRepository.save(
+			new Reservation(customer, restaurant, customerInput)
+		);
+
+		// when & then
+		mockMvc.perform(get("/owner/api/reservations/{reservationId}", reservation.getId())
+				.header(HeaderValue.AUTHORIZATION.getValue(), jwtGenerator.getToken(owner)))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("owner-reservation-get-detail",
+				pathParameters(
+					parameterWithName("reservationId").description("예약 식별자")
+				),
+				responseFields(
+					fieldWithPath("customerInfoRes").description("고객 정보"),
+					fieldWithPath("customerInfoRes.name").description("고객 이름"),
+					fieldWithPath("customerInfoRes.phone").description("고객 전화번호"),
+					fieldWithPath("customerInfoRes.visitedCount").description("방문 횟수"),
+					fieldWithPath("customerInfoRes.noShowCount").description("노쇼 횟수"),
+					fieldWithPath("customerInfoRes.lastVisitedDateTime").description("마지막 방문일시"),
+					fieldWithPath("reservationInfoResForOwner").description("예약 정보"),
+					fieldWithPath("reservationInfoResForOwner.visitDateTime").description("예약 일시"),
+					fieldWithPath("reservationInfoResForOwner.visitorCount").description("방문 인원수"),
+					fieldWithPath("reservationInfoResForOwner.memo").description("예약 메모")
+				))
+			);
+	}
+
+	@Test
 	@DisplayName("점주는 확정 대기 중인 예약을 취소할 수 있다.")
 	void cancel_reservation() throws Exception {
 		// given
