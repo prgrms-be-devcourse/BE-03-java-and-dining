@@ -8,21 +8,23 @@
 
 == 회원
 
-=== 인증
-
 ==== 회원 가입
 
 operation::member-join[snippets='http-request,request-fields,http-response']
+
+==== 로그인
+
+operation::member-login[snippets='http-request,request-fields,http-response,response-fields']
 
 == 고객
 
 === 예약
 
-==== 예약 가능 날짜 조회
+==== 예약 가능 날짜 조회(비회원도 가능)
 
 operation::customer-get-available-dates-restaurant[snippets='http-request,http-response']
 
-==== 예약 가능 시간 조회
+==== 예약 가능 시간 조회(비회원도 가능)
 
 operation::customer-reservation-get-available-times[snippets='http-request,request-parameters,http-response']
 
@@ -30,15 +32,27 @@ operation::customer-reservation-get-available-times[snippets='http-request,reque
 
 operation::customer-reserve[snippets='http-request,request-fields,http-response']
 
+==== 예약 상태별 조회
+
+operation::customer-reservation-get-by-visitStatus[snippets='http-request,request-parameters,http-response,response-body']
+
+==== 예약 단건 조회
+
+operation::customer-reservation-get-detail[snippets='http-request,path-parameters,http-response,response-body']
+
 ==== 예약 취소
 
-operation::customer-reservation-update-status-cancel[snippets='http-request,path-parameters,request-parameters,request-fields,http-response']
+operation::customer-reservation-update-status-cancel[snippets='http-request,path-parameters,request-fields,http-response']
 
-=== 식당
+=== 식당(비회원도 가능)
 
 ==== 식당 다건 조회
 
 operation::customer-get-restaurant-list[snippets='http-request,http-response,response-fields']
+
+==== 식당 이름으로 다건조회
+
+operation::customer-get-restaurant-list-containing-name[snippets='http-request,http-response,response-fields']
 
 ==== 식당 단건 조회
 
@@ -48,33 +62,39 @@ operation::customer-get-one-restaurant[snippets='http-request,http-response,resp
 
 operation::customer-get-menus[snippets='http-request,http-response,response-fields']
 
-==== 식당 이름으로 다건조회
 
-operation::customer-get-restaurant-list-containing-name[snippets='http-request,http-response,response-fields']
+
+
 
 == 점주
 
 === 예약
 
-==== 상태 변경
+==== 예약 상태별 조회
+
+operation::owner-reservation-get-by-reservationStatus[snippets='http-request,request-parameters,http-response,response-fields']
+
+==== 예약 단건 조회
+
+operation::owner-reservation-get-detail[snippets='http-request,path-parameters,http-response,response-fields']
+
+==== 예약상태 변경
 
 ===== 예약 확정으로 변경
 
-operation::owner-reservation-update-status-confirm[snippets='http-request,path-parameters,request-parameters,request-fields,http-response']
+operation::owner-reservation-update-status-confirm[snippets='http-request,path-parameters,request-fields,http-response']
 
 ===== 예약 취소로 변경
 
-operation::owner-reservation-update-status-cancel[snippets='http-request,path-parameters,request-parameters,request-fields,http-response']
+operation::owner-reservation-update-status-cancel[snippets='http-request,path-parameters,request-fields,http-response']
 
 ===== 예약 방문완료로 변경
 
-operation::owner-reservation-update-status-visit[snippets='http-request,path-parameters,request-parameters,request-fields,http-response']
+operation::owner-reservation-update-status-visit[snippets='http-request,path-parameters,request-fields,http-response']
 
 ===== 예약 노쇼로 변경
 
-operation::owner-reservation-update-status-noShow[snippets='http-request,
-
-path-parameters,request-parameters,request-fields,http-response']
+operation::owner-reservation-update-status-noShow[snippets='http-request,path-parameters,request-fields,http-response']
 
 === 식당
 

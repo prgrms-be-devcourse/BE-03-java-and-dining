@@ -192,4 +192,9 @@ public class FakeMemberRepository implements MemberRepository {
 			.filter(member -> memberType.equals(member.getMemberType()))
 			.findAny();
 	}
+
+	@Override
+	public Optional<Member> findByNickname(String nickname) {
+		return Optional.empty();
+	}
 }

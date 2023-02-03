@@ -33,13 +33,18 @@ public class SlackNotifyService {
 	private static final String CUSTOMER_PHONE_PREFIX = "*예약자 전화번호:*\n";
 	private static final String VISITOR_COUNT_PREFIX = "*예약자 인원수:*\n";
 	private static final String VISIT_DATE_TIME_PREFIX = "*예약 날짜:*\n";
-	private static final String CUSTOMER_CHANNEL = "#03-allen-customer-java-and-dining";
-	private static final String OWNER_CHANNEL = "#03-allen-owner-java-and-dining";
-	private static String token;
+	private final String customerChannel;
+	private final String ownerChannel;
+	private final String token;
 
-	@Value(value = "${slack.token}")
-	public void setToken(String value) {
-		token = value;
+	public SlackNotifyService(
+		@Value(value = "${slack.token}") String token,
+		@Value(value = "${slack.channel.customer}") String customerChannel,
+		@Value(value = "${slack.channel.owner}") String ownerChannel
+	) {
+		this.token = token;
+		this.customerChannel = customerChannel;
+		this.ownerChannel = ownerChannel;
 	}
 
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -92,8 +97,8 @@ public class SlackNotifyService {
 
 	private String getChannelBy(MemberType memberType) {
 		return switch (memberType) {
-			case OWNER -> OWNER_CHANNEL;
-			case CUSTOMER -> CUSTOMER_CHANNEL;
+			case OWNER -> ownerChannel;
+			case CUSTOMER -> customerChannel;
 		};
 	}
 
