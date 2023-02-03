@@ -19,7 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.dto.MemberSignupReq;
+import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.generator.DummyGenerator;
+import com.prgms.allen.dining.security.config.MemberLoginReq;
 
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc
@@ -60,6 +63,33 @@ class MemberApiTest {
 					fieldWithPath("phone").description("전화번호"),
 					fieldWithPath("password").description("비밀번호"),
 					fieldWithPath("memberType").description("회원 유형")
+				))
+			);
+	}
+
+	@Test
+	@DisplayName("회원은 로그인을 할 수 있다.")
+	void member_login() throws Exception {
+		// given
+		Member customer = memberRepository.save(DummyGenerator.CUSTOMER);
+		MemberLoginReq loginReq = new MemberLoginReq(
+			customer.getNickname(),
+			customer.getPassword()
+		);
+
+		// when & then
+		mockMvc.perform(post("/api/members/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(loginReq)))
+			.andExpect(status().isOk())
+			.andDo(print())
+			.andDo(document("member-login",
+				requestFields(
+					fieldWithPath("nickname").description("닉네임"),
+					fieldWithPath("password").description("비밀번호")
+				),
+				responseFields(
+					fieldWithPath("token").description("JWT 토큰")
 				))
 			);
 	}

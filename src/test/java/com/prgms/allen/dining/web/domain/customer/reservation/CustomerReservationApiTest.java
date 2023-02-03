@@ -168,7 +168,7 @@ class CustomerReservationApiTest {
 			.andExpect(status().isOk())
 			.andDo(print())
 			.andDo(
-				document("reservation-getAllByCustomer",
+				document("customer-reservation-get-by-visitStatus",
 					requestParameters(
 						parameterWithName("status").description("조회할 상태"),
 						parameterWithName("page").description("페이지 번호"),
@@ -221,7 +221,7 @@ class CustomerReservationApiTest {
 			.andExpect(status().isOk())
 			.andDo(print())
 			.andDo(
-				document("reservation-getAllByCustomer",
+				document("customer-reservation-get-detail",
 					pathParameters(
 						parameterWithName("reservationId").description("조회할 상태")
 					),

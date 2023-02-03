@@ -46,12 +46,12 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
 			);
 		}
 
-		MemberLoginRequest memberLoginRequest = objectMapper.readValue(
+		MemberLoginReq memberLoginReq = objectMapper.readValue(
 			StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8),
-			MemberLoginRequest.class
+			MemberLoginReq.class
 		);
-		String nickname = memberLoginRequest.nickname();
-		String password = memberLoginRequest.password();
+		String nickname = memberLoginReq.nickname();
+		String password = memberLoginReq.password();
 
 		if (nickname == null || password == null) {
 			throw new AuthenticationServiceException(
@@ -64,8 +64,5 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
 			password
 		);
 		return this.getAuthenticationManager().authenticate(unauthenticatedToken);
-	}
-
-	private record MemberLoginRequest(String nickname, String password) {
 	}
 }
