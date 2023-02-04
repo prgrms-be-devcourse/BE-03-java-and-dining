@@ -1,12 +1,17 @@
 # 🍣 자바랑 식당
 
-프로그래머스 데브코스 백엔드 3기 앨런팀의 캐치 테이블 클론코딩 프로젝트
+백엔드 데브코스 3기 앨런팀: 캐치테이블 클론코딩 프로젝트
 
 ![image](https://user-images.githubusercontent.com/65555299/216244230-c9ad2dc3-4a35-4774-a0ea-f13b6bad80b0.png)
 
+<br>
+
 ## 📌 프로젝트 목표
 
-- 협업 경험 ( 수정 예정)
+- 캐치테이블의 핵심 도메인 `예약`의 비즈니스 정책을 분석하고, 핵심 기능을 RESTful API로 구현
+- GitHub, Jira 티켓 등을 이용한 협업 경험
+
+<br>
 
 ## 🧑‍💻 팀원 소개
 
@@ -14,27 +19,15 @@
 |:-----------------------------------:|:-------------------------------------:|:-----------------------------------:|:------------------------------------:|:---------------------------------:|:------------------------------------:|:-------------------------------------:|
 | [김선호](https://github.com/preferKim) | [이택승](https://github.com/dlxortmd987) | [서예원](https://github.com/yewon9609) | [김 환](https://github.com/hwankim123) | [이수린](https://github.com/Tnfls99) | [앨런](https://github.com/hongbin-dev) | [함승훈](https://github.com/seung-hun-h) |
 
-## 🛠️ 기술 스택
+<br>
 
-<!-- 요 링크에서 따오면 좋을 듯! https://github.com/Ileriayo/markdown-badges --> 
+## 🛠️ 기술 스택
 
 ### Tech
 
-<img src="https://img.shields.io/badge/Java-FC4C02?style=flat-square&logo=java&logoColor=white"/>
-<img src="https://img.shields.io/badge/Spring boot-6DB33F?style=flat-square&logo=Spring boot&logoColor=white"/>
-<img src="https://img.shields.io/badge/gradle-02303A?logo=gradle&logoWidth=25"/> 
-<img src="https://img.shields.io/badge/Spring Data JPA-0078D4?style=flat-square&logo=Spring Data JPA&logoColor=white"/>
-<img src="https://img.shields.io/badge/Query DSL-0078D4?style=flat-square&logo=Spring Data JPA&logoColor=white"/>
+<img src="https://img.shields.io/badge/Java-FC4C02?style=flat-square&logo=java&logoColor=white"/> <img src="https://img.shields.io/badge/Spring boot-6DB33F?style=flat-square&logo=Spring boot&logoColor=white"/> <img src="https://img.shields.io/badge/gradle-02303A?logo=gradle&logoWidth=25"/>
 
-<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=spring-security&logoColor=white"/> 
-
-<img src="https://img.shields.io/badge/MySQL-2AB1AC?style=flat-square&logo=MySQL&logoColor=white"/> 
-
-<img src="https://img.shields.io/badge/H2 Database-2AB1AC?style=flat-square&logo=&logoColor=white"/> 
-
-
-<img src="https://img.shields.io/badge/Junit-25A162?style=flat-square&logo=Junit5&logoColor=white"/> 
-<img src="https://img.shields.io/badge/REST Docs-8CA1AF?style=flat-square&logo=Read the Docs&logoColor=white">
+<img src="https://img.shields.io/badge/Spring Data JPA-0078D4?style=flat-square&logo=Spring Data JPA&logoColor=white"/> <img src="https://img.shields.io/badge/Query DSL-0078D4?style=flat-square&logo=Spring Data JPA&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=spring-security&logoColor=white"/> <img src="https://img.shields.io/badge/MySQL-2AB1AC?style=flat-square&logo=MySQL&logoColor=white"/> <img src="https://img.shields.io/badge/H2 Database-2AB1AC?style=flat-square&logo=&logoColor=white"/> <img src="https://img.shields.io/badge/Junit-25A162?style=flat-square&logo=Junit5&logoColor=white"/> <img src="https://img.shields.io/badge/REST Docs-8CA1AF?style=flat-square&logo=Read the Docs&logoColor=white">
 
 ### Deploy
 
@@ -46,32 +39,47 @@
 <img src="https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=Slack&logoColor=white"/>
 <img src="https://img.shields.io/badge/Jira-0052CC?style=flat-square&logo=Jira&logoColor=white"/>
 
+<br>
+
 ## 🍎 설계 및 문서
 
-### 프로젝트 구조
+### 주요 기능
 
-(예정)
+- 회원가입, 로그인
+- 예약
+- 예약 상태 변경
 
-### ERD
-
-(예정)
+<br>
 
 ### API 명세서
 
 - [REST Docs](http://3.37.85.54:8080/)
 - [노션](https://backend-devcourse.notion.site/API-6671c63eabbe4d5cb20f41700a884bbd)
 
-## 주요 기능
+<br>
 
-- 회원가입, 로그인
-- 예약
-- 예약 상태 변경
+### ERD
 
-## 🚀 배포 주소
+![image](https://user-images.githubusercontent.com/65555299/216760634-72919c92-bbc4-4d91-8f50-20fd6a683ab4.png)
 
-- [java-and-dining](http://3.37.85.54:8080/)
+<br>
 
-## 브랜치 전략
+### CI/CD 파이프라인
+
+![image](https://user-images.githubusercontent.com/65555299/216760484-b76226b3-547f-4e6e-ba8f-8254bee1f783.png)
+
+- 배포 주소:  [자바랑 식당](http://3.37.85.54:8080/)
+
+<br>
+
+## 🫐 프로젝트 페이지
+
+- 프로젝트 홈
+- 회고
+    - [스프린트 회고](https://www.notion.so/backend-devcourse/1-33c4e39aa5c34a198f484c6a2de823fb)
+    - [프로젝트 최종 회고](https://backend-devcourse.notion.site/9ac45064ff1e446fbeca4ffc4eede3c5)
+
+<br>
 
 ## 🍇 프로젝트 실행 방법
 
@@ -129,12 +137,3 @@
     java -jar build/libs/dining-1.0.0-SNAPSHOT.jar
     ```
 
-## 🫐 프로젝트 페이지
-
-### [프로젝트 홈](https://backend-devcourse.notion.site/7609a45d6dc648dba5df537456db75d3)
-
-### [프로젝트 문서 (최종 프로젝트 문서 추가)]
-
-### [그라운드 룰](https://www.notion.so/backend-devcourse/7063f14625f147e291f45f371092d84a)
-
-### [회고](https://backend-devcourse.notion.site/ec39d675e1ee42929672d9d481eba364)
