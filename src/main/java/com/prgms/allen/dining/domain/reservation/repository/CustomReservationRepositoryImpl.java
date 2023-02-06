@@ -28,7 +28,7 @@ public class CustomReservationRepositoryImpl extends QuerydslRepositorySupport
 
 	public static final String VISITED_DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm";
 	public static final String DATE_TIME_CONCAT_DELIMITER = " ";
-	public static final String DATE_TIME_FORMAT_FUNCTION = "CAST(FORMATDATETIME({0}, {1}) as java.lang.String)";
+	public static final String DATE_TIME_FORMAT_FUNCTION = "CAST(DATE_FORMAT({0}, {1}) as java.lang.String)";
 	public static final String DATE_TIME_CONCAT_FUNCTION = "CAST(CONCAT_WS({0},{1}, {2}) as java.lang.String)";
 
 	public CustomReservationRepositoryImpl() {
