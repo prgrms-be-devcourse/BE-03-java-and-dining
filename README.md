@@ -68,7 +68,7 @@
 
 ![image](https://user-images.githubusercontent.com/65555299/216760484-b76226b3-547f-4e6e-ba8f-8254bee1f783.png)
 
-- 배포 주소:  [자바랑 식당](http://3.37.85.54:8080/)
+- 배포 주소:  [자바랑 식당](http://3.37.85.54:8080/) (배포 중단)
 
 <br>
 
