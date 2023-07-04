@@ -73,9 +73,8 @@ public class RestaurantService {
 	}
 
 	public RestaurantDetailResForOwner getRestaurant(Long restaurantId, Long ownerId) {
-		Member owner = memberService.findOwnerById(ownerId);
 
-		Restaurant restaurant = restaurantRepository.findByIdAndOwner(restaurantId, owner)
+		Restaurant restaurant = restaurantRepository.findByIdAndOwner(restaurantId, ownerId)
 			.orElseThrow(() -> {
 				throw new NotFoundResourceException(
 					MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}, owner id = {1}",
