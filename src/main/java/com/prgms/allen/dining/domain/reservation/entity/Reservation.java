@@ -168,6 +168,10 @@ public class Reservation extends BaseEntity {
 		return this.getCustomerInput().getVisitTime();
 	}
 
+	public LocalDate getVisitDate() {
+		return this.customerInput.getVisitDate();
+	}
+
 	public void confirm(Long ownerId) {
 		assertMatchesOwner(ownerId);
 		assertReservationStatusOneOf(PENDING, CONFIRMED);

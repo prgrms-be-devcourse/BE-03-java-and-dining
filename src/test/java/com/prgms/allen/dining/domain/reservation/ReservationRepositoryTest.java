@@ -26,7 +26,6 @@ import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoParam;
 import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
-import com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -317,11 +316,11 @@ class ReservationRepositoryTest {
 		createReservations(customer, restaurant, ReservationStatus.CONFIRMED);
 
 		// when
-		List<DateAndTotalVisitCountPerDayProj> actual = reservationRepository.findTotalVisitorCountPerDay(restaurant,
+		List<Reservation> actual = reservationRepository.findTotalVisitorCountPerDay(restaurant.getId(),
 			List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING));
 
 		// then
-		assertThat(actual.get(0).count())
+		assertThat(actual.get(0))
 			.isEqualTo(expect);
 
 	}

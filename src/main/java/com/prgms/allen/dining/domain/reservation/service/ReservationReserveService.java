@@ -17,7 +17,7 @@ import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
-import com.prgms.allen.dining.domain.restaurant.RestaurantFindService;
+import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
@@ -29,14 +29,14 @@ public class ReservationReserveService {
 		List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING);
 
 	private final ReservationRepository reservationRepository;
-	private final RestaurantFindService restaurantService;
+	private final RestaurantProvider restaurantService;
 	private final MemberService memberService;
 	private final SlackNotifyService slackNotifyService;
 	private final RestaurantRepository restaurantRepository;
 
 	public ReservationReserveService(
 		ReservationRepository reservationRepository,
-		RestaurantFindService restaurantService,
+		RestaurantProvider restaurantService,
 		MemberService memberService,
 		SlackNotifyService slackNotifyService,
 		RestaurantRepository restaurantRepository) {

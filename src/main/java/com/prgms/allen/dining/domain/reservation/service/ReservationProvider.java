@@ -1,10 +1,10 @@
 package com.prgms.allen.dining.domain.reservation.service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
-import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo;
 
 public interface ReservationProvider {
@@ -14,5 +14,5 @@ public interface ReservationProvider {
 
 	List<LocalTime> getAvailableTimes(RestaurantOperationInfo restaurant);
 
-	ReservationAvailableDatesRes getAvailableDates(Long restaurantId);
+	List<LocalDate> getAvailableDates(Long restaurantId);
 }

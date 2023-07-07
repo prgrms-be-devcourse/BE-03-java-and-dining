@@ -40,6 +40,7 @@ import com.prgms.allen.dining.domain.reservation.service.ReservationProvider;
 import com.prgms.allen.dining.domain.reservation.service.ReservationReserveService;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantFindService;
+import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
@@ -55,15 +56,15 @@ class ReservationFindServiceTest {
 	private final MemberRepository memberRepository = new FakeMemberRepository();
 	private final MemberService memberService = new MemberService(memberRepository);
 	private final SlackNotifyService slackNotifyService = new FakeSlackNotifyService();
-	private final ReservationProvider reservationService = new ReservationInfoService(reservationRepository,
+	private final RestaurantProvider restaurantProvider = new RestaurantFindService(
 		restaurantRepository);
+	private final ReservationProvider reservationService = new ReservationInfoService(reservationRepository,
+		restaurantProvider);
 	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService,
 		reservationService);
-	private final RestaurantFindService restaurantServiceForReservation = new RestaurantFindService(
-		restaurantRepository);
 	private final ReservationReserveService reservationReserveService = new ReservationReserveService(
 		reservationRepository,
-		restaurantServiceForReservation,
+		restaurantProvider,
 		memberService,
 		slackNotifyService,
 		restaurantRepository);

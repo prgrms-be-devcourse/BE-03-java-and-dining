@@ -1,6 +1,7 @@
 package com.prgms.allen.dining.api.customer.reservation;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -33,7 +34,6 @@ import com.prgms.allen.dining.domain.reservation.service.ReservationProvider;
 import com.prgms.allen.dining.domain.reservation.service.ReservationReserveService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationStatusUpdateService;
 import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
-import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo;
 import com.prgms.allen.dining.security.jwt.JwtAuthenticationPrincipal;
 
@@ -51,7 +51,7 @@ public class CustomerReservationApi {
 		ReservationReserveService reservationReserveService,
 		ReservationFindService reservationFindService,
 		@Qualifier("customerReservationStatusUpdateService") ReservationStatusUpdateService statusUpdateService,
-		@Qualifier("reservationInfoService") ReservationProvider reservationService,
+		ReservationProvider reservationService,
 		RestaurantProvider restaurantProvider) {
 		this.reservationReserveService = reservationReserveService;
 		this.reservationFindService = reservationFindService;
@@ -122,10 +122,9 @@ public class CustomerReservationApi {
 	}
 
 	@GetMapping("/available-dates")
-	public ResponseEntity<ReservationAvailableDatesRes> getAvailableDates(@RequestParam Long restaurantId) {
-		ReservationAvailableDatesRes reservationAvailableDatesRes = reservationService.getAvailableDates(
-			restaurantId);
+	public ResponseEntity<List<LocalDate>> getAvailableDates(@RequestParam Long restaurantId) {
+		List<LocalDate> availableDates = reservationService.getAvailableDates(restaurantId);
 
-		return ResponseEntity.ok(reservationAvailableDatesRes);
+		return ResponseEntity.ok(availableDates);
 	}
 }

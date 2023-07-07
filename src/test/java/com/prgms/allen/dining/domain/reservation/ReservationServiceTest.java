@@ -24,8 +24,8 @@ import com.prgms.allen.dining.domain.reservation.service.ReservationProvider;
 import com.prgms.allen.dining.domain.reservation.service.ReservationReserveService;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantFindService;
+import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
-import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
 
@@ -43,8 +43,9 @@ class ReservationServiceTest {
 		restaurantFindService,
 		memberService,
 		slackNotifyService, restaurantRepository);
+	private final RestaurantProvider restaurantProvider = new RestaurantFindService(restaurantRepository);
 	private final ReservationProvider reservationService = new ReservationInfoService(reservationRepository,
-		restaurantRepository);
+		restaurantProvider);
 
 	@Test
 	@DisplayName("고객은 식당의 예약을 요청할 수 있다.")
@@ -85,11 +86,11 @@ class ReservationServiceTest {
 		reservationRepository.saveAll(reservations);
 
 		// when
-		ReservationAvailableDatesRes expect =
+		List<LocalDate> expect =
 			reservationService.getAvailableDates(restaurant.getId());
 
 		// then
-		assertThat(expect.availableDates())
+		assertThat(expect)
 			.doesNotContain(reservations.get(0).getVisitDateTime().toLocalDate())
 			.allMatch(localDate -> !restaurant.isClosingDay(localDate));
 	}
