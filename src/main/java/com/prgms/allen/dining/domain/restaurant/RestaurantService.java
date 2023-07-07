@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgms.allen.dining.domain.common.NotFoundResourceException;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
+import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuDetailRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuSimpleRes;
@@ -29,10 +32,13 @@ public class RestaurantService {
 
 	private final RestaurantRepository restaurantRepository;
 	private final MemberService memberService;
+	private final ReservationService reservationService;
 
-	public RestaurantService(RestaurantRepository restaurantRepository, MemberService memberService) {
+	public RestaurantService(RestaurantRepository restaurantRepository, MemberService memberService,
+		ReservationService reservationService) {
 		this.restaurantRepository = restaurantRepository;
 		this.memberService = memberService;
+		this.reservationService = reservationService;
 	}
 
 	public Restaurant findById(Long restaurantId) {
@@ -40,14 +46,6 @@ public class RestaurantService {
 			.orElseThrow(() -> new NotFoundResourceException(
 				MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
 			));
-	}
-
-	public void validateRestaurantExists(long restaurantId) {
-		if (!restaurantRepository.existsById(restaurantId)) {
-			throw new NotFoundResourceException(
-				MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
-			);
-		}
 	}
 
 	@Transactional
@@ -100,7 +98,14 @@ public class RestaurantService {
 
 		return new PageImpl<>(restaurantRepository.findAll(pageable)
 			.stream()
-			.map(RestaurantSimpleRes::new)
+			.map(restaurant -> {
+				ReservationAvailableTimesReq reservationAvailableTimesReq = new ReservationAvailableTimesReq(
+					restaurant.getId());
+				ReservationAvailableTimesRes reservationAvailableTimesRes = reservationService.getAvailableTimes(
+					reservationAvailableTimesReq);
+
+				return RestaurantSimpleRes.toDto(restaurant, reservationAvailableTimesRes);
+			})
 			.toList());
 	}
 
@@ -108,7 +113,14 @@ public class RestaurantService {
 
 		return new PageImpl<>(restaurantRepository.findAllByNameContains(pageable, restaurantName)
 			.stream()
-			.map(RestaurantSimpleRes::new)
+			.map(restaurant -> {
+				ReservationAvailableTimesReq reservationAvailableTimesReq = new ReservationAvailableTimesReq(
+					restaurant.getId());
+				ReservationAvailableTimesRes reservationAvailableTimesRes = reservationService.getAvailableTimes(
+					reservationAvailableTimesReq);
+
+				return RestaurantSimpleRes.toDto(restaurant, reservationAvailableTimesRes);
+			})
 			.toList());
 	}
 
