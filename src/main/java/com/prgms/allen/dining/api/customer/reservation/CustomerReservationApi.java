@@ -116,6 +116,7 @@ public class CustomerReservationApi {
 		@AuthenticationPrincipal JwtAuthenticationPrincipal principal,
 		@Valid @RequestBody ReservationStatusUpdateReq statusUpdateReq
 	) {
+
 		statusUpdateService.update(reservationId, principal.memberId(), statusUpdateReq);
 		return ResponseEntity.ok()
 			.build();

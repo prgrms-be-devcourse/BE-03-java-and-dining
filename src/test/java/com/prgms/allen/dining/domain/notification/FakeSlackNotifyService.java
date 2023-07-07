@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantInfo;
 
 public class FakeSlackNotifyService extends SlackNotifyService {
 
@@ -17,17 +18,17 @@ public class FakeSlackNotifyService extends SlackNotifyService {
 	}
 
 	@Override
-	public void notifyReserve(Reservation reservation) {
+	public void notifyReserve(Reservation reservation, RestaurantInfo restaurant) {
 		log.info("FakeSlackNotifyService.notifyReserve() called because service code doesn't need to be called");
 	}
 
 	@Override
-	public void notifyConfirm(Reservation reservation) {
+	public void notifyConfirm(Reservation reservation, RestaurantInfo restaurant) {
 		log.info("FakeSlackNotifyService.notifyConfirm() called because service code doesn't need to be called");
 	}
 
 	@Override
-	public void notifyCancel(Reservation reservation) {
+	public void notifyCancel(Reservation reservation, RestaurantInfo restaurant) {
 		log.info("FakeSlackNotifyService.notifyCancel() called because service code doesn't need to be called");
 	}
 }

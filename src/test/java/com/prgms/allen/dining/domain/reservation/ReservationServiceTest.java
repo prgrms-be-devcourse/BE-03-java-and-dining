@@ -42,7 +42,7 @@ class ReservationServiceTest {
 		reservationRepository,
 		restaurantFindService,
 		memberService,
-		slackNotifyService, restaurantRepository);
+		slackNotifyService);
 	private final RestaurantProvider restaurantProvider = new RestaurantFindService(restaurantRepository);
 	private final ReservationProvider reservationService = new ReservationInfoService(reservationRepository,
 		restaurantProvider);

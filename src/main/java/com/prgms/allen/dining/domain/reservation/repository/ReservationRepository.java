@@ -14,13 +14,12 @@ import org.springframework.data.repository.query.Param;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
-import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long>, CustomReservationRepository {
 
 	@Query("select r "
 		+ " from Reservation r "
-		+ " where r.restaurant.id = :restaurantId "
+		+ " where r.restaurantId = :restaurantId "
 		+ " AND r.status In (:statuses) "
 		+ " AND r.customerInput.visitDate = :visitDate"
 		+ " AND r.customerInput.visitTime = :visitTime")
@@ -30,8 +29,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
 		@Param("visitTime") LocalTime visitTime,
 		@Param("statuses") List<ReservationStatus> statuses);
 
-	Page<Reservation> findAllByRestaurantAndStatus(
-		Restaurant restaurant,
+	Page<Reservation> findAllByRestaurantIdAndStatus(
+		Long restaurantId,
 		ReservationStatus status,
 		Pageable pageable
 	);
@@ -50,7 +49,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
 	@Query(
 		"select r "
 			+ "from Reservation r "
-			+ "where r.restaurant.id = :restaurantId "
+			+ "where r.restaurantId = :restaurantId "
 			+ "and r.customerInput.visitDate = :date "
 			+ "and r.status in (:statuses) ")
 	List<Reservation> findBookingCounts(
@@ -61,7 +60,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
 
 	@Query("select r "
 		+ "from Reservation r "
-		+ "where r.restaurant.id = :restaurantId "
+		+ "where r.restaurantId = :restaurantId "
 		+ "AND r.status IN (:statues) ")
 	List<Reservation> findTotalVisitorCountPerDay(
 		@Param("restaurantId") Long restaurantId,

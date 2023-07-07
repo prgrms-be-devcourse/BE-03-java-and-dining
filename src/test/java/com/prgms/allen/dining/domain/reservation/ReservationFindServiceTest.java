@@ -43,6 +43,7 @@ import com.prgms.allen.dining.domain.restaurant.RestaurantFindService;
 import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantInfo;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
@@ -66,11 +67,10 @@ class ReservationFindServiceTest {
 		reservationRepository,
 		restaurantProvider,
 		memberService,
-		slackNotifyService,
-		restaurantRepository);
+		slackNotifyService);
 	private final ReservationFindService reservationFindService = new ReservationFindService(
 		reservationRepository,
-		restaurantService,
+		restaurantProvider,
 		memberService,
 		reservationReserveService
 	);
@@ -143,7 +143,11 @@ class ReservationFindServiceTest {
 		PageImpl<ReservationSimpleResForCustomer> expect = new PageImpl<>(
 			reservations
 				.stream()
-				.map(ReservationSimpleResForCustomer::new)
+				.map(reservation -> {
+					var restaurantInfo = RestaurantInfo.toRestaurantInfo(restaurant);
+
+					return ReservationSimpleResForCustomer.from(reservation, restaurantInfo);
+				})
 				.toList());
 
 		// when
@@ -176,7 +180,9 @@ class ReservationFindServiceTest {
 			customerInput
 		));
 
-		ReservationDetailResForCustomer expect = new ReservationDetailResForCustomer(reservation);
+		RestaurantInfo restaurantInfo = RestaurantInfo.toRestaurantInfo(restaurant);
+
+		ReservationDetailResForCustomer expect = new ReservationDetailResForCustomer(reservation, restaurantInfo);
 
 		// when
 		ReservationDetailResForCustomer actual = reservationFindService.getReservationDetail(reservation.getId(),
@@ -281,7 +287,7 @@ class ReservationFindServiceTest {
 		Reservation lastVisitedReservation = reservationRepository.save(Reservation.newTestInstance(
 			null,
 			customer,
-			restaurant,
+			restaurant.getId(),
 			ReservationStatus.VISITED,
 			customerInput2
 		));
@@ -328,7 +334,7 @@ class ReservationFindServiceTest {
 		reservationRepository.save(Reservation.newTestInstance(
 			null,
 			consumer,
-			savedRestaurant,
+			savedRestaurant.getId(),
 			status,
 			customerInput
 		));

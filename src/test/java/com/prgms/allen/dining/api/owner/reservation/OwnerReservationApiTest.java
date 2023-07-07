@@ -78,7 +78,7 @@ class OwnerReservationApiTest {
 			2
 		);
 		Reservation reservation = reservationRepository.save(
-			new Reservation(customer, restaurant, customerInput)
+			new Reservation(customer, restaurant.getId(), customerInput)
 		);
 
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(CONFIRMED);
@@ -115,7 +115,7 @@ class OwnerReservationApiTest {
 			2
 		);
 		Reservation reservation = reservationRepository.save(
-			new Reservation(customer, restaurant, customerInput)
+			new Reservation(customer, restaurant.getId(), customerInput)
 		);
 
 		// when & then
@@ -156,7 +156,8 @@ class OwnerReservationApiTest {
 				.truncatedTo(ChronoUnit.HOURS),
 			2
 		);
-		Reservation reservation = reservationRepository.save(new Reservation(customer, restaurant, customerInput));
+		Reservation reservation = reservationRepository.save(
+			new Reservation(customer, restaurant.getId(), customerInput));
 
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(CANCELLED);
 
@@ -192,7 +193,7 @@ class OwnerReservationApiTest {
 			2
 		);
 		Reservation reservation = reservationRepository.save(
-			Reservation.newTestInstance(null, customer, restaurant, CONFIRMED, customerInput)
+			Reservation.newTestInstance(null, customer, restaurant.getId(), CONFIRMED, customerInput)
 		);
 
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(VISITED);
@@ -229,7 +230,7 @@ class OwnerReservationApiTest {
 			2
 		);
 		Reservation reservation = reservationRepository.save(
-			Reservation.newTestInstance(null, customer, restaurant, CONFIRMED, customerInput)
+			Reservation.newTestInstance(null, customer, restaurant.getId(), CONFIRMED, customerInput)
 		);
 
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(NO_SHOW);
@@ -267,7 +268,8 @@ class OwnerReservationApiTest {
 			2
 		);
 		Reservation reservation = reservationRepository.save(
-			Reservation.newTestInstance(null, customer, restaurant, ReservationStatus.valueOf(status), customerInput)
+			Reservation.newTestInstance(null, customer, restaurant.getId(), ReservationStatus.valueOf(status),
+				customerInput)
 		);
 		String page = "0";
 		String size = "5";

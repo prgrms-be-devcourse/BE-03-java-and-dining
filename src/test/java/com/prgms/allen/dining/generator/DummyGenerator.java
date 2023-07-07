@@ -145,7 +145,7 @@ public class DummyGenerator {
 		return Reservation.newTestInstance(
 			null,
 			customer,
-			restaurant,
+			restaurant.getId(),
 			status,
 			customerInput
 		);
@@ -174,7 +174,7 @@ public class DummyGenerator {
 			reservations.add(Reservation.newTestInstance(
 				null,
 				customer,
-				restaurant,
+				restaurant.getId(),
 				ReservationStatus.CONFIRMED,
 				new ReservationCustomerInput(
 					LocalDate.now()

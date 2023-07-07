@@ -22,26 +22,25 @@ import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
-import com.prgms.allen.dining.domain.restaurant.RestaurantService;
-import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantInfo;
 
 @Service
 @Transactional(readOnly = true)
 public class ReservationFindService {
 
 	private final ReservationRepository reservationRepository;
-	private final RestaurantService restaurantService;
+	private final RestaurantProvider restaurantProvider;
 	private final MemberService memberService;
 	private final ReservationReserveService reservationService;
 
 	public ReservationFindService(
 		ReservationRepository reservationRepository,
-		RestaurantService restaurantService,
-		MemberService memberService,
+		RestaurantProvider restaurantProvider, MemberService memberService,
 		ReservationReserveService reservationService
 	) {
 		this.reservationRepository = reservationRepository;
-		this.restaurantService = restaurantService;
+		this.restaurantProvider = restaurantProvider;
 		this.memberService = memberService;
 		this.reservationService = reservationService;
 	}
@@ -53,10 +52,10 @@ public class ReservationFindService {
 		ReservationStatus status,
 		Pageable pageable
 	) {
-		final Restaurant restaurant = restaurantService.findById(restaurantId);
+		final RestaurantInfo restaurant = restaurantProvider.getInfoById(restaurantId);
 
 		return new PageImpl<>(
-			reservationRepository.findAllByRestaurantAndStatus(restaurant, status, pageable)
+			reservationRepository.findAllByRestaurantIdAndStatus(restaurant.getId(), status, pageable)
 				.stream()
 				.map(ReservationSimpleResForOwner::new)
 				.toList()
@@ -74,7 +73,10 @@ public class ReservationFindService {
 
 		return new PageImpl<>(reservationRepository.findAllByCustomerAndStatusIn(customer, statuses, pageable)
 			.stream()
-			.map(ReservationSimpleResForCustomer::new)
+			.map(reservation -> {
+				RestaurantInfo restaurantInfo = restaurantProvider.getInfoById(reservation.getRestaurantId());
+				return ReservationSimpleResForCustomer.from(reservation, restaurantInfo);
+			})
 			.toList());
 	}
 
@@ -82,13 +84,17 @@ public class ReservationFindService {
 
 		final Member customer = memberService.findCustomerById(customerId);
 
-		return new ReservationDetailResForCustomer(reservationRepository.findByIdAndCustomer(reservationId, customer)
-			.orElseThrow(() -> new NotFoundResourceException(
-				MessageFormat.format(
-					"Cannot find Reservation entity satisfies both reservation id={0} and customer id={1}",
-					reservationId,
-					customerId
-				))));
+		String errorMessage = MessageFormat.format(
+			"Cannot find Reservation entity satisfies both reservation id={0} and customer id={1}",
+			reservationId, customerId
+		);
+
+		Reservation reservation = reservationRepository.findByIdAndCustomer(reservationId, customer)
+			.orElseThrow(() -> new NotFoundResourceException(errorMessage));
+
+		RestaurantInfo restaurant = restaurantProvider.getInfoById(reservation.getRestaurantId());
+
+		return new ReservationDetailResForCustomer(reservation, restaurant);
 	}
 
 	public ReservationDetailResForOwner getReservationDetail(

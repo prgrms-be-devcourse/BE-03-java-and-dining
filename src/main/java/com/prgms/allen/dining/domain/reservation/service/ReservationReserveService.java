@@ -18,6 +18,7 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantInfo;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo;
 
 @Service
@@ -46,18 +47,21 @@ public class ReservationReserveService {
 	@Transactional
 	public Long reserve(Long customerId, ReservationCreateReq createRequest) {
 		Member customer = memberService.findCustomerById(customerId);
-		RestaurantOperationInfo restaurant = restaurantProvider.findById(createRequest.restaurantId());
+		RestaurantOperationInfo restaurantOperationInfo = restaurantProvider.findById(createRequest.restaurantId());
 
 		ReservationCustomerInput customerInput = createRequest
 			.reservationCustomerInput()
 			.toEntity();
 
-		checkAvailableReservation(restaurant, customerInput.getVisitDateTime(), customerInput.getVisitorCount());
+		checkAvailableReservation(restaurantOperationInfo, customerInput.getVisitDateTime(),
+			customerInput.getVisitorCount());
 
-		Reservation newReservation = new Reservation(customer, restaurant, customerInput);
+		Reservation newReservation = new Reservation(customer, restaurantOperationInfo.getId(), customerInput);
 		reservationRepository.save(newReservation);
 
-		slackNotifyService.notifyReserve(newReservation);
+		RestaurantInfo restaurantInfo = restaurantProvider.getInfoById(restaurantOperationInfo.getId());
+
+		slackNotifyService.notifyReserve(newReservation, restaurantInfo);
 
 		return newReservation.getId();
 	}

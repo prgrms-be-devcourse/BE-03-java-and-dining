@@ -9,11 +9,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
-import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.member.MemberService;
+import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
+import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantInfo;
 
 @Service
 @Transactional
@@ -24,13 +28,18 @@ public class CustomerReservationStatusUpdateService implements ReservationStatus
 
 	private final ReservationReserveService reservationService;
 	private final SlackNotifyService slackNotifyService;
+	private final MemberService memberService;
+	private final RestaurantProvider restaurantProvider;
 
 	public CustomerReservationStatusUpdateService(
 		ReservationReserveService reservationService,
-		SlackNotifyService slackNotifyService
-	) {
+		SlackNotifyService slackNotifyService,
+		MemberService memberService,
+		RestaurantProvider restaurantProvider) {
 		this.reservationService = reservationService;
 		this.slackNotifyService = slackNotifyService;
+		this.memberService = memberService;
+		this.restaurantProvider = restaurantProvider;
 	}
 
 	@Override
@@ -46,8 +55,21 @@ public class CustomerReservationStatusUpdateService implements ReservationStatus
 
 	private void cancel(Long reservationId, Long customerId) {
 		Reservation findReservation = reservationService.findById(reservationId);
-		findReservation.cancel(MemberType.CUSTOMER, customerId);
-		slackNotifyService.notifyCancel(findReservation);
+		Member customer = memberService.findCustomerById(customerId);
+
+		RestaurantInfo restaurant = restaurantProvider.getInfoById(findReservation.getRestaurantId());
+
+		Assert.state(
+			customer.matchesId(customerId),
+			MessageFormat.format(
+				"Customer does not match. Parameter customerId={0} but actual customerId={1}",
+				customerId,
+				customer.getId()
+			)
+		);
+
+		findReservation.cancel();
+		slackNotifyService.notifyCancel(findReservation, restaurant);
 		log.info("Reservation {}'s status updated to {}", reservationId, findReservation.getStatus());
 	}
 }

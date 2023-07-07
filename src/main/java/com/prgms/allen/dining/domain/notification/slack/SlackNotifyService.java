@@ -18,6 +18,7 @@ import com.prgms.allen.dining.domain.notification.slack.dto.HeaderMessage;
 import com.prgms.allen.dining.domain.notification.slack.dto.SlackNotificationMessageRes;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantInfo;
 import com.slack.api.Slack;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
@@ -48,32 +49,32 @@ public class SlackNotifyService {
 	}
 
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void notifyReserve(Reservation reservation) {
+	public void notifyReserve(Reservation reservation, RestaurantInfo restaurant) {
 		if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
-			notifyAll(reservation, HeaderMessage.RESERVATION_CONFIRMED);
+			notifyAll(reservation, HeaderMessage.RESERVATION_CONFIRMED, restaurant);
 			return;
 		}
 
-		notifyAll(reservation, HeaderMessage.RESERVATION_ACCEPTED);
+		notifyAll(reservation, HeaderMessage.RESERVATION_ACCEPTED, restaurant);
 	}
 
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void notifyConfirm(Reservation reservation) {
-		notifyAll(reservation, HeaderMessage.RESERVATION_CONFIRMED);
+	public void notifyConfirm(Reservation reservation, RestaurantInfo restaurant) {
+		notifyAll(reservation, HeaderMessage.RESERVATION_CONFIRMED, restaurant);
 	}
 
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void notifyCancel(Reservation reservation) {
-		notifyAll(reservation, HeaderMessage.RESERVATION_CANCELED);
+	public void notifyCancel(Reservation reservation, RestaurantInfo restaurant) {
+		notifyAll(reservation, HeaderMessage.RESERVATION_CANCELED, restaurant);
 	}
 
-	private void notifyAll(Reservation reservation, HeaderMessage headerMessage) {
+	private void notifyAll(Reservation reservation, HeaderMessage headerMessage, RestaurantInfo restaurant) {
 		notify(
-			new SlackNotificationMessageRes(reservation, headerMessage),
+			new SlackNotificationMessageRes(reservation, headerMessage, restaurant),
 			MemberType.OWNER
 		);
 		notify(
-			new SlackNotificationMessageRes(reservation, headerMessage),
+			new SlackNotificationMessageRes(reservation, headerMessage, restaurant),
 			MemberType.CUSTOMER
 		);
 	}

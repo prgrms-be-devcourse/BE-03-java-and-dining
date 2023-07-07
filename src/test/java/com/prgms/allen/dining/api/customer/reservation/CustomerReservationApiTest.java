@@ -262,7 +262,8 @@ class CustomerReservationApiTest {
 				.truncatedTo(ChronoUnit.HOURS),
 			2
 		);
-		Reservation reservation = reservationRepository.save(new Reservation(customer, restaurant, customerInput));
+		Reservation reservation = reservationRepository.save(
+			new Reservation(customer, restaurant.getId(), customerInput));
 
 		ReservationStatusUpdateReq statusUpdateReq = new ReservationStatusUpdateReq(CANCELLED);
 

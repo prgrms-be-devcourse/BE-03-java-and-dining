@@ -77,7 +77,7 @@ class ReservationTest {
 		// when
 		Reservation reservation = new Reservation(
 			validCustomer,
-			validRestaurant,
+			validRestaurant.getId(),
 			new ReservationCustomerInput(
 				notVisitToday,
 				2,
@@ -107,7 +107,7 @@ class ReservationTest {
 		);
 
 		// when
-		Reservation reservation = new Reservation(customer, restaurant, fakeCustomerInput);
+		Reservation reservation = new Reservation(customer, restaurant.getId(), fakeCustomerInput);
 
 		// then
 		ReservationStatus actualStatus = reservation.getStatus();
@@ -135,7 +135,7 @@ class ReservationTest {
 		);
 
 		// when
-		reservation.cancel(MemberType.CUSTOMER, customer.getId());
+		reservation.cancel();
 
 		// then
 		assertThat(reservation.getStatus()).isSameAs(ReservationStatus.CANCELLED);
@@ -162,7 +162,7 @@ class ReservationTest {
 		);
 
 		// when
-		reservation.confirm(owner.getId());
+		reservation.confirm();
 
 		// then
 		assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.CONFIRMED);
@@ -184,7 +184,7 @@ class ReservationTest {
 
 		// when & then
 		assertThrows(IllegalStateException.class, () ->
-			reservation.confirm(owner.getId())
+			reservation.confirm()
 		);
 	}
 
@@ -211,7 +211,7 @@ class ReservationTest {
 
 		// when & then
 		assertThrows(IllegalStateException.class, () ->
-			lateReservation.confirm(owner.getId())
+			lateReservation.confirm()
 		);
 	}
 
@@ -228,7 +228,7 @@ class ReservationTest {
 		);
 
 		// when
-		reservation.cancel(MemberType.OWNER, owner.getId());
+		reservation.cancel();
 
 		// then
 		assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.CANCELLED);
@@ -250,7 +250,7 @@ class ReservationTest {
 
 		// when & then
 		assertThrows(IllegalStateException.class, () ->
-			reservation.cancel(MemberType.OWNER, owner.getId())
+			reservation.cancel()
 		);
 	}
 
@@ -277,7 +277,7 @@ class ReservationTest {
 
 		// when & then
 		assertThrows(IllegalStateException.class, () ->
-			reservation.confirm(owner.getId())
+			reservation.confirm()
 		);
 	}
 
@@ -300,7 +300,7 @@ class ReservationTest {
 		);
 
 		// when
-		reservation.visit(owner.getId());
+		reservation.visit();
 
 		// then
 		assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.VISITED);
@@ -325,7 +325,7 @@ class ReservationTest {
 		);
 
 		// when
-		reservation.noShow(owner.getId());
+		reservation.noShow();
 
 		// then
 		assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.NO_SHOW);
@@ -352,8 +352,8 @@ class ReservationTest {
 
 		// when & then
 		assertAll(
-			() -> assertThrows(IllegalStateException.class, () -> reservation.visit(owner.getId())),
-			() -> assertThrows(IllegalStateException.class, () -> reservation.noShow(owner.getId()))
+			() -> assertThrows(IllegalStateException.class, () -> reservation.visit()),
+			() -> assertThrows(IllegalStateException.class, () -> reservation.noShow())
 		);
 	}
 
@@ -377,8 +377,8 @@ class ReservationTest {
 
 		// when & then
 		assertAll(
-			() -> assertThrows(IllegalStateException.class, () -> reservation.visit(owner.getId())),
-			() -> assertThrows(IllegalStateException.class, () -> reservation.noShow(owner.getId()))
+			() -> assertThrows(IllegalStateException.class, () -> reservation.visit()),
+			() -> assertThrows(IllegalStateException.class, () -> reservation.noShow())
 		);
 	}
 }

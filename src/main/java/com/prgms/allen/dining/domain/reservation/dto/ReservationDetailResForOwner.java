@@ -1,14 +1,21 @@
 package com.prgms.allen.dining.domain.reservation.dto;
 
+import java.time.LocalDateTime;
+
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 
 public record ReservationDetailResForOwner(
 	CustomerInfoRes customerInfoRes,
-	ReservationInfoResForOwner reservationInfoResForOwner
+	LocalDateTime visitDateTime,
+	int visitorCount,
+	String memo
 ) {
 	public ReservationDetailResForOwner(CustomerReservationInfoProj customerReservationInfo, Reservation reservation) {
 		this(
 			new CustomerInfoRes(customerReservationInfo),
-			new ReservationInfoResForOwner(reservation));
+			reservation.getVisitDateTime(),
+			reservation.getVisitorCount(),
+			reservation.getMemo()
+		);
 	}
 }

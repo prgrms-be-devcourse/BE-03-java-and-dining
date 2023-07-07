@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -187,13 +186,13 @@ class ReservationRepositoryTest {
 		);
 
 		// when
-		Optional<Integer> currentReservedCount = reservationRepository.findReservationsByDateTime(restaurant,
+		List<Reservation> currentReservedCount = reservationRepository.findReservationsByDateTime(restaurant.getId(),
 			visitDateTime.toLocalDate(),
 			visitDateTime.toLocalTime(),
 			List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING));
 
 		// then
-		assertThat(currentReservedCount).contains(2);
+		assertThat(currentReservedCount.size()).isEqualTo(2);
 	}
 
 	@Test
@@ -335,7 +334,7 @@ class ReservationRepositoryTest {
 		return reservationRepository.save(Reservation.newTestInstance(
 			null,
 			consumer,
-			savedRestaurant,
+			savedRestaurant.getId(),
 			status,
 			customerInput
 		));
@@ -382,7 +381,7 @@ class ReservationRepositoryTest {
 		reservationRepository.save(Reservation.newTestInstance(
 			null,
 			consumer,
-			savedRestaurant,
+			savedRestaurant.getId(),
 			status,
 			new ReservationCustomerInput(
 				reserveDate,
@@ -395,7 +394,7 @@ class ReservationRepositoryTest {
 		reservationRepository.save(Reservation.newTestInstance(
 			null,
 			consumer,
-			savedRestaurant,
+			savedRestaurant.getId(),
 			status,
 			new ReservationCustomerInput(
 				reserveDate,
@@ -408,7 +407,7 @@ class ReservationRepositoryTest {
 		reservationRepository.save(Reservation.newTestInstance(
 			null,
 			consumer,
-			savedRestaurant,
+			savedRestaurant.getId(),
 			status,
 			new ReservationCustomerInput(
 				reserveDate,
@@ -421,7 +420,7 @@ class ReservationRepositoryTest {
 		reservationRepository.save(Reservation.newTestInstance(
 			null,
 			consumer,
-			savedRestaurant,
+			savedRestaurant.getId(),
 			status,
 			new ReservationCustomerInput(
 				reserveDate,

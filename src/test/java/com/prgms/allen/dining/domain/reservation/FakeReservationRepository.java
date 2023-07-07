@@ -24,7 +24,6 @@ import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
-import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public class FakeReservationRepository implements ReservationRepository {
 
@@ -32,11 +31,11 @@ public class FakeReservationRepository implements ReservationRepository {
 	private Long id = 0L;
 
 	@Override
-	public Page<Reservation> findAllByRestaurantAndStatus(Restaurant restaurant, ReservationStatus status,
+	public Page<Reservation> findAllByRestaurantIdAndStatus(Long restaurantId, ReservationStatus status,
 		Pageable pageable) {
 		return new PageImpl<>(
 			reservations.stream()
-				.filter(reservation -> Objects.equals(reservation.getRestaurantId(), restaurant.getId()))
+				.filter(reservation -> Objects.equals(reservation.getRestaurantId(), restaurantId))
 				.filter(reservation -> reservation.getStatus() == status)
 				.skip(pageable.getOffset())
 				.limit(pageable.getPageSize())
@@ -152,7 +151,7 @@ public class FakeReservationRepository implements ReservationRepository {
 		Reservation newReservation = Reservation.newTestInstance(
 			++id,
 			entity.getCustomer(),
-			entity.getRestaurant(),
+			entity.getRestaurantId(),
 			entity.getStatus(),
 			entity.getCustomerInput()
 		);
@@ -310,14 +309,14 @@ public class FakeReservationRepository implements ReservationRepository {
 
 	private Predicate<Reservation> isRestaurantReservationPredicate(
 		CustomerReservationInfoParam customerReservationInfoParam) {
-		return reservation -> reservation.getRestaurant().equals(
+		return reservation -> Objects.equals(reservation.getRestaurantId(), (
 			reservations.stream()
 				.filter(
 					reservation1 -> reservation1.getId().equals(customerReservationInfoParam.reservationId()))
-				.map(Reservation::getRestaurant)
+				.map(Reservation::getRestaurantId)
 				.findAny()
 				.get()
-		);
+		));
 	}
 
 	private Predicate<Reservation> isCustomerReservationPredicate(

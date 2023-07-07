@@ -1,6 +1,5 @@
 package com.prgms.allen.dining.domain.reservation.entity;
 
-import static com.prgms.allen.dining.domain.member.entity.MemberType.*;
 import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus.*;
 
 import java.text.MessageFormat;
@@ -25,8 +24,6 @@ import org.springframework.util.Assert;
 
 import com.prgms.allen.dining.domain.common.entity.BaseEntity;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.member.entity.MemberType;
-import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Entity
 public class Reservation extends BaseEntity {
@@ -42,9 +39,8 @@ public class Reservation extends BaseEntity {
 	@JoinColumn(name = "customer_id", nullable = false)
 	private Member customer;
 
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "restaurant_id", nullable = false)
-	private Restaurant restaurant;
+	private Long restaurantId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
@@ -59,24 +55,23 @@ public class Reservation extends BaseEntity {
 
 	public Reservation(
 		Member customer,
-		Restaurant restaurant,
+		Long restaurantId,
 		ReservationCustomerInput customerInput
 	) {
-		this(null, customer, restaurant, checkVisitingToday(customerInput), customerInput);
+		this(null, customer, restaurantId, checkVisitingToday(customerInput), customerInput);
 	}
 
 	private Reservation(
 		Long id,
 		Member customer,
-		Restaurant restaurant,
+		Long restaurantId,
 		ReservationStatus status,
 		ReservationCustomerInput customerInput
 	) {
-		validate(customer, restaurant, customerInput);
+		validate(customer, restaurantId, customerInput);
 
 		this.id = id;
 		this.customer = customer;
-		this.restaurant = restaurant;
 		this.status = status;
 		this.customerInput = customerInput;
 	}
@@ -84,11 +79,11 @@ public class Reservation extends BaseEntity {
 	public static Reservation newTestInstance(
 		Long id,
 		Member customer,
-		Restaurant restaurant,
+		Long restaurantId,
 		ReservationStatus status,
 		ReservationCustomerInput customerInput
 	) {
-		return new Reservation(id, customer, restaurant, status, customerInput);
+		return new Reservation(id, customer, restaurantId, status, customerInput);
 	}
 
 	public static ReservationStatus checkVisitingToday(ReservationCustomerInput customerInput) {
@@ -98,21 +93,9 @@ public class Reservation extends BaseEntity {
 		return PENDING;
 	}
 
-	private void validate(Member customer, Restaurant restaurant, ReservationCustomerInput customerInput) {
-		validateCustomer(customer);
-		validateRestaurant(restaurant);
-		validateReservationDetail(customerInput);
-	}
-
-	private void validateCustomer(Member customer) {
+	private void validate(Member customer, Long restaurantId, ReservationCustomerInput customerInput) {
 		Assert.notNull(customer, "Customer must not be null.");
-	}
-
-	private void validateRestaurant(Restaurant restaurant) {
-		Assert.notNull(restaurant, "Restaurant must not be null.");
-	}
-
-	private void validateReservationDetail(ReservationCustomerInput customerInput) {
+		Assert.notNull(restaurantId, "Restaurant must not be null.");
 		Assert.notNull(customerInput, "ReservationDetail must not be null.");
 	}
 
@@ -124,10 +107,6 @@ public class Reservation extends BaseEntity {
 		return customer;
 	}
 
-	public Restaurant getRestaurant() {
-		return restaurant;
-	}
-
 	public ReservationStatus getStatus() {
 		return status;
 	}
@@ -137,7 +116,7 @@ public class Reservation extends BaseEntity {
 	}
 
 	public long getRestaurantId() {
-		return restaurant.getId();
+		return restaurantId;
 	}
 
 	public int getVisitorCount() {
@@ -156,10 +135,6 @@ public class Reservation extends BaseEntity {
 		return customerInput.getVisitDateTime();
 	}
 
-	public Member getRestaurantOwner() {
-		return restaurant.getOwner();
-	}
-
 	public String getMemo() {
 		return customerInput.getCustomerMemo();
 	}
@@ -172,42 +147,30 @@ public class Reservation extends BaseEntity {
 		return this.customerInput.getVisitDate();
 	}
 
-	public void confirm(Long ownerId) {
-		assertMatchesOwner(ownerId);
+	public void confirm() {
 		assertReservationStatusOneOf(PENDING, CONFIRMED);
 		assertVisitDateAfterCurrentDate();
 		status = CONFIRMED;
 	}
 
-	public void cancel(MemberType memberType, Long memberId) {
-		assertMatchesMember(memberType, memberId);
+	public void cancel() {
 		assertReservationStatusOneOf(PENDING, CONFIRMED);
 		assertVisitDateAfterCurrentDate();
 		status = CANCELLED;
 	}
 
-	public void visit(Long ownerId) {
-		assertMatchesOwner(ownerId);
+	public void visit() {
 		assertReservationStatusOneOf(CONFIRMED);
 		assertVisitDateTimeBeforeCurrentDateTime();
 		assertDaysBetweenVisitDateAndCurrentDateWithin(MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
 		status = VISITED;
 	}
 
-	public void noShow(Long ownerId) {
-		assertMatchesOwner(ownerId);
+	public void noShow() {
 		assertReservationStatusOneOf(CONFIRMED);
 		assertVisitDateTimeBeforeCurrentDateTime();
 		assertDaysBetweenVisitDateAndCurrentDateWithin(MAX_STATUS_UPDATE_EXPIRATION_PERIOD);
 		status = NO_SHOW;
-	}
-
-	private void assertMatchesMember(MemberType memberType, Long memberId) {
-		if (memberType == CUSTOMER) {
-			assertMatchesCustomer(memberId);
-			return;
-		}
-		assertMatchesOwner(memberId);
 	}
 
 	private void assertMatchesCustomer(Long customerId) {
@@ -217,17 +180,6 @@ public class Reservation extends BaseEntity {
 				"Customer does not match. Parameter customerId={0} but actual customerId={1}",
 				customerId,
 				customer.getId()
-			)
-		);
-	}
-
-	private void assertMatchesOwner(Long ownerId) {
-		Assert.state(
-			getRestaurantOwner().matchesId(ownerId),
-			MessageFormat.format(
-				"Owner does not match. Parameter ownerId={0} but actual ownerId={1}",
-				ownerId,
-				getRestaurantOwner().getId()
 			)
 		);
 	}
@@ -279,13 +231,5 @@ public class Reservation extends BaseEntity {
 
 	public Long getCustomerId() {
 		return customer.getId();
-	}
-
-	public String getRestaurantName() {
-		return restaurant.getName();
-	}
-
-	public String getRestaurantAddress() {
-		return restaurant.getLocation();
 	}
 }
