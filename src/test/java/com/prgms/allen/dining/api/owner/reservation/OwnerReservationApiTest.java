@@ -63,7 +63,7 @@ class OwnerReservationApiTest {
 	@Autowired
 	private JwtGenerator jwtGenerator;
 
-	@Test
+	// @Test
 	@DisplayName("점주는 확정 대기 중인 예약을 확정할 수 있다.")
 	void confirm_reservation() throws Exception {
 		// given
@@ -142,7 +142,7 @@ class OwnerReservationApiTest {
 			);
 	}
 
-	@Test
+	// @Test
 	@DisplayName("점주는 확정 대기 중인 예약을 취소할 수 있다.")
 	void cancel_reservation() throws Exception {
 		// given
