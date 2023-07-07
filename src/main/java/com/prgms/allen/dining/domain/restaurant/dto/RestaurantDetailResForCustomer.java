@@ -17,11 +17,7 @@ public record RestaurantDetailResForCustomer(
 	List<MenuSimpleRes> menuList,
 	List<ClosingDayRes> closingDays
 ) {
-	public RestaurantDetailResForCustomer(
-		Restaurant restaurant,
-		List<MenuSimpleRes> menuList,
-		List<ClosingDayRes> closingDays
-	) {
+	public RestaurantDetailResForCustomer(Restaurant restaurant) {
 		this(
 			restaurant.getName(),
 			restaurant.getDescription(),
@@ -30,9 +26,14 @@ public record RestaurantDetailResForCustomer(
 			restaurant.getOpenTime(),
 			restaurant.getLastOrderTime(),
 			restaurant.getPhone(),
-			menuList,
-			closingDays
+			restaurant.getMenu()
+				.stream()
+				.map(MenuSimpleRes::new)
+				.toList(),
+			restaurant.getClosingDays()
+				.stream()
+				.map(ClosingDayRes::new)
+				.toList()
 		);
 	}
-
 }

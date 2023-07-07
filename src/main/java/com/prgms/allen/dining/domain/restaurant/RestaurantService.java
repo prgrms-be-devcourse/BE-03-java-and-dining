@@ -3,7 +3,6 @@ package com.prgms.allen.dining.domain.restaurant;
 import static com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo.*;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,15 +14,11 @@ import com.prgms.allen.dining.domain.common.NotFoundResourceException;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.service.ReservationProvider;
-import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuDetailRes;
-import com.prgms.allen.dining.domain.restaurant.dto.MenuSimpleRes;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantDetailResForCustomer;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantDetailResForOwner;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantSimpleRes;
-import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
-import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Service
@@ -64,10 +59,7 @@ public class RestaurantService {
 	public RestaurantDetailResForCustomer getRestaurant(Long restaurantId) {
 		Restaurant restaurant = findById(restaurantId);
 
-		return new RestaurantDetailResForCustomer(restaurant,
-			toMenuSimpleResList(restaurant.getMenu()),
-			toClosingDayResList(restaurant.getClosingDays())
-		);
+		return new RestaurantDetailResForCustomer(restaurant);
 	}
 
 	public RestaurantDetailResForOwner getRestaurant(Long restaurantId, Long ownerId) {
@@ -80,10 +72,7 @@ public class RestaurantService {
 				);
 			});
 
-		return new RestaurantDetailResForOwner(restaurant,
-			toMenuSimpleResList(restaurant.getMinorMenu()),
-			toClosingDayResList(restaurant.getClosingDays())
-		);
+		return new RestaurantDetailResForOwner(restaurant);
 	}
 
 	private void validAlreadyHasRestaurant(Long ownerId) {
@@ -126,17 +115,5 @@ public class RestaurantService {
 			.stream()
 			.map(MenuDetailRes::new)
 			.toList());
-	}
-
-	private List<MenuSimpleRes> toMenuSimpleResList(List<Menu> menu) {
-		return menu.stream()
-			.map(MenuSimpleRes::new)
-			.toList();
-	}
-
-	private List<ClosingDayRes> toClosingDayResList(List<ClosingDay> closingDayList) {
-		return closingDayList.stream()
-			.map(ClosingDayRes::new)
-			.toList();
 	}
 }
