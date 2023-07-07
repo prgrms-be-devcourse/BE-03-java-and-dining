@@ -232,3 +232,5 @@ gradle-app.setting
 .idea
 
 /src/main/resources/application.yml
+
+/src/test/resources/application.yaml
