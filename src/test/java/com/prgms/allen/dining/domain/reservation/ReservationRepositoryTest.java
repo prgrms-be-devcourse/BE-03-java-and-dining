@@ -14,10 +14,12 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
@@ -25,7 +27,6 @@ import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoParam;
 import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
 import com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj;
-import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -37,6 +38,7 @@ import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @DataJpaTest
+@ExtendWith(SpringExtension.class)
 class ReservationRepositoryTest {
 
 	Logger log = LoggerFactory.getLogger(ReservationRepositoryTest.class);
@@ -153,18 +155,18 @@ class ReservationRepositoryTest {
 		);
 
 		// when
-		List<VisitorCountPerVisitTimeProj> visitorCountPerVisitTime = reservationRepository
-			.findVisitorCountPerVisitTime(
-				restaurant,
+		List<Reservation> visitorCountPerVisitTime = reservationRepository
+			.findBookingCounts(
+				restaurant.getId(),
 				visitToday.toLocalDate(),
 				List.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED)
 			);
 		visitorCountPerVisitTime.forEach(
-			v -> log.info("visitTime at {} - totalVisitCount is {}", v.visitTime(), v.totalVisitorCount()));
+			v -> log.info("visitTime at {} - totalVisitCount is {}", v.getVisitTime(), v.getVisitorCount()));
 
 		// then
 		Long actualTotalVisitorCount = visitorCountPerVisitTime.get(0)
-			.totalVisitorCount();
+			.getCustomerId();
 		assertThat(actualTotalVisitorCount).isEqualTo(5);
 	}
 

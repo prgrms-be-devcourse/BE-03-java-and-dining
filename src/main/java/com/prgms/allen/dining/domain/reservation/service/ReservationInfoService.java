@@ -1,96 +1,59 @@
 package com.prgms.allen.dining.domain.reservation.service;
 
 import static com.prgms.allen.dining.domain.reservation.policy.ReservationPolicy.*;
+import static java.util.stream.Collectors.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
-import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
+import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
-import com.prgms.allen.dining.domain.restaurant.RestaurantFindService;
+import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Service
 @Transactional(readOnly = true)
-public class ReservationInfoService implements ReservationService {
+public class ReservationInfoService implements ReservationProvider {
+
+	private static final int BOOKING_COUNT = 2;
 
 	private final ReservationRepository reservationRepository;
-	private final RestaurantFindService restaurantFindService;
+	private final RestaurantRepository restaurantRepository;
 
 	public ReservationInfoService(ReservationRepository reservationRepository,
-		RestaurantFindService restaurantFindService) {
+		RestaurantRepository restaurantRepository) {
 		this.reservationRepository = reservationRepository;
-		this.restaurantFindService = restaurantFindService;
+		this.restaurantRepository = restaurantRepository;
 	}
 
 	@Override
-	public ReservationAvailableTimesRes getAvailableTimes(ReservationAvailableTimesReq availableTimesReq) {
-		Restaurant restaurant = restaurantFindService.findById(availableTimesReq.restaurantId());
-
-		Map<LocalTime, Long> visitorCountPerTimeMap = getVisitorCountPerTimeMap(availableTimesReq.date(), restaurant);
-
-		List<LocalTime> availableTimes = getAvailableTimes(
-			availableTimesReq.visitorCount(),
-			restaurant,
-			visitorCountPerTimeMap
-		);
-
-		return new ReservationAvailableTimesRes(availableTimes);
-	}
-
-	private Map<LocalTime, Long> getVisitorCountPerTimeMap(LocalDate visitDate, Restaurant restaurant) {
-		return reservationRepository.findVisitorCountPerVisitTime(
-				restaurant,
-				visitDate,
+	public List<LocalTime> getAvailableTimes(RestaurantOperationInfo restaurant) {
+		Map<LocalTime, Long> bookingCounts = reservationRepository.findBookingCounts(
+				restaurant.getId(),
+				LocalDate.now(),
 				BEFORE_VISIT_STATUSES
 			)
 			.stream()
-			.collect(Collectors.toMap(
-					VisitorCountPerVisitTimeProj::visitTime,
-					VisitorCountPerVisitTimeProj::totalVisitorCount
-				)
+			.collect(
+				groupingBy(
+					Reservation::getVisitTime,
+					summingLong(Reservation::getVisitorCount))
 			);
-	}
 
-	private List<LocalTime> getAvailableTimes(
-		int visitorCount,
-		Restaurant restaurant,
-		Map<LocalTime, Long> visitorCountPerTimeMap
-	) {
-		return restaurant.generateTimeTable()
-			.stream()
-			.filter(availableVisitorCountPredicate(visitorCount, restaurant, visitorCountPerTimeMap))
-			.toList();
-	}
-
-	private Predicate<LocalTime> availableVisitorCountPredicate(
-		int visitorCount,
-		Restaurant restaurant,
-		Map<LocalTime, Long> visitorCountPerTimeMap
-	) {
-		return time -> {
-			Long totalVisitorCount = visitorCountPerTimeMap.getOrDefault(time, 0L);
-			return restaurant.isAvailableVisitorCount(
-				totalVisitorCount.intValue(),
-				visitorCount
-			);
-		};
+		return restaurant.getAvailableTimes(BOOKING_COUNT, bookingCounts);
 	}
 
 	@Override
 	public ReservationAvailableDatesRes getAvailableDates(Long restaurantId) {
-		Restaurant restaurant = restaurantFindService.findById(restaurantId);
+		Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow();
 
 		List<LocalDate> notAvailableDates = getReserveNotAvailableDates(restaurant);
 

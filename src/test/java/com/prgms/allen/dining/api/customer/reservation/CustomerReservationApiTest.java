@@ -132,7 +132,7 @@ class CustomerReservationApiTest {
 					parameterWithName("visitorCount").description("방문객 수")
 				),
 				responseFields(
-					fieldWithPath("availableTimes[]").description("예약 가능한 시간")
+					fieldWithPath("reservationAvailableTimes[]").description("예약 가능한 시간")
 				))
 			);
 	}

@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.generator;
 
+import java.math.BigInteger;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -11,6 +13,9 @@ import com.prgms.allen.dining.domain.member.entity.MemberType;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateReq;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantCreateReq;
 import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
@@ -77,6 +82,24 @@ public class DummyGenerator {
 		2
 	);
 
+	public static Member createOwner() {
+		return new Member(
+			"nickname",
+			"익명",
+			"01011112222",
+			"qwer1234!",
+			MemberType.OWNER);
+	}
+
+	public static Member createOwner(String nickname) {
+		return new Member(
+			nickname,
+			"익명",
+			"01011112222",
+			"qwer1234!",
+			MemberType.OWNER);
+	}
+
 	public static Restaurant createRestaurant(Member owner) {
 		return new Restaurant(
 			owner,
@@ -89,6 +112,28 @@ public class DummyGenerator {
 			"실망시키지 않는 맛집",
 			"021234123"
 		);
+	}
+
+	public static RestaurantCreateReq createRestaurantCreateReq() {
+		return new RestaurantCreateReq(
+			FoodType.KOREAN,
+			"유명 레스토랑",
+			30,
+			LocalTime.of(11, 0),
+			LocalTime.of(21, 0),
+			"서울특별시 강남구 어딘가로 123 무슨빌딩 1층",
+			"우리는 유명한 한식당입니다.",
+			"0211112222",
+			createMenuReq(),
+			createClosingDayReq());
+	}
+
+	public static List<MenuCreateReq> createMenuReq() {
+		return List.of(new MenuCreateReq("맛있는 밥", BigInteger.valueOf(10000), "맛있어용"));
+	}
+
+	public static List<ClosingDayCreateReq> createClosingDayReq() {
+		return List.of(new ClosingDayCreateReq(DayOfWeek.MONDAY));
 	}
 
 	public static Reservation createReservation(

@@ -18,6 +18,7 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantFindService;
+import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 @Service
@@ -31,23 +32,25 @@ public class ReservationReserveService {
 	private final RestaurantFindService restaurantService;
 	private final MemberService memberService;
 	private final SlackNotifyService slackNotifyService;
+	private final RestaurantRepository restaurantRepository;
 
 	public ReservationReserveService(
 		ReservationRepository reservationRepository,
 		RestaurantFindService restaurantService,
 		MemberService memberService,
-		SlackNotifyService slackNotifyService
-	) {
+		SlackNotifyService slackNotifyService,
+		RestaurantRepository restaurantRepository) {
 		this.reservationRepository = reservationRepository;
 		this.restaurantService = restaurantService;
 		this.memberService = memberService;
 		this.slackNotifyService = slackNotifyService;
+		this.restaurantRepository = restaurantRepository;
 	}
 
 	@Transactional
 	public Long reserve(Long customerId, ReservationCreateReq createRequest) {
 		Member customer = memberService.findCustomerById(customerId);
-		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId());
+		Restaurant restaurant = restaurantRepository.findById(createRequest.restaurantId()).orElseThrow();
 
 		ReservationCustomerInput customerInput = createRequest
 			.reservationCustomerInput()

@@ -1,5 +1,7 @@
 package com.prgms.allen.dining.domain.restaurant;
 
+import static com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo.*;
+
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -12,9 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prgms.allen.dining.domain.common.NotFoundResourceException;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesReq;
-import com.prgms.allen.dining.domain.reservation.dto.ReservationAvailableTimesRes;
-import com.prgms.allen.dining.domain.reservation.service.ReservationService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationProvider;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuDetailRes;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuSimpleRes;
@@ -32,13 +32,13 @@ public class RestaurantService {
 
 	private final RestaurantRepository restaurantRepository;
 	private final MemberService memberService;
-	private final ReservationService reservationService;
+	private final ReservationProvider reservationProvider;
 
 	public RestaurantService(RestaurantRepository restaurantRepository, MemberService memberService,
-		ReservationService reservationService) {
+		ReservationProvider reservationProvider) {
 		this.restaurantRepository = restaurantRepository;
 		this.memberService = memberService;
-		this.reservationService = reservationService;
+		this.reservationProvider = reservationProvider;
 	}
 
 	public Restaurant findById(Long restaurantId) {
@@ -99,10 +99,8 @@ public class RestaurantService {
 		return new PageImpl<>(restaurantRepository.findAll(pageable)
 			.stream()
 			.map(restaurant -> {
-				ReservationAvailableTimesReq reservationAvailableTimesReq = new ReservationAvailableTimesReq(
-					restaurant.getId());
-				ReservationAvailableTimesRes reservationAvailableTimesRes = reservationService.getAvailableTimes(
-					reservationAvailableTimesReq);
+				var operationInfo = toOperationInfo(restaurant);
+				var reservationAvailableTimesRes = reservationProvider.getAvailableTimes(operationInfo);
 
 				return RestaurantSimpleRes.toDto(restaurant, reservationAvailableTimesRes);
 			})
@@ -114,10 +112,8 @@ public class RestaurantService {
 		return new PageImpl<>(restaurantRepository.findAllByNameContains(pageable, restaurantName)
 			.stream()
 			.map(restaurant -> {
-				ReservationAvailableTimesReq reservationAvailableTimesReq = new ReservationAvailableTimesReq(
-					restaurant.getId());
-				ReservationAvailableTimesRes reservationAvailableTimesRes = reservationService.getAvailableTimes(
-					reservationAvailableTimesReq);
+				var operationInfo = toOperationInfo(restaurant);
+				var reservationAvailableTimesRes = reservationProvider.getAvailableTimes(operationInfo);
 
 				return RestaurantSimpleRes.toDto(restaurant, reservationAvailableTimesRes);
 			})

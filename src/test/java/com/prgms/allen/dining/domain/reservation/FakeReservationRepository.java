@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -21,11 +20,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoParam;
 import com.prgms.allen.dining.domain.reservation.dto.CustomerReservationInfoProj;
-import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimeProj;
+import com.prgms.allen.dining.domain.reservation.dto.DateAndTotalVisitCountPerDayProj;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
@@ -70,8 +68,8 @@ public class FakeReservationRepository implements ReservationRepository {
 	}
 
 	@Override
-	public List<VisitorCountPerVisitTimeProj> findVisitorCountPerVisitTime(
-		Restaurant restaurant,
+	public List<Reservation> findBookingCounts(
+		Long restaurantId,
 		LocalDate date,
 		List<ReservationStatus> statuses
 	) {

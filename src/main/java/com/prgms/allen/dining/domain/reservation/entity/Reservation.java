@@ -6,6 +6,7 @@ import static com.prgms.allen.dining.domain.reservation.entity.ReservationStatus
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 
 import javax.persistence.Column;
@@ -161,6 +162,10 @@ public class Reservation extends BaseEntity {
 
 	public String getMemo() {
 		return customerInput.getCustomerMemo();
+	}
+
+	public LocalTime getVisitTime() {
+		return this.getCustomerInput().getVisitTime();
 	}
 
 	public void confirm(Long ownerId) {

@@ -20,8 +20,8 @@ import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCre
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.service.ReservationInfoService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationProvider;
 import com.prgms.allen.dining.domain.reservation.service.ReservationReserveService;
-import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantFindService;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
@@ -42,9 +42,9 @@ class ReservationServiceTest {
 		reservationRepository,
 		restaurantFindService,
 		memberService,
-		slackNotifyService);
-	private final ReservationService reservationService = new ReservationInfoService(reservationRepository,
-		restaurantFindService);
+		slackNotifyService, restaurantRepository);
+	private final ReservationProvider reservationService = new ReservationInfoService(reservationRepository,
+		restaurantRepository);
 
 	@Test
 	@DisplayName("고객은 식당의 예약을 요청할 수 있다.")

@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.common.NotFoundResourceException;
-import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo;
 
 @Service
 @Transactional(readOnly = true)
-public class RestaurantFindService {
+public class RestaurantFindService implements RestaurantProvider {
 
 	private final RestaurantRepository restaurantRepository;
 
@@ -18,8 +18,9 @@ public class RestaurantFindService {
 		this.restaurantRepository = restaurantRepository;
 	}
 
-	public Restaurant findById(Long restaurantId) {
+	public RestaurantOperationInfo findById(Long restaurantId) {
 		return restaurantRepository.findById(restaurantId)
+			.map(RestaurantOperationInfo::toOperationInfo)
 			.orElseThrow(() -> new NotFoundResourceException(
 				MessageFormat.format("Cannot find Restaurant entity for restaurant id = {0}", restaurantId)
 			));

@@ -36,8 +36,8 @@ import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationInfoService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationProvider;
 import com.prgms.allen.dining.domain.reservation.service.ReservationReserveService;
-import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantFindService;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
@@ -55,9 +55,8 @@ class ReservationFindServiceTest {
 	private final MemberRepository memberRepository = new FakeMemberRepository();
 	private final MemberService memberService = new MemberService(memberRepository);
 	private final SlackNotifyService slackNotifyService = new FakeSlackNotifyService();
-	private final RestaurantFindService restaurantFindService = new RestaurantFindService(restaurantRepository);
-	private final ReservationService reservationService = new ReservationInfoService(reservationRepository,
-		restaurantFindService);
+	private final ReservationProvider reservationService = new ReservationInfoService(reservationRepository,
+		restaurantRepository);
 	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService,
 		reservationService);
 	private final RestaurantFindService restaurantServiceForReservation = new RestaurantFindService(
@@ -66,8 +65,8 @@ class ReservationFindServiceTest {
 		reservationRepository,
 		restaurantServiceForReservation,
 		memberService,
-		slackNotifyService
-	);
+		slackNotifyService,
+		restaurantRepository);
 	private final ReservationFindService reservationFindService = new ReservationFindService(
 		reservationRepository,
 		restaurantService,
