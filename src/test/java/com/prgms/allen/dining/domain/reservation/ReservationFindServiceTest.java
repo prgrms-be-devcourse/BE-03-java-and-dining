@@ -35,8 +35,11 @@ import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationInfoService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationReserveService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
+import com.prgms.allen.dining.domain.restaurant.RestaurantFindService;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
@@ -52,10 +55,16 @@ class ReservationFindServiceTest {
 	private final MemberRepository memberRepository = new FakeMemberRepository();
 	private final MemberService memberService = new MemberService(memberRepository);
 	private final SlackNotifyService slackNotifyService = new FakeSlackNotifyService();
-	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
-	private final ReservationService reservationService = new ReservationService(
+	private final RestaurantFindService restaurantFindService = new RestaurantFindService(restaurantRepository);
+	private final ReservationService reservationService = new ReservationInfoService(reservationRepository,
+		restaurantFindService);
+	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService,
+		reservationService);
+	private final RestaurantFindService restaurantServiceForReservation = new RestaurantFindService(
+		restaurantRepository);
+	private final ReservationReserveService reservationReserveService = new ReservationReserveService(
 		reservationRepository,
-		restaurantService,
+		restaurantServiceForReservation,
 		memberService,
 		slackNotifyService
 	);
@@ -63,7 +72,7 @@ class ReservationFindServiceTest {
 		reservationRepository,
 		restaurantService,
 		memberService,
-		reservationService
+		reservationReserveService
 	);
 
 	@ParameterizedTest

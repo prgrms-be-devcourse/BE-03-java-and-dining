@@ -96,11 +96,11 @@ class CustomerReservationApiTest {
 			.andExpect(status().isCreated())
 			.andDo(print())
 			.andDo(document("customer-reserve",
-				requestFields(
-					fieldWithPath("restaurantId").description("식당 상태"),
-					fieldWithPath("reservationCustomerInput.visitDateTime").description("방문할 날짜와 시간"),
-					fieldWithPath("reservationCustomerInput.visitorCount").description("방문 인원수"),
-					fieldWithPath("reservationCustomerInput.memo").description("예약자 메모")
+					requestFields(
+						fieldWithPath("restaurantId").description("식당 상태"),
+						fieldWithPath("reservationCustomerInput.visitDateTime").description("방문할 날짜와 시간"),
+						fieldWithPath("reservationCustomerInput.visitorCount").description("방문 인원수"),
+						fieldWithPath("reservationCustomerInput.memo").description("예약자 메모")
 					)
 				)
 			);

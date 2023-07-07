@@ -28,6 +28,7 @@ import com.prgms.allen.dining.domain.reservation.dto.ReservationSimpleResForCust
 import com.prgms.allen.dining.domain.reservation.dto.ReservationStatusUpdateReq;
 import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationReserveService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationStatusUpdateService;
 import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
@@ -37,18 +38,20 @@ import com.prgms.allen.dining.security.jwt.JwtAuthenticationPrincipal;
 @RequestMapping("/customer/api/reservations")
 public class CustomerReservationApi {
 
-	private final ReservationService reservationService;
 	private final ReservationFindService reservationFindService;
 	private final ReservationStatusUpdateService statusUpdateService;
+	private final ReservationReserveService reservationReserveService;
+	private final ReservationService reservationService;
 
 	public CustomerReservationApi(
-		ReservationService reservationService,
+		ReservationReserveService reservationReserveService,
 		ReservationFindService reservationFindService,
-		@Qualifier("customerReservationStatusUpdateService") ReservationStatusUpdateService statusUpdateService
-	) {
-		this.reservationService = reservationService;
+		@Qualifier("customerReservationStatusUpdateService") ReservationStatusUpdateService statusUpdateService,
+		@Qualifier("reservationInfoService") ReservationService reservationService) {
+		this.reservationReserveService = reservationReserveService;
 		this.reservationFindService = reservationFindService;
 		this.statusUpdateService = statusUpdateService;
+		this.reservationService = reservationService;
 	}
 
 	@GetMapping
@@ -80,7 +83,7 @@ public class CustomerReservationApi {
 		@AuthenticationPrincipal JwtAuthenticationPrincipal principal,
 		@RequestBody @Valid ReservationCreateReq createRequest
 	) {
-		final Long reservationId = reservationService.reserve(principal.memberId(), createRequest);
+		final Long reservationId = reservationReserveService.reserve(principal.memberId(), createRequest);
 
 		final URI location = UriComponentsBuilder.fromPath("/customer/api/me/reservations/{reservationId}")
 			.buildAndExpand(reservationId)

@@ -19,10 +19,12 @@ import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
+import com.prgms.allen.dining.domain.reservation.service.ReservationInfoService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationReserveService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
+import com.prgms.allen.dining.domain.restaurant.RestaurantFindService;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
-import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
@@ -34,12 +36,15 @@ class ReservationServiceTest {
 	private final MemberRepository memberRepository = new FakeMemberRepository();
 	private SlackNotifyService slackNotifyService = new FakeSlackNotifyService();
 	private final MemberService memberService = new MemberService(memberRepository);
-	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
-	private final ReservationService reservationService = new ReservationService(
+	private final RestaurantFindService restaurantFindService = new RestaurantFindService(
+		restaurantRepository);
+	private final ReservationReserveService reservationReserveService = new ReservationReserveService(
 		reservationRepository,
-		restaurantService,
+		restaurantFindService,
 		memberService,
 		slackNotifyService);
+	private final ReservationService reservationService = new ReservationInfoService(reservationRepository,
+		restaurantFindService);
 
 	@Test
 	@DisplayName("고객은 식당의 예약을 요청할 수 있다.")
@@ -62,7 +67,7 @@ class ReservationServiceTest {
 		);
 
 		// when
-		reservationService.reserve(customer.getId(), reservationCreateReq);
+		reservationReserveService.reserve(customer.getId(), reservationCreateReq);
 
 		// then
 		long actualCount = reservationRepository.count();

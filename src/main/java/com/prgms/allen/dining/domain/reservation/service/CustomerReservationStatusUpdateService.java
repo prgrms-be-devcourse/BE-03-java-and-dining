@@ -22,11 +22,11 @@ public class CustomerReservationStatusUpdateService implements ReservationStatus
 
 	private static final Logger log = LoggerFactory.getLogger(CustomerReservationStatusUpdateService.class);
 
-	private final ReservationService reservationService;
+	private final ReservationReserveService reservationService;
 	private final SlackNotifyService slackNotifyService;
 
 	public CustomerReservationStatusUpdateService(
-		ReservationService reservationService,
+		ReservationReserveService reservationService,
 		SlackNotifyService slackNotifyService
 	) {
 		this.reservationService = reservationService;

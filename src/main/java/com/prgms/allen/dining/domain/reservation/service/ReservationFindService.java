@@ -32,13 +32,13 @@ public class ReservationFindService {
 	private final ReservationRepository reservationRepository;
 	private final RestaurantService restaurantService;
 	private final MemberService memberService;
-	private final ReservationService reservationService;
+	private final ReservationReserveService reservationService;
 
 	public ReservationFindService(
 		ReservationRepository reservationRepository,
 		RestaurantService restaurantService,
 		MemberService memberService,
-		ReservationService reservationService
+		ReservationReserveService reservationService
 	) {
 		this.reservationRepository = reservationRepository;
 		this.restaurantService = restaurantService;

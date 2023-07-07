@@ -20,6 +20,10 @@ import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.reservation.FakeReservationRepository;
+import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
+import com.prgms.allen.dining.domain.reservation.service.ReservationInfoService;
+import com.prgms.allen.dining.domain.reservation.service.ReservationService;
 import com.prgms.allen.dining.domain.restaurant.dto.ClosingDayCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuCreateReq;
 import com.prgms.allen.dining.domain.restaurant.dto.MenuDetailRes;
@@ -34,10 +38,13 @@ class RestaurantServiceTest {
 	private final RestaurantRepository restaurantRepository = new FakeRestaurantRepository();
 	private final MemberRepository memberRepository = new FakeMemberRepository();
 	private final MemberService memberService = new MemberService(memberRepository);
+	private final ReservationRepository reservationRepository = new FakeReservationRepository();
+	private final RestaurantFindService restaurantFindService = new RestaurantFindService(restaurantRepository);
+	private final ReservationService reservationService = new ReservationInfoService(reservationRepository,
+		restaurantFindService);
 	private final RestaurantService restaurantService = new RestaurantService(
 		restaurantRepository,
-		memberService
-	);
+		memberService, reservationService);
 
 	private Member savedOwner;
 	private List<ClosingDayCreateReq> closingDayList;
