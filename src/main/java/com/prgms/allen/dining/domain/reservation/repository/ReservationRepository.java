@@ -18,14 +18,14 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long>, CustomReservationRepository {
 
-	@Query("select sum(r.customerInput.visitorCount) "
+	@Query("select r "
 		+ " from Reservation r "
-		+ " where r.restaurant = :restaurant "
+		+ " where r.restaurant.id = :restaurantId "
 		+ " AND r.status In (:statuses) "
 		+ " AND r.customerInput.visitDate = :visitDate"
 		+ " AND r.customerInput.visitTime = :visitTime")
-	Optional<Integer> countTotalVisitorCount(
-		@Param("restaurant") Restaurant restaurant,
+	List<Reservation> findReservationsByDateTime(
+		@Param("restaurantId") Long restaurantId,
 		@Param("visitDate") LocalDate visitDate,
 		@Param("visitTime") LocalTime visitTime,
 		@Param("statuses") List<ReservationStatus> statuses);

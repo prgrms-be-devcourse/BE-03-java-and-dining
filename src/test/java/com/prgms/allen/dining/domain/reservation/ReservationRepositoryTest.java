@@ -187,7 +187,7 @@ class ReservationRepositoryTest {
 		);
 
 		// when
-		Optional<Integer> currentReservedCount = reservationRepository.countTotalVisitorCount(restaurant,
+		Optional<Integer> currentReservedCount = reservationRepository.findReservationsByDateTime(restaurant,
 			visitDateTime.toLocalDate(),
 			visitDateTime.toLocalTime(),
 			List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING));

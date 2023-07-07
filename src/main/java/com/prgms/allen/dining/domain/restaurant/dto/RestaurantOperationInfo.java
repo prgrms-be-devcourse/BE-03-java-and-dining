@@ -5,6 +5,7 @@ import static com.prgms.allen.dining.domain.reservation.policy.ReservationPolicy
 import static java.util.function.Predicate.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,15 @@ public class RestaurantOperationInfo {
 		return id;
 	}
 
-	private boolean isAvailable(int totalBookingCount, int requestBookingCount) {
+	public LocalTime getOpenTime() {
+		return openTime;
+	}
+
+	public LocalTime getLastOrderTime() {
+		return lastOrderTime;
+	}
+
+	public boolean isAvailable(int totalBookingCount, int requestBookingCount) {
 		int availableCount = this.capacity - totalBookingCount;
 		return availableCount >= requestBookingCount;
 	}
@@ -80,5 +89,16 @@ public class RestaurantOperationInfo {
 
 				return isAvailable(totalBookingCount, bookingCount);
 			}).toList();
+	}
+
+	public boolean isAvailable(LocalDateTime visitDateTime) {
+		LocalDate visitDate = visitDateTime.toLocalDate();
+		LocalTime visitTime = visitDateTime.toLocalTime();
+
+		boolean isOnAfterOpenTime = visitTime.isAfter(openTime) && visitTime.equals(openTime);
+		boolean isOnBeforeLastOrderTime = visitTime.isBefore(lastOrderTime) && visitTime.equals(lastOrderTime);
+		boolean isNotClosingDay = !this.closingDays.contains(visitDate.getDayOfWeek());
+
+		return isNotClosingDay && isOnAfterOpenTime && isOnBeforeLastOrderTime;
 	}
 }

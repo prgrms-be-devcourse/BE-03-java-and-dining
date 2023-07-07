@@ -74,20 +74,11 @@ public class FakeReservationRepository implements ReservationRepository {
 	}
 
 	@Override
-	public Optional<Integer> countTotalVisitorCount(Restaurant restaurant,
+	public List<Reservation> findReservationsByDateTime(Long restaurantId,
 		LocalDate visitDate,
 		LocalTime visitTime,
 		List<ReservationStatus> statuses) {
-		return reservations.stream()
-			.filter(reservation -> restaurant.getId().equals(reservation.getRestaurantId()))
-			.filter(reservation -> reservation.getVisitDateTime()
-				.toLocalDate()
-				.equals(visitDate))
-			.filter(reservation -> reservation.getVisitDateTime()
-				.toLocalTime()
-				.equals(visitTime))
-			.map(Reservation::getVisitorCount)
-			.reduce(Integer::sum);
+		return reservations;
 	}
 
 	@Override
