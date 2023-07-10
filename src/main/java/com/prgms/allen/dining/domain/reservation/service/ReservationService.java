@@ -31,6 +31,7 @@ import com.prgms.allen.dining.domain.reservation.repository.ReservationRepositor
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.domain.schedule.service.ScheduleService;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,17 +44,20 @@ public class ReservationService {
 	private final RestaurantService restaurantService;
 	private final MemberService memberService;
 	private final SlackNotifyService slackNotifyService;
+	private final ScheduleService scheduleService;
 
 	public ReservationService(
 		ReservationRepository reservationRepository,
 		RestaurantService restaurantService,
 		MemberService memberService,
-		SlackNotifyService slackNotifyService
+		SlackNotifyService slackNotifyService,
+		ScheduleService scheduleService
 	) {
 		this.reservationRepository = reservationRepository;
 		this.restaurantService = restaurantService;
 		this.memberService = memberService;
 		this.slackNotifyService = slackNotifyService;
+		this.scheduleService = scheduleService;
 	}
 
 	@Transactional
@@ -65,6 +69,24 @@ public class ReservationService {
 			.reservationCustomerInput()
 			.toEntity();
 		checkAvailableReservation(restaurant, customerInput.getVisitDateTime(), customerInput.getVisitorCount());
+
+		Reservation newReservation = new Reservation(customer, restaurant, customerInput);
+		reservationRepository.save(newReservation);
+
+		slackNotifyService.notifyReserve(newReservation);
+
+		return newReservation.getId();
+	}
+
+	@Transactional
+	public Long reserveWithSchedule(Long customerId, ReservationCreateReq createRequest) {
+		Member customer = memberService.findCustomerById(customerId);
+		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId());
+
+		ReservationCustomerInput customerInput = createRequest
+			.reservationCustomerInput()
+			.toEntity();
+		scheduleService.fix(customerInput.getVisitDateTime(), restaurant, customerInput.getVisitorCount());
 
 		Reservation newReservation = new Reservation(customer, restaurant, customerInput);
 		reservationRepository.save(newReservation);
