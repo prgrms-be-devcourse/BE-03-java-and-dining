@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
@@ -40,6 +41,9 @@ public class Schedule {
 	@JoinColumn(name = "restaurant_id", nullable = false)
 	private Restaurant restaurant;
 
+	@Version
+	private Integer version;
+
 	protected Schedule(){}
 
 	private Schedule(LocalDateTime dateTime, Restaurant restaurant){
@@ -55,7 +59,6 @@ public class Schedule {
 	}
 
 	public void fix(int visitorCount){
-		System.out.println("capacity : " + capacity);
 		if(capacity < visitorCount){
 			System.out.println("Schedule.fix IllegalStateException");
 			throw new IllegalStateException(

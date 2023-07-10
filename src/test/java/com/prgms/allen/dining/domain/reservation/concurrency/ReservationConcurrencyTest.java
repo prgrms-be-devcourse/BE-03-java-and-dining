@@ -89,6 +89,7 @@ public class ReservationConcurrencyTest {
 			latch.countDown();
 		}).exceptionally(e -> {
 			System.out.println("e = " + e);
+			latch.countDown();
 			return null;
 		});
 		CompletableFuture.runAsync(() -> {
@@ -98,6 +99,7 @@ public class ReservationConcurrencyTest {
 			latch.countDown();
 		}).exceptionally(e -> {
 			System.out.println("e = " + e);
+			latch.countDown();
 			return null;
 		});
 
