@@ -13,8 +13,10 @@ import com.prgms.allen.dining.domain.common.NotFoundResourceException;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
+import com.prgms.allen.dining.domain.reservation.BookingScheduleService;
 import com.prgms.allen.dining.domain.reservation.ReserveFailException;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
+import com.prgms.allen.dining.domain.reservation.entity.BookingSchedule;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -35,16 +37,18 @@ public class ReservationReserveService {
 	private final ReservationRepository reservationRepository;
 	private final RestaurantProvider restaurantProvider;
 	private final MemberService memberService;
+	private final BookingScheduleService bookingScheduleService;
 	private final SlackNotifyService slackNotifyService;
 
 	public ReservationReserveService(
 		ReservationRepository reservationRepository,
 		RestaurantProvider restaurantProvider,
-		MemberService memberService,
+		MemberService memberService, BookingScheduleService bookingScheduleService,
 		SlackNotifyService slackNotifyService) {
 		this.reservationRepository = reservationRepository;
 		this.restaurantProvider = restaurantProvider;
 		this.memberService = memberService;
+		this.bookingScheduleService = bookingScheduleService;
 		this.slackNotifyService = slackNotifyService;
 	}
 
@@ -57,47 +61,55 @@ public class ReservationReserveService {
 			.reservationCustomerInput()
 			.toEntity();
 
-		checkAvailableReservation(restaurantOperationInfo, customerInput.getVisitDateTime(),
-			customerInput.getVisitorCount());
+		LocalDateTime bookingDateTime = customerInput.getVisitDateTime();
+		Long restaurantId = restaurantOperationInfo.getId();
+		int capacity = restaurantOperationInfo.getCapacity();
 
-		Reservation newReservation = new Reservation(customer, restaurantOperationInfo.getId(), customerInput);
+		BookingSchedule schedule = bookingScheduleService.findOrInit(restaurantId, bookingDateTime, capacity);
+
+		checkAvailableReservation(restaurantOperationInfo, schedule, customerInput);
+
+		Reservation newReservation = new Reservation(customer, restaurantId, customerInput);
 		reservationRepository.save(newReservation);
 
-		logger.info("예약자명 : {}", customer.getNickname());
+		int visitorCount = customerInput.getVisitorCount();
+		bookingScheduleService.booking(schedule, visitorCount);
 
-		RestaurantInfo restaurantInfo = restaurantProvider.getInfoById(restaurantOperationInfo.getId());
+		logger.warn("예약자명 : {}", customer.getNickname());
 
-		// slackNotifyService.notifyReserve(newReservation, restaurantInfo);
+		sendSlackNotify(restaurantOperationInfo);
 
 		return newReservation.getId();
 	}
 
-	private void checkAvailableReservation(RestaurantOperationInfo restaurant, LocalDateTime visitDateTime,
-		int visitorCount) {
-		boolean isAvailableBook = restaurant.isAvailable(visitDateTime);
+	private void sendSlackNotify(RestaurantOperationInfo restaurantOperationInfo) {
+		RestaurantInfo restaurantInfo = restaurantProvider.getInfoById(restaurantOperationInfo.getId());
 
-		int totalBookCount = reservationRepository.findReservationsByDateTime(
-				restaurant.getId(),
-				visitDateTime.toLocalDate(),
-				visitDateTime.toLocalTime(),
-				BEFORE_VISIT_STATUSES
-			).stream()
-			.mapToInt(Reservation::getVisitorCount)
-			.sum();
+		// slackNotifyService.notifyReserve(newReservation, restaurantInfo);
+	}
 
-		boolean isAvailableVisitCount = restaurant.isAvailable(totalBookCount, visitorCount);
+	private void checkAvailableReservation(RestaurantOperationInfo restaurant, BookingSchedule schedule,
+		ReservationCustomerInput customerInput) {
+		LocalDateTime visitDateTime = customerInput.getVisitDateTime();
+		int visitorCount = customerInput.getVisitorCount();
 
-		boolean isAvailableReserve = isAvailableBook && isAvailableVisitCount;
+		// 레스토랑이 운영할 때인지
+		boolean isOperationTime = restaurant.isAvailable(visitDateTime);
+
+		// 해당 날짜와 시간에 신청한 인원이 예약 가능한지
+		boolean isAvailableBooking = schedule.isLowerThanRemainCounts(visitorCount);
+
+		boolean isAvailableReserve = isOperationTime && isAvailableBooking;
 
 		if (isAvailableReserve) {
 			return;
 		}
 
-		logger.warn("isAvailableBook: {}, isAvailableCount : {}", isAvailableBook, isAvailableVisitCount);
+		logger.warn("isOperationTime: {}, isAvailableBooking : {}", isOperationTime, isAvailableBooking);
 
 		String errorMessage = String.format(
-			"Reservation for restaurant ID %d failed. isAvailableBook: {}, isAvailableCount : {}",
-			restaurant.getId(), isAvailableBook, isAvailableVisitCount);
+			"Reservation for restaurant ID %d failed. isOperationTime: {}, isAvailableBooking : {}",
+			restaurant.getId(), isOperationTime, isAvailableBooking);
 
 		throw new ReserveFailException(errorMessage);
 	}

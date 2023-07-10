@@ -62,6 +62,10 @@ public class RestaurantOperationInfo {
 		return lastOrderTime;
 	}
 
+	public int getCapacity() {
+		return capacity;
+	}
+
 	public boolean isAvailable(int totalBookingCount, int requestBookingCount) {
 		int remainCount = this.capacity - totalBookingCount;
 		boolean hasRemainCount = remainCount >= requestBookingCount;

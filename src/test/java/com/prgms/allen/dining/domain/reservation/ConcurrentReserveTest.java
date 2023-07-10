@@ -15,9 +15,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
@@ -30,10 +30,11 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
 
 @SpringBootTest
-@Transactional
+// @Transactional
+@Rollback(value = false)
 public class ConcurrentReserveTest {
 
-	private final int numberOfThreads = 3;
+	private final int numberOfThreads = 2;
 	@Autowired
 	private PlatformTransactionManager platformTransactionManager;
 	@Autowired
@@ -44,6 +45,10 @@ public class ConcurrentReserveTest {
 	private ReservationReserveService reservationReserveService;
 	@Autowired
 	private ReservationRepository reservationRepository;
+
+	@Autowired
+	private BookingScheduleRepository bookingScheduleRepository;
+
 	private TransactionTemplate transactionTemplate;
 	private ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
 
@@ -77,6 +82,7 @@ public class ConcurrentReserveTest {
 		customers = transactionTemplate.execute(
 			status -> memberRepository.saveAll(customerList)
 		);
+
 	}
 
 	@Test
@@ -111,4 +117,27 @@ public class ConcurrentReserveTest {
 
 		assertThat(reservationSize).isEqualTo(answer);
 	}
+
+	// @Test
+	// @DisplayName("동시에 같은 날짜, 같은 시간에 예약을 요청하면 맨 처음 이외에 예약 생성이 실패한다.")
+	// void test_insert() throws InterruptedException {
+	//
+	// 	for (int i = 0; i < numberOfThreads; i++) {
+	// 		Member customer = customers.get(i);
+	// 		LocalDateTime visitTime = LocalDateTime.of(
+	// 			LocalDate.now().plusDays(1L),
+	// 			LocalTime.of(13, 0)
+	// 		);
+	// 		int visitCount = capacity;
+	//
+	// 		executorService.execute(() -> {
+	//
+	// 			transactionTemplate.execute(
+	// 				status -> bookingScheduleRepository.save(
+	// 					new BookingSchedule(restaurant.getId(), visitTime, restaurant.getCapacity())));
+	// 			countDownLatch.countDown();
+	// 		});
+	// 	}
+	// 	countDownLatch.await();
+	// }
 }

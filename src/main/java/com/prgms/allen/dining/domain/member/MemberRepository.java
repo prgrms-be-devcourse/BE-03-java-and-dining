@@ -2,10 +2,7 @@ package com.prgms.allen.dining.domain.member;
 
 import java.util.Optional;
 
-import javax.persistence.LockModeType;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -18,7 +15,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	Optional<Member> findByNickname(String nickname);
 
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	// @Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("select m from Member m where m.id = :id and m.memberType = :memberType")
 	Optional<Member> findCustomerForReserve(
 		@Param(value = "id") Long id,
