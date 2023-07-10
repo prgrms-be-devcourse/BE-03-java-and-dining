@@ -3,6 +3,7 @@ package com.prgms.allen.dining.generator;
 import java.math.BigInteger;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.List;
 
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.member.entity.MemberType;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
+import com.prgms.allen.dining.domain.reservation.dto.ReservationCustomerInputCreateReq;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
@@ -114,6 +117,20 @@ public class DummyGenerator {
 		);
 	}
 
+	public static Restaurant createRestaurant(Member owner, int capacity) {
+		return new Restaurant(
+			owner,
+			FoodType.KOREAN,
+			"장충동국밥",
+			capacity,
+			LocalTime.of(9, 0),
+			LocalTime.of(23, 0),
+			"서울특별시 서초구 어디길11 2층",
+			"실망시키지 않는 맛집",
+			"021234123"
+		);
+	}
+
 	public static RestaurantCreateReq createRestaurantCreateReq() {
 		return new RestaurantCreateReq(
 			FoodType.KOREAN,
@@ -143,12 +160,17 @@ public class DummyGenerator {
 		ReservationCustomerInput customerInput
 	) {
 		return Reservation.newTestInstance(
-			null,
+			restaurant.getId(),
 			customer,
 			restaurant.getId(),
 			status,
 			customerInput
 		);
+	}
+
+	public static Reservation createReservation(Member customer, Long restaurantId,
+		ReservationCustomerInput customerInput) {
+		return new Reservation(customer, restaurantId, customerInput);
 	}
 
 	public static Restaurant createRestaurantWith2Capacity(Member owner) {
@@ -186,5 +208,19 @@ public class DummyGenerator {
 			));
 		}
 		return reservations;
+	}
+
+	public static ReservationCreateReq createReservationInfo(Member customer, Long restaurantId,
+		LocalDateTime visitDateTime, int visitCount) {
+		return new ReservationCreateReq(restaurantId,
+			new ReservationCustomerInputCreateReq(visitDateTime, visitCount, ""));
+	}
+
+	public static Member createCustomer(String nickname) {
+		return new Member(nickname,
+			"익명",
+			"01011112222",
+			"qwer1234!",
+			MemberType.CUSTOMER);
 	}
 }

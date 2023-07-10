@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,8 @@ public class ReservationReserveService {
 	private static final List<ReservationStatus> BEFORE_VISIT_STATUSES =
 		List.of(ReservationStatus.CONFIRMED, ReservationStatus.PENDING);
 
+	private final Logger logger = LoggerFactory.getLogger(ReservationReserveService.class);
+
 	private final ReservationRepository reservationRepository;
 	private final RestaurantProvider restaurantProvider;
 	private final MemberService memberService;
@@ -46,7 +50,7 @@ public class ReservationReserveService {
 
 	@Transactional
 	public Long reserve(Long customerId, ReservationCreateReq createRequest) {
-		Member customer = memberService.findCustomerById(customerId);
+		Member customer = memberService.findCustomerForReserve(customerId);
 		RestaurantOperationInfo restaurantOperationInfo = restaurantProvider.findById(createRequest.restaurantId());
 
 		ReservationCustomerInput customerInput = createRequest
@@ -59,9 +63,11 @@ public class ReservationReserveService {
 		Reservation newReservation = new Reservation(customer, restaurantOperationInfo.getId(), customerInput);
 		reservationRepository.save(newReservation);
 
+		logger.info("예약자명 : {}", customer.getNickname());
+
 		RestaurantInfo restaurantInfo = restaurantProvider.getInfoById(restaurantOperationInfo.getId());
 
-		slackNotifyService.notifyReserve(newReservation, restaurantInfo);
+		// slackNotifyService.notifyReserve(newReservation, restaurantInfo);
 
 		return newReservation.getId();
 	}
@@ -81,18 +87,19 @@ public class ReservationReserveService {
 
 		boolean isAvailableVisitCount = restaurant.isAvailable(totalBookCount, visitorCount);
 
-		if (!isAvailableBook && !isAvailableVisitCount) {
-			throw new ReserveFailException(
-				String.format(
-					"Reservation for restaurant ID %d failed. "
-						+ "Requested visit date time %s is not between %s and %s",
-					restaurant.getId(),
-					visitDateTime,
-					restaurant.getOpenTime(),
-					restaurant.getLastOrderTime()
-				)
-			);
+		boolean isAvailableReserve = isAvailableBook && isAvailableVisitCount;
+
+		if (isAvailableReserve) {
+			return;
 		}
+
+		logger.warn("isAvailableBook: {}, isAvailableCount : {}", isAvailableBook, isAvailableVisitCount);
+
+		String errorMessage = String.format(
+			"Reservation for restaurant ID %d failed. isAvailableBook: {}, isAvailableCount : {}",
+			restaurant.getId(), isAvailableBook, isAvailableVisitCount);
+
+		throw new ReserveFailException(errorMessage);
 	}
 
 	public Reservation findById(Long id) {

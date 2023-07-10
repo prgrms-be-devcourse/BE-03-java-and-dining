@@ -35,7 +35,8 @@ public class CustomerReservationStatusUpdateService implements ReservationStatus
 		ReservationReserveService reservationService,
 		SlackNotifyService slackNotifyService,
 		MemberService memberService,
-		RestaurantProvider restaurantProvider) {
+		RestaurantProvider restaurantProvider
+	) {
 		this.reservationService = reservationService;
 		this.slackNotifyService = slackNotifyService;
 		this.memberService = memberService;

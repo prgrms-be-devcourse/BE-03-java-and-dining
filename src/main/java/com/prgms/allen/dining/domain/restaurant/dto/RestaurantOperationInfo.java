@@ -10,10 +10,15 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
 public class RestaurantOperationInfo {
+
+	private final Logger logger = LoggerFactory.getLogger(RestaurantOperationInfo.class);
 
 	private static final long DEFAULT_COUNT = 0L;
 
@@ -58,8 +63,10 @@ public class RestaurantOperationInfo {
 	}
 
 	public boolean isAvailable(int totalBookingCount, int requestBookingCount) {
-		int availableCount = this.capacity - totalBookingCount;
-		return availableCount >= requestBookingCount;
+		int remainCount = this.capacity - totalBookingCount;
+		boolean hasRemainCount = remainCount >= requestBookingCount;
+
+		return hasRemainCount;
 	}
 
 	public List<LocalTime> getAvailableTimes(
@@ -95,10 +102,15 @@ public class RestaurantOperationInfo {
 		LocalDate visitDate = visitDateTime.toLocalDate();
 		LocalTime visitTime = visitDateTime.toLocalTime();
 
-		boolean isOnAfterOpenTime = visitTime.isAfter(openTime) && visitTime.equals(openTime);
-		boolean isOnBeforeLastOrderTime = visitTime.isBefore(lastOrderTime) && visitTime.equals(lastOrderTime);
+		boolean isOnAfterOpenTime = visitTime.isAfter(openTime) || visitTime.equals(openTime);
+		boolean isOnBeforeLastOrderTime = visitTime.isBefore(lastOrderTime) || visitTime.equals(lastOrderTime);
 		boolean isNotClosingDay = !this.closingDays.contains(visitDate.getDayOfWeek());
 
-		return isNotClosingDay && isOnAfterOpenTime && isOnBeforeLastOrderTime;
+		logger.warn("isAfterOpen: {}, isBeforeClose: {}, isNotClosingDay: {}", isOnAfterOpenTime, isOnAfterOpenTime,
+			isOnBeforeLastOrderTime);
+
+		boolean isBusinessHour = isNotClosingDay && isOnAfterOpenTime && isOnBeforeLastOrderTime;
+
+		return isBusinessHour;
 	}
 }

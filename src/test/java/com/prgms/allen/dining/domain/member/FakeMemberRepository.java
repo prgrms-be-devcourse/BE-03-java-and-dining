@@ -197,4 +197,9 @@ public class FakeMemberRepository implements MemberRepository {
 	public Optional<Member> findByNickname(String nickname) {
 		return Optional.empty();
 	}
+
+	@Override
+	public Optional<Member> findCustomerForReserve(Long id, MemberType memberType) {
+		return Optional.empty();
+	}
 }

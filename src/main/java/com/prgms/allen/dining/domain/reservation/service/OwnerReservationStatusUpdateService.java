@@ -32,7 +32,9 @@ public class OwnerReservationStatusUpdateService implements ReservationStatusUpd
 	public OwnerReservationStatusUpdateService(
 		ReservationReserveService reservationService,
 		SlackNotifyService slackNotifyService,
-		MemberService memberService, RestaurantProvider restaurantProvider) {
+		MemberService memberService,
+		RestaurantProvider restaurantProvider
+	) {
 		this.reservationService = reservationService;
 		this.slackNotifyService = slackNotifyService;
 		this.memberService = memberService;
@@ -44,46 +46,40 @@ public class OwnerReservationStatusUpdateService implements ReservationStatusUpd
 		Reservation findReservation = reservationService.findById(reservationId);
 		RestaurantInfo restaurant = restaurantProvider.getInfoById(findReservation.getRestaurantId());
 
+		checkOwner(ownerId);
+
 		switch (updateReq.status()) {
-			case CONFIRMED -> confirm(findReservation, ownerId, restaurant);
-			case CANCELLED -> cancel(findReservation, ownerId, restaurant);
-			case VISITED -> visit(findReservation, ownerId);
-			case NO_SHOW -> noShow(findReservation, ownerId);
-			default -> throw new IllegalArgumentException(MessageFormat.format(
+			case CONFIRMED -> confirm(findReservation, restaurant);
+			case CANCELLED -> cancel(findReservation, restaurant);
+			case VISITED -> visit(findReservation);
+			case NO_SHOW -> noShow(findReservation);
+			case PENDING -> throw new IllegalArgumentException(MessageFormat.format(
 				"Cannot update reservation status for status={0}. Check your Payload.",
 				updateReq.status()
 			));
 		}
 	}
 
-	private void confirm(Reservation findReservation, Long ownerId, RestaurantInfo restaurant) {
-		checkOwner(ownerId);
-
+	private void confirm(Reservation findReservation, RestaurantInfo restaurant) {
 		findReservation.confirm();
 
 		slackNotifyService.notifyConfirm(findReservation, restaurant);
 		log.info("Reservation {}'s status updated to {}", findReservation.getId(), findReservation.getStatus());
 	}
 
-	private void cancel(Reservation findReservation, Long ownerId, RestaurantInfo restaurant) {
-		checkOwner(ownerId);
-
+	private void cancel(Reservation findReservation, RestaurantInfo restaurant) {
 		findReservation.cancel();
 
 		slackNotifyService.notifyCancel(findReservation, restaurant);
 		log.info("Reservation {}'s status updated to {}", findReservation.getId(), findReservation.getStatus());
 	}
 
-	private void visit(Reservation findReservation, Long ownerId) {
-		checkOwner(ownerId);
-
+	private void visit(Reservation findReservation) {
 		findReservation.visit();
 		log.info("Reservation {}'s status updated to {}", findReservation.getId(), findReservation.getStatus());
 	}
 
-	private void noShow(Reservation findReservation, Long ownerId) {
-		checkOwner(ownerId);
-
+	private void noShow(Reservation findReservation) {
 		findReservation.noShow();
 		log.info("Reservation {}'s status updated to {}", findReservation.getId(), findReservation.getStatus());
 	}
@@ -91,13 +87,15 @@ public class OwnerReservationStatusUpdateService implements ReservationStatusUpd
 	private void checkOwner(Long ownerId) {
 		Member owner = memberService.findOwnerById(ownerId);
 
+		String errorMessage = MessageFormat.format(
+			"Owner does not match. Parameter ownerId={0} but actual ownerId={1}",
+			ownerId,
+			owner.getId()
+		);
+
 		Assert.state(
 			owner.matchesId(ownerId),
-			MessageFormat.format(
-				"Owner does not match. Parameter ownerId={0} but actual ownerId={1}",
-				ownerId,
-				owner.getId()
-			)
+			errorMessage
 		);
 	}
 }

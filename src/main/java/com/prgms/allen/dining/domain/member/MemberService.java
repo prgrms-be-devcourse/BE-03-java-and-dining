@@ -48,4 +48,11 @@ public class MemberService {
 		member.checkPassword(password);
 		return member;
 	}
+
+	public Member findCustomerForReserve(Long customerId) {
+		return memberRepository.findCustomerForReserve(customerId, MemberType.CUSTOMER)
+			.orElseThrow(() -> new NotFoundResourceException(
+				MessageFormat.format("Cannot find Customer entity for customer id = {0}", customerId)
+			));
+	}
 }

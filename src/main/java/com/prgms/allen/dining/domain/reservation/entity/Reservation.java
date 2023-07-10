@@ -73,6 +73,7 @@ public class Reservation extends BaseEntity {
 		this.id = id;
 		this.customer = customer;
 		this.status = status;
+		this.restaurantId = restaurantId;
 		this.customerInput = customerInput;
 	}
 
