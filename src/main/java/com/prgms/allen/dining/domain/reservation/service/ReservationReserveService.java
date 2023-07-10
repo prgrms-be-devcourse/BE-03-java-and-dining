@@ -52,7 +52,6 @@ public class ReservationReserveService {
 		this.slackNotifyService = slackNotifyService;
 	}
 
-	@Transactional
 	public Long reserve(Long customerId, ReservationCreateReq createRequest) {
 		Member customer = memberService.findCustomerForReserve(customerId);
 		RestaurantOperationInfo restaurantOperationInfo = restaurantProvider.findById(createRequest.restaurantId());
