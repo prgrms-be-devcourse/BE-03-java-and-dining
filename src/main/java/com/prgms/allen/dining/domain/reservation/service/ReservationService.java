@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.domain.schedule.service.ScheduleService;
+import com.prgms.allen.dining.domain.schedule.service.ScheduleServiceFacade;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,20 +46,30 @@ public class ReservationService {
 	private final RestaurantService restaurantService;
 	private final MemberService memberService;
 	private final SlackNotifyService slackNotifyService;
-	private final ScheduleService scheduleService;
+	private final ScheduleServiceFacade scheduleServiceFacade;
 
 	public ReservationService(
 		ReservationRepository reservationRepository,
 		RestaurantService restaurantService,
 		MemberService memberService,
 		SlackNotifyService slackNotifyService,
-		ScheduleService scheduleService
+		ScheduleServiceFacade scheduleServiceFacade
 	) {
 		this.reservationRepository = reservationRepository;
 		this.restaurantService = restaurantService;
 		this.memberService = memberService;
 		this.slackNotifyService = slackNotifyService;
-		this.scheduleService = scheduleService;
+		this.scheduleServiceFacade = scheduleServiceFacade;
+	}
+
+	@Transactional
+	public Reservation reserve(Member customer, Restaurant restaurant, ReservationCreateReq createRequest) {
+
+		ReservationCustomerInput customerInput = createRequest
+			.reservationCustomerInput()
+			.toEntity();
+
+		return reservationRepository.save(new Reservation(customer, restaurant, customerInput));
 	}
 
 	@Transactional
@@ -78,23 +90,6 @@ public class ReservationService {
 		return newReservation.getId();
 	}
 
-	@Transactional
-	public Long reserveWithSchedule(Long customerId, ReservationCreateReq createRequest) {
-		Member customer = memberService.findCustomerById(customerId);
-		Restaurant restaurant = restaurantService.findById(createRequest.restaurantId());
-
-		ReservationCustomerInput customerInput = createRequest
-			.reservationCustomerInput()
-			.toEntity();
-		scheduleService.fix(customerInput.getVisitDateTime(), restaurant, customerInput.getVisitorCount());
-
-		Reservation newReservation = new Reservation(customer, restaurant, customerInput);
-		reservationRepository.save(newReservation);
-
-		slackNotifyService.notifyReserve(newReservation);
-
-		return newReservation.getId();
-	}
 
 	private void checkAvailableReservation(Restaurant restaurant, LocalDateTime visitDateTime, int visitorCount) {
 		checkAvailableVisitDateTime(restaurant, visitDateTime);
@@ -236,5 +231,4 @@ public class ReservationService {
 			.map(DateAndTotalVisitCountPerDayProj::date)
 			.toList();
 	}
-
 }

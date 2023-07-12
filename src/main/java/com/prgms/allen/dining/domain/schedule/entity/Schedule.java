@@ -60,7 +60,6 @@ public class Schedule {
 
 	public void fix(int visitorCount){
 		if(capacity < visitorCount){
-			System.out.println("Schedule.fix IllegalStateException");
 			throw new IllegalStateException(
 				"Reservation fail. Capacity of restaurant '%s' on date time '%s' is under visitorCount %d".formatted(
 					restaurant.getName(), dateTime, visitorCount)

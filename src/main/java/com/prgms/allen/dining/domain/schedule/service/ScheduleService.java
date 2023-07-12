@@ -3,6 +3,7 @@ package com.prgms.allen.dining.domain.schedule.service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +21,16 @@ public class ScheduleService {
 		this.scheduleRepository = scheduleRepository;
 	}
 
-	public void fix(LocalDateTime dateTime, Restaurant restaurant, int visitorCount) {
-		scheduleRepository.findByRestaurantAndDateTime(restaurant, dateTime)
-			.ifPresentOrElse(schedule -> schedule.fix(visitorCount),
-				() -> scheduleRepository.save(Schedule.ofFirstSchedule(dateTime, restaurant, visitorCount))
-			);
+	@Transactional
+	public void fix(LocalDateTime dateTime, Restaurant restaurant, int visitorCount){
+		Schedule schedule = scheduleRepository.findByRestaurantAndDateTime(restaurant, dateTime)
+			.orElseThrow(() -> new RuntimeException(
+				"Schedule data isn't exist. Member can't reserve restaurant before Schedule data inserted."
+			));
+		schedule.fix(visitorCount);
 	}
 
+	@Transactional
 	public void cancel(Restaurant restaurant, LocalDateTime dateTime, int visitorCount) {
 		Schedule schedule = scheduleRepository.findByRestaurantAndDateTime(restaurant, dateTime)
 			.orElseThrow(() -> new IllegalArgumentException(
