@@ -46,6 +46,7 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.domain.schedule.FakeScheduleRepository;
 import com.prgms.allen.dining.domain.schedule.repository.ScheduleRepository;
 import com.prgms.allen.dining.domain.schedule.service.ScheduleService;
+import com.prgms.allen.dining.domain.schedule.service.ScheduleServiceFacade;
 import com.prgms.allen.dining.generator.DummyGenerator;
 
 class ReservationFindServiceTest {
@@ -58,12 +59,13 @@ class ReservationFindServiceTest {
 	private final SlackNotifyService slackNotifyService = new FakeSlackNotifyService();
 	private final RestaurantService restaurantService = new RestaurantService(restaurantRepository, memberService);
 	private final ScheduleService scheduleService = new ScheduleService(scheduleRepository);
+	private final ScheduleServiceFacade scheduleServiceFacade = new ScheduleServiceFacade(scheduleService);
 	private final ReservationService reservationService = new ReservationService(
 		reservationRepository,
 		restaurantService,
 		memberService,
 		slackNotifyService,
-		scheduleService
+		scheduleServiceFacade
 	);
 	private final ReservationFindService reservationFindService = new ReservationFindService(
 		reservationRepository,
