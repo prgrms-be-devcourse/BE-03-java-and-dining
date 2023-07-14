@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +31,6 @@ import com.prgms.allen.dining.domain.reservation.repository.ReservationRepositor
 import com.prgms.allen.dining.domain.restaurant.RestaurantService;
 import com.prgms.allen.dining.domain.restaurant.dto.ReservationAvailableDatesRes;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
-import com.prgms.allen.dining.domain.schedule.service.ScheduleService;
 import com.prgms.allen.dining.domain.schedule.service.ScheduleServiceFacade;
 
 @Service
@@ -72,6 +70,7 @@ public class ReservationService {
 		return reservationRepository.save(new Reservation(customer, restaurant, customerInput));
 	}
 
+	//Todo: 지워
 	@Transactional
 	public Long reserve(Long customerId, ReservationCreateReq createRequest) {
 		Member customer = memberService.findCustomerById(customerId);
