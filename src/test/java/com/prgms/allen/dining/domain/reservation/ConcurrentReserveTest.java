@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +35,7 @@ import com.prgms.allen.dining.generator.DummyGenerator;
 @Rollback(value = false)
 public class ConcurrentReserveTest {
 
-	private final int numberOfThreads = 2;
+	private final int numberOfThreads = 3;
 	@Autowired
 	private PlatformTransactionManager platformTransactionManager;
 	@Autowired
@@ -45,9 +46,6 @@ public class ConcurrentReserveTest {
 	private ReservationReserveService reservationReserveService;
 	@Autowired
 	private ReservationRepository reservationRepository;
-
-	@Autowired
-	private BookingScheduleRepository bookingScheduleRepository;
 
 	private TransactionTemplate transactionTemplate;
 	private ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
@@ -60,7 +58,7 @@ public class ConcurrentReserveTest {
 
 	private List<Member> customers;
 
-	private int capacity = 2;
+	private int capacity = 4;
 
 	@BeforeEach
 	void setup() {
@@ -71,13 +69,10 @@ public class ConcurrentReserveTest {
 		restaurant = transactionTemplate.execute(
 			status -> restaurantRepository.save(DummyGenerator.createRestaurant(owner, capacity)));
 
-		List<Member> customerList = List.of(
-			DummyGenerator.createCustomer("customer1"),
-			DummyGenerator.createCustomer("customer2"),
-			DummyGenerator.createCustomer("customer3"),
-			DummyGenerator.createCustomer("customer4"),
-			DummyGenerator.createCustomer("customer5")
-		);
+		List<Member> customerList = IntStream.range(0, numberOfThreads)
+			.boxed()
+			.map(num -> DummyGenerator.createCustomer("customer" + num))
+			.toList();
 
 		customers = transactionTemplate.execute(
 			status -> memberRepository.saveAll(customerList)
@@ -88,6 +83,39 @@ public class ConcurrentReserveTest {
 	@Test
 	@DisplayName("동시에 같은 날짜, 같은 시간에 예약을 요청하면 맨 처음 이외에 예약 생성이 실패한다.")
 	void test_concurrent_reservation() throws InterruptedException {
+
+		for (int i = 0; i < numberOfThreads; i++) {
+			Member customer = customers.get(i);
+			LocalDateTime visitTime = LocalDateTime.of(
+				LocalDate.now().plusDays(1L),
+				LocalTime.of(13, 0)
+			);
+			int visitCount = 2;
+
+			executorService.execute(() -> {
+				ReservationCreateReq reservationInfo = DummyGenerator.createReservationInfo(
+					customer,
+					restaurant.getId(),
+					visitTime,
+					visitCount
+				);
+
+				transactionTemplate.execute(
+					status -> reservationReserveService.reserve(customer.getId(), reservationInfo));
+				countDownLatch.countDown();
+			});
+		}
+		countDownLatch.await();
+
+		int reservationSize = reservationRepository.findAll().size();
+		int answer = 1;
+
+		assertThat(reservationSize).isEqualTo(answer);
+	}
+
+	@Test
+	@DisplayName("동시에 같은 날짜, 같은 시간에 예약을 요청하면 맨 처음 이외에 예약 생성이 실패한다.")
+	void test_concurrent_reservation2() throws InterruptedException {
 
 		for (int i = 0; i < numberOfThreads; i++) {
 			Member customer = customers.get(i);
@@ -117,27 +145,4 @@ public class ConcurrentReserveTest {
 
 		assertThat(reservationSize).isEqualTo(answer);
 	}
-
-	// @Test
-	// @DisplayName("동시에 같은 날짜, 같은 시간에 예약을 요청하면 맨 처음 이외에 예약 생성이 실패한다.")
-	// void test_insert() throws InterruptedException {
-	//
-	// 	for (int i = 0; i < numberOfThreads; i++) {
-	// 		Member customer = customers.get(i);
-	// 		LocalDateTime visitTime = LocalDateTime.of(
-	// 			LocalDate.now().plusDays(1L),
-	// 			LocalTime.of(13, 0)
-	// 		);
-	// 		int visitCount = capacity;
-	//
-	// 		executorService.execute(() -> {
-	//
-	// 			transactionTemplate.execute(
-	// 				status -> bookingScheduleRepository.save(
-	// 					new BookingSchedule(restaurant.getId(), visitTime, restaurant.getCapacity())));
-	// 			countDownLatch.countDown();
-	// 		});
-	// 	}
-	// 	countDownLatch.await();
-	// }
 }

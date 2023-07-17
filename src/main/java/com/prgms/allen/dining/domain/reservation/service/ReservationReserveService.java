@@ -64,7 +64,7 @@ public class ReservationReserveService {
 		Long restaurantId = restaurantOperationInfo.getId();
 		int capacity = restaurantOperationInfo.getCapacity();
 
-		BookingSchedule schedule = bookingScheduleService.findOrInit(restaurantId, bookingDateTime, capacity);
+		BookingSchedule schedule = bookingScheduleService.findSchedule(restaurantId, bookingDateTime, capacity);
 
 		checkAvailableReservation(restaurantOperationInfo, schedule, customerInput);
 
@@ -107,7 +107,7 @@ public class ReservationReserveService {
 		logger.warn("isOperationTime: {}, isAvailableBooking : {}", isOperationTime, isAvailableBooking);
 
 		String errorMessage = String.format(
-			"Reservation for restaurant ID %d failed. isOperationTime: {}, isAvailableBooking : {}",
+			"Reservation for restaurant ID %d failed. isOperationTime: %b, isAvailableBooking : %b",
 			restaurant.getId(), isOperationTime, isAvailableBooking);
 
 		throw new ReserveFailException(errorMessage);
