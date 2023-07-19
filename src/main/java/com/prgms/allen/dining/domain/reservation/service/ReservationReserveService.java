@@ -52,6 +52,7 @@ public class ReservationReserveService {
 		this.slackNotifyService = slackNotifyService;
 	}
 
+	@Transactional
 	public Long reserve(Long customerId, ReservationCreateReq createRequest) {
 		Member customer = memberService.findCustomerForReserve(customerId);
 		RestaurantOperationInfo restaurantOperationInfo = restaurantProvider.findById(createRequest.restaurantId());
@@ -68,11 +69,11 @@ public class ReservationReserveService {
 
 		checkAvailableReservation(restaurantOperationInfo, schedule, customerInput);
 
-		Reservation newReservation = new Reservation(customer, restaurantId, customerInput);
-		reservationRepository.save(newReservation);
-
 		int visitorCount = customerInput.getVisitorCount();
 		bookingScheduleService.booking(schedule, visitorCount);
+
+		Reservation newReservation = new Reservation(customer, restaurantId, customerInput);
+		reservationRepository.save(newReservation);
 
 		logger.warn("예약자명 : {}", customer.getNickname());
 

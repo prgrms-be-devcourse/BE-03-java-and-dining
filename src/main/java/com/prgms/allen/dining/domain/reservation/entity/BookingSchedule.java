@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Entity
 @Table(name = "BOOKING_SCHEDULE",
 	uniqueConstraints = {
@@ -17,6 +20,8 @@ import javax.persistence.UniqueConstraint;
 			"booking_date_time"})
 	})
 public class BookingSchedule {
+
+	private static final Logger logger = LoggerFactory.getLogger(BookingSchedule.class);
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -91,6 +96,8 @@ public class BookingSchedule {
 		if (result < 0) {
 			throw new IllegalArgumentException("예약 허용 인원수 초과");
 		}
+
+		logger.warn("result : {}", result);
 
 		this.remainCounts = result;
 

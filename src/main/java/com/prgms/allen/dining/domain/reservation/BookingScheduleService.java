@@ -27,21 +27,27 @@ public class BookingScheduleService {
 	}
 
 	public BookingSchedule findSchedule(Long restaurantId, LocalDateTime bookingDateTime, int seatCount) {
-		return bookingScheduleRepository.findByRestaurantIdAndAndBookingDateTime(restaurantId, bookingDateTime)
+		bookingScheduleRepository.findByRestaurantIdAndAndBookingDateTime(restaurantId, bookingDateTime)
 			.orElse(generateSchedule(restaurantId, bookingDateTime, seatCount));
+
+		return bookingScheduleRepository.getByRestaurantIdAndAndBookingDateTime(restaurantId, bookingDateTime);
 	}
 
 	private BookingSchedule generateSchedule(Long restaurantId, LocalDateTime bookingDateTime, int seatCount) {
+		logger.warn("find로 못찾았기 때문에 없어서 생성하러 감");
 		try {
 			return bookingScheduleGenerator.generate(restaurantId, bookingDateTime, seatCount);
 		} catch (DuplicatedException duplicatedException) {
-			logger.warn("생성에 실패하여 다시 시도합니다.");
+			logger.warn("중복 생성 시도로 오류가 발생하여 찾아옵니다.");
 			return bookingScheduleGenerator.retryGenerate(restaurantId, bookingDateTime, seatCount);
 		}
 	}
 
+	@Transactional
 	public void booking(BookingSchedule schedule, int visitorCount) {
-		bookingScheduleRepository.save(schedule.booking(visitorCount));
+		logger.warn("예약 진행 전 가능 인원수 : {}", schedule.getRemainCounts());
+		schedule.booking(visitorCount);
+		logger.warn("예약 가능 인원수 : {}", schedule.getRemainCounts());
 	}
 
 }
