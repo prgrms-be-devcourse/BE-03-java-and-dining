@@ -136,6 +136,8 @@ class CustomerRestaurantApiTest {
 					fieldWithPath("content[].foodType").description("음식 카테고리"),
 					fieldWithPath("content[].restaurantName").description("레스토랑 이름"),
 					fieldWithPath("content[].location").description("레스토랑 주소"),
+					fieldWithPath("content[].reservationAvailableTimes[]")
+						.description("요청한 날짜와 시간을 기준으로 예약 가능한 시간대 리스트"),
 					fieldWithPath("pageable").description(""),
 					fieldWithPath("totalElements").description("전체 데이터 개수"),
 					fieldWithPath("first").description("첫번째 페이지인지 여부"),
@@ -175,6 +177,8 @@ class CustomerRestaurantApiTest {
 					fieldWithPath("content[].foodType").description("음식 카테고리"),
 					fieldWithPath("content[].restaurantName").description("레스토랑 이름"),
 					fieldWithPath("content[].location").description("레스토랑 주소"),
+					fieldWithPath("content[].reservationAvailableTimes[]")
+						.description("요청한 날짜와 시간을 기준으로 예약 가능한 시간대 리스트"),
 					fieldWithPath("pageable").description(""),
 					fieldWithPath("totalElements").description("전체 데이터 개수"),
 					fieldWithPath("first").description("첫번째 페이지인지 여부"),
