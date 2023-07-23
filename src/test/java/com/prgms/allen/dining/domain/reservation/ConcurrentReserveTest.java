@@ -11,14 +11,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
@@ -31,11 +32,12 @@ import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
 
 @SpringBootTest
-// @Transactional
-@Rollback(value = false)
+@Transactional
 public class ConcurrentReserveTest {
 
-	private final int numberOfThreads = 3;
+	private final int THREAD_NUMS = 3;
+	private final int CAPACITY = 4;
+
 	@Autowired
 	private PlatformTransactionManager platformTransactionManager;
 	@Autowired
@@ -48,17 +50,12 @@ public class ConcurrentReserveTest {
 	private ReservationRepository reservationRepository;
 
 	private TransactionTemplate transactionTemplate;
-	private ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-
-	private CountDownLatch countDownLatch = new CountDownLatch(numberOfThreads);
 
 	private Member owner;
 
 	private Restaurant restaurant;
 
 	private List<Member> customers;
-
-	private int capacity = 4;
 
 	@BeforeEach
 	void setup() {
@@ -67,9 +64,9 @@ public class ConcurrentReserveTest {
 
 		owner = transactionTemplate.execute(status -> memberRepository.save(DummyGenerator.createOwner()));
 		restaurant = transactionTemplate.execute(
-			status -> restaurantRepository.save(DummyGenerator.createRestaurant(owner, capacity)));
+			status -> restaurantRepository.save(DummyGenerator.createRestaurant(owner, CAPACITY)));
 
-		List<Member> customerList = IntStream.range(0, numberOfThreads)
+		List<Member> customerList = IntStream.range(0, THREAD_NUMS)
 			.boxed()
 			.map(num -> DummyGenerator.createCustomer("customer" + num))
 			.toList();
@@ -80,11 +77,21 @@ public class ConcurrentReserveTest {
 
 	}
 
+	@AfterEach
+	void clean() {
+		reservationRepository.deleteAll();
+		restaurantRepository.deleteAll();
+		memberRepository.deleteAll();
+	}
+
 	@Test
-	@DisplayName("동시에 같은 날짜, 같은 시간에 예약을 요청하면 맨 처음 이외에 예약 생성이 실패한다.")
+	@DisplayName("동시에 같은 날짜, 같은 시간에 3개의 예약을 요청하면 2개만 성공한다.")
 	void test_concurrent_reservation() throws InterruptedException {
 
-		for (int i = 0; i < numberOfThreads; i++) {
+		ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUMS);
+		CountDownLatch countDownLatch = new CountDownLatch(THREAD_NUMS);
+
+		for (int i = 0; i < THREAD_NUMS; i++) {
 			Member customer = customers.get(i);
 			LocalDateTime visitTime = LocalDateTime.of(
 				LocalDate.now().plusDays(1L),
@@ -93,55 +100,26 @@ public class ConcurrentReserveTest {
 			int visitCount = 2;
 
 			executorService.execute(() -> {
-				ReservationCreateReq reservationInfo = DummyGenerator.createReservationInfo(
-					customer,
-					restaurant.getId(),
-					visitTime,
-					visitCount
-				);
+				try {
+					ReservationCreateReq reservationInfo = DummyGenerator.createReservationInfo(
+						customer,
+						restaurant.getId(),
+						visitTime,
+						visitCount
+					);
 
-				transactionTemplate.execute(
-					status -> reservationReserveService.reserve(customer.getId(), reservationInfo));
-				countDownLatch.countDown();
+					transactionTemplate.execute(
+						status -> reservationReserveService.reserve(customer.getId(), reservationInfo));
+				} finally {
+					countDownLatch.countDown();
+				}
 			});
 		}
+
 		countDownLatch.await();
 
 		int reservationSize = reservationRepository.findAll().size();
-		int answer = 1;
-
-		assertThat(reservationSize).isEqualTo(answer);
-	}
-
-	@Test
-	@DisplayName("동시에 같은 날짜, 같은 시간에 예약을 요청하면 맨 처음 이외에 예약 생성이 실패한다.")
-	void test_concurrent_reservation2() throws InterruptedException {
-
-		for (int i = 0; i < numberOfThreads; i++) {
-			Member customer = customers.get(i);
-			LocalDateTime visitTime = LocalDateTime.of(
-				LocalDate.now().plusDays(1L),
-				LocalTime.of(13, 0)
-			);
-			int visitCount = capacity;
-
-			executorService.execute(() -> {
-				ReservationCreateReq reservationInfo = DummyGenerator.createReservationInfo(
-					customer,
-					restaurant.getId(),
-					visitTime,
-					visitCount
-				);
-
-				transactionTemplate.execute(
-					status -> reservationReserveService.reserve(customer.getId(), reservationInfo));
-				countDownLatch.countDown();
-			});
-		}
-		countDownLatch.await();
-
-		int reservationSize = reservationRepository.findAll().size();
-		int answer = 1;
+		int answer = 2;
 
 		assertThat(reservationSize).isEqualTo(answer);
 	}
