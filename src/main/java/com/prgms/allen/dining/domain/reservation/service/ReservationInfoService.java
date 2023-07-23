@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
-import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo;
+import com.prgms.allen.dining.domain.restaurant.provider.RestaurantProvider;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,7 +31,7 @@ public class ReservationInfoService implements ReservationProvider {
 
 	@Override
 	public List<LocalTime> getAvailableTimes(RestaurantOperationInfo restaurant) {
-		Map<LocalTime, Long> bookingCounts = reservationRepository.findBookingCounts(
+		Map<LocalTime, Long> bookingCounts = reservationRepository.findAllByDateAndStatus(
 				restaurant.getId(),
 				LocalDate.now(),
 				BEFORE_VISIT_STATUSES
@@ -50,7 +50,7 @@ public class ReservationInfoService implements ReservationProvider {
 	public List<LocalDate> getAvailableDates(Long restaurantId) {
 		RestaurantOperationInfo restaurant = restaurantProvider.findById(restaurantId);
 
-		Map<LocalDate, Long> bookingCounts = reservationRepository.findTotalVisitorCountPerDay(restaurant.getId(),
+		Map<LocalDate, Long> bookingCounts = reservationRepository.findAllByRestaurantIdAndStatus(restaurant.getId(),
 				BEFORE_VISIT_STATUSES)
 			.stream()
 			.collect(

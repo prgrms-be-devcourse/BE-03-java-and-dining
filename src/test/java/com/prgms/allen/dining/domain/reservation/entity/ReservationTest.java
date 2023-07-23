@@ -7,12 +7,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.prgms.allen.dining.domain.fake.FakeRestaurant;
 import com.prgms.allen.dining.domain.member.FakeMemberRepository;
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
@@ -21,7 +21,6 @@ import com.prgms.allen.dining.domain.reservation.FakeReservationRepository;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.restaurant.FakeRestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
-import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;
 
@@ -51,19 +50,7 @@ class ReservationTest {
 			MemberType.OWNER
 		);
 
-		validRestaurant = new Restaurant(
-			validOwner,
-			FoodType.CHINESE,
-			"맛있는 식당",
-			30,
-			LocalTime.now(),
-			LocalTime.now(),
-			"서울시 뭐뭐구 뭐뭐동 202",
-			"맛있는 식당입니다.",
-			"01012342345",
-			new ArrayList<>(),
-			new ArrayList<>()
-		);
+		validRestaurant = new FakeRestaurant(1L, DummyGenerator.createRestaurant(validOwner));
 	}
 
 	@Test

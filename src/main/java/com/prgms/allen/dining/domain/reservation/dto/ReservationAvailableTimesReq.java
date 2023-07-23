@@ -31,8 +31,4 @@ public record ReservationAvailableTimesReq(
 			", visitorCount=" + visitorCount +
 			'}';
 	}
-
-	public ReservationAvailableTimesReq(Long restaurantId) {
-		this(restaurantId, LocalDate.now(), 2);
-	}
 }

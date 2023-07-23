@@ -204,7 +204,7 @@ class RestaurantServiceTest {
 	private List<Restaurant> restaurantSaveAll(RestaurantCreateReq createReq, List<Member> members) {
 		List<Restaurant> restaurants = new ArrayList<>();
 		for (long id = 1L; id <= members.size(); id++) {
-			restaurants.add(new FakeRestaurant(id, createRestaurant(members.get((int)id))));
+			restaurants.add(new FakeRestaurant(id, createRestaurant(members.get((int)id - 1))));
 		}
 
 		return restaurants;

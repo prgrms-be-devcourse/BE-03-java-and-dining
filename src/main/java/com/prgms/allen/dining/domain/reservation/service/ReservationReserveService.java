@@ -13,17 +13,17 @@ import com.prgms.allen.dining.domain.common.NotFoundResourceException;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
 import com.prgms.allen.dining.domain.notification.slack.SlackNotifyService;
-import com.prgms.allen.dining.domain.reservation.BookingScheduleService;
 import com.prgms.allen.dining.domain.reservation.ReserveFailException;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.entity.BookingSchedule;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.service.BookingScheduleService;
 import com.prgms.allen.dining.domain.reservation.dto.ReservationCreateReq;
-import com.prgms.allen.dining.domain.reservation.entity.BookingSchedule;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
-import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantInfo;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo;
+import com.prgms.allen.dining.domain.restaurant.provider.RestaurantProvider;
 
 @Service
 @Transactional(readOnly = true)

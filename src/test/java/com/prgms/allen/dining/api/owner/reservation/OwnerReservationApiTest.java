@@ -134,10 +134,9 @@ class OwnerReservationApiTest {
 					fieldWithPath("customerInfoRes.visitedCount").description("방문 횟수"),
 					fieldWithPath("customerInfoRes.noShowCount").description("노쇼 횟수"),
 					fieldWithPath("customerInfoRes.lastVisitedDateTime").description("마지막 방문일시"),
-					fieldWithPath("reservationInfoResForOwner").description("예약 정보"),
-					fieldWithPath("reservationInfoResForOwner.visitDateTime").description("예약 일시"),
-					fieldWithPath("reservationInfoResForOwner.visitorCount").description("방문 인원수"),
-					fieldWithPath("reservationInfoResForOwner.memo").description("예약 메모")
+					fieldWithPath("visitDateTime").description("예약 일시"),
+					fieldWithPath("visitorCount").description("방문 인원수"),
+					fieldWithPath("memo").description("예약 메모")
 				))
 			);
 	}

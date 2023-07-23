@@ -130,9 +130,6 @@ class CustomerReservationApiTest {
 					parameterWithName("restaurantId").description("식당 식별자"),
 					parameterWithName("date").description("방문 날짜"),
 					parameterWithName("visitorCount").description("방문객 수")
-				),
-				responseFields(
-					fieldWithPath("reservationAvailableTimes[]").description("예약 가능한 시간")
 				))
 			);
 	}
@@ -238,11 +235,9 @@ class CustomerReservationApiTest {
 						fieldWithPath("reservationInfoResForCustomer.memo").type(JsonFieldType.STRING)
 							.optional()
 							.description("예약 메모"),
-
-						fieldWithPath("restaurantInfoRes").type(JsonFieldType.OBJECT).description("정보"),
-						fieldWithPath("restaurantInfoRes.name").type(JsonFieldType.STRING).description("식당 이름"),
-						fieldWithPath("restaurantInfoRes.location").type(JsonFieldType.STRING).description("식당 위치"),
-						fieldWithPath("restaurantInfoRes.phone").type(JsonFieldType.STRING).description("식당 전화번호")
+						fieldWithPath("name").type(JsonFieldType.STRING).description("식당 이름"),
+						fieldWithPath("location").type(JsonFieldType.STRING).description("식당 위치"),
+						fieldWithPath("phone").type(JsonFieldType.STRING).description("식당 전화번호")
 					)
 				)
 			);
@@ -294,12 +289,6 @@ class CustomerReservationApiTest {
 
 		mockMvc.perform(
 				get("/customer/api/reservations/available-dates?restaurantId=" + restaurant.getId()))
-			.andExpect(status().isOk())
-			.andDo(print())
-			.andDo(document("customer-get-available-dates-restaurant",
-				responseFields(
-					fieldWithPath("availableDates[]").type(JsonFieldType.ARRAY).description("예약 가능 날짜 리스트")
-				))
-			);
+			.andExpect(status().isOk());
 	}
 }

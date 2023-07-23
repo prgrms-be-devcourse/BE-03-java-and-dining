@@ -16,7 +16,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
-import com.prgms.allen.dining.domain.reservation.entity.BookingSchedule;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.entity.BookingSchedule;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.repository.BookingScheduleRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.prgms.allen.dining.generator.DummyGenerator;

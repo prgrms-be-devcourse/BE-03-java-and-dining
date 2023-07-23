@@ -13,7 +13,6 @@ import com.prgms.allen.dining.domain.reservation.entity.QReservation;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.restaurant.entity.QRestaurant;
-import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -46,7 +45,7 @@ public class CustomReservationRepositoryImpl extends QuerydslRepositorySupport
 
 		final JPQLQuery<Reservation> query = from(reservation);
 		query.join(customer).on(reservation.customer.eq(customer))
-			.join(restaurant).on(reservation.restaurant.eq(restaurant));
+			.join(restaurant).on(reservation.restaurantId.eq(restaurant.id));
 
 		return query.distinct()
 			.select(Projections.fields(CustomerReservationInfoProj.class,
@@ -65,7 +64,7 @@ public class CustomReservationRepositoryImpl extends QuerydslRepositorySupport
 			.where(
 				customer.eq(selectReservationCustomer(customerReservationInfoParam, reservation, customer))
 					.and(
-						restaurant.eq(
+						restaurant.id.eq(
 							selectReservationRestaurant(customerReservationInfoParam, reservation, restaurant))
 					)
 			)
@@ -82,14 +81,16 @@ public class CustomReservationRepositoryImpl extends QuerydslRepositorySupport
 			.where(reservation.id.eq(customerReservationInfoParam.reservationId()));
 	}
 
-	private JPQLQuery<Restaurant> selectReservationRestaurant(
+	private JPQLQuery<Long> selectReservationRestaurant(
 		CustomerReservationInfoParam customerReservationInfoParam,
 		QReservation reservation,
 		QRestaurant restaurant
 	) {
-		return JPAExpressions.select(restaurant)
+		JPQLQuery<Long> restaurantId = JPAExpressions.select(reservation.restaurantId)
 			.from(reservation)
 			.where(reservation.id.eq(customerReservationInfoParam.reservationId()));
+
+		return restaurantId;
 	}
 
 	private StringTemplate formatVisitedDateTime(QReservation reservation) {

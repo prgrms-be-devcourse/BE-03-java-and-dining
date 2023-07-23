@@ -12,11 +12,12 @@ import com.prgms.allen.dining.domain.fake.FakeMember;
 import com.prgms.allen.dining.domain.fake.FakeRestaurant;
 import com.prgms.allen.dining.domain.member.MemberService;
 import com.prgms.allen.dining.domain.member.entity.Member;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.service.BookingScheduleService;
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.reservation.service.ReservationReserveService;
-import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
+import com.prgms.allen.dining.domain.restaurant.provider.RestaurantProvider;
 import com.prgms.allen.dining.generator.DummyGenerator;
 
 @ExtendWith(MockitoExtension.class)

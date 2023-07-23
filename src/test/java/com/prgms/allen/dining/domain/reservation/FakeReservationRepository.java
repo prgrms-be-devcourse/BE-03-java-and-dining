@@ -1,7 +1,6 @@
 package com.prgms.allen.dining.domain.reservation;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -64,7 +63,7 @@ public class FakeReservationRepository implements ReservationRepository {
 	}
 
 	@Override
-	public List<Reservation> findBookingCounts(
+	public List<Reservation> findAllByDateAndStatus(
 		Long restaurantId,
 		LocalDate date,
 		List<ReservationStatus> statuses
@@ -73,15 +72,7 @@ public class FakeReservationRepository implements ReservationRepository {
 	}
 
 	@Override
-	public List<Reservation> findReservationsByDateTime(Long restaurantId,
-		LocalDate visitDate,
-		LocalTime visitTime,
-		List<ReservationStatus> statuses) {
-		return reservations;
-	}
-
-	@Override
-	public List<Reservation> findTotalVisitorCountPerDay(Long restaurantId,
+	public List<Reservation> findAllByRestaurantIdAndStatus(Long restaurantId,
 		List<ReservationStatus> statuses) {
 		return reservations;
 	}

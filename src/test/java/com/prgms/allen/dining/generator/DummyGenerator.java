@@ -223,4 +223,12 @@ public class DummyGenerator {
 			"qwer1234!",
 			MemberType.CUSTOMER);
 	}
+
+	public static ReservationCustomerInput createCustomerInput(Member customer, int visitorCount) {
+		return new ReservationCustomerInput(
+			LocalDate.now().plusDays(1L),
+			LocalTime.of(13, 0),
+			visitorCount
+		);
+	}
 }

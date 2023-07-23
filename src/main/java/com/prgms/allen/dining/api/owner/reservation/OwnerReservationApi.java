@@ -46,11 +46,12 @@ public class OwnerReservationApi {
 		@RequestParam Long restaurantId,
 		Pageable pageable
 	) {
-		return ResponseEntity.ok(reservationFindService.getReservations(
+		Page<ReservationSimpleResForOwner> reservations = reservationFindService.getReservations(
 			restaurantId,
 			reservationStatus,
 			pageable
-		));
+		);
+		return ResponseEntity.ok(reservations);
 	}
 
 	@PreAuthorize("hasRole('OWNER') or isAnonymous()")

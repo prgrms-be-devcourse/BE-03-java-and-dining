@@ -79,9 +79,15 @@ public class ConcurrentReserveTest {
 
 	@AfterEach
 	void clean() {
-		reservationRepository.deleteAll();
-		restaurantRepository.deleteAll();
-		memberRepository.deleteAll();
+		transactionTemplate.executeWithoutResult(
+			status -> reservationRepository.deleteAll()
+		);
+		transactionTemplate.executeWithoutResult(
+			status -> restaurantRepository.deleteAll()
+		);
+		transactionTemplate.executeWithoutResult(
+			status -> memberRepository.deleteAll()
+		);
 	}
 
 	@Test

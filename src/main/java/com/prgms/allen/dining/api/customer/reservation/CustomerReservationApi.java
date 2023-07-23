@@ -33,8 +33,8 @@ import com.prgms.allen.dining.domain.reservation.service.ReservationFindService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationProvider;
 import com.prgms.allen.dining.domain.reservation.service.ReservationReserveService;
 import com.prgms.allen.dining.domain.reservation.service.ReservationStatusUpdateService;
-import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo;
+import com.prgms.allen.dining.domain.restaurant.provider.RestaurantProvider;
 import com.prgms.allen.dining.security.jwt.JwtAuthenticationPrincipal;
 
 @RestController

@@ -22,8 +22,8 @@ import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
 import com.prgms.allen.dining.domain.reservation.entity.VisitStatus;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
-import com.prgms.allen.dining.domain.restaurant.RestaurantProvider;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantInfo;
+import com.prgms.allen.dining.domain.restaurant.provider.RestaurantProvider;
 
 @Service
 @Transactional(readOnly = true)
