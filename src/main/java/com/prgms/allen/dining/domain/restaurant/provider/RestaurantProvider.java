@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.restaurant;
+package com.prgms.allen.dining.domain.restaurant.provider;
 
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantInfo;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo;

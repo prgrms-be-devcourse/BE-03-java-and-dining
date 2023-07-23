@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.reservation.service;
+package com.prgms.allen.dining.domain.reservation.bookingSchedule.service;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.prgms.allen.dining.domain.reservation.BookingScheduleRepository;
-import com.prgms.allen.dining.domain.reservation.DuplicatedException;
-import com.prgms.allen.dining.domain.reservation.entity.BookingSchedule;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.BookingScheduleDuplicateException;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.entity.BookingSchedule;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.repository.BookingScheduleRepository;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,7 +40,7 @@ public class BookingScheduleGenerator {
 			String errorMessage = MessageFormat.format("{0}번 레스토랑의 {1}의 예약 현황 로우가 이미 생성되었기 때문에 찾아옵니다.",
 				restaurantId, bookingDateTime);
 
-			throw new DuplicatedException(errorMessage);
+			throw new BookingScheduleDuplicateException(errorMessage);
 		}
 	}
 

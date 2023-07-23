@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.restaurant;
+package com.prgms.allen.dining.domain.restaurant.provider;
 
 import java.text.MessageFormat;
 
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.common.NotFoundResourceException;
+import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantInfo;
 import com.prgms.allen.dining.domain.restaurant.dto.RestaurantOperationInfo;
 

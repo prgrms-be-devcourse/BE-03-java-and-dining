@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.reservation;
+package com.prgms.allen.dining.domain.reservation.bookingSchedule.repository;
 
 import java.time.LocalDateTime;
 
@@ -8,7 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import com.prgms.allen.dining.domain.reservation.entity.BookingSchedule;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.entity.BookingSchedule;
 
 public class BookingScheduleRepositoryCustomImpl implements BookingScheduleRepositoryCustom {
 

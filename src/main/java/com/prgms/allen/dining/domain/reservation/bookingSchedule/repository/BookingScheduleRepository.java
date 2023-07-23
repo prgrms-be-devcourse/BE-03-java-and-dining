@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.reservation;
+package com.prgms.allen.dining.domain.reservation.bookingSchedule.repository;
 
 import static org.hibernate.annotations.QueryHints.*;
 
@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.QueryHints;
 
-import com.prgms.allen.dining.domain.reservation.entity.BookingSchedule;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.entity.BookingSchedule;
 
 public interface BookingScheduleRepository
 	extends JpaRepository<BookingSchedule, Long>, BookingScheduleRepositoryCustom {

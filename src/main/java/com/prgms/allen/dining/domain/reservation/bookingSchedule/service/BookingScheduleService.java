@@ -1,4 +1,4 @@
-package com.prgms.allen.dining.domain.reservation;
+package com.prgms.allen.dining.domain.reservation.bookingSchedule.service;
 
 import java.time.LocalDateTime;
 
@@ -7,8 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.prgms.allen.dining.domain.reservation.entity.BookingSchedule;
-import com.prgms.allen.dining.domain.reservation.service.BookingScheduleGenerator;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.BookingScheduleDuplicateException;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.entity.BookingSchedule;
+import com.prgms.allen.dining.domain.reservation.bookingSchedule.repository.BookingScheduleRepository;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,7 +38,7 @@ public class BookingScheduleService {
 		logger.warn("find로 못찾았기 때문에 없어서 생성하러 감");
 		try {
 			return bookingScheduleGenerator.generate(restaurantId, bookingDateTime, seatCount);
-		} catch (DuplicatedException duplicatedException) {
+		} catch (BookingScheduleDuplicateException bookingScheduleDuplicateException) {
 			logger.warn("중복 생성 시도로 오류가 발생하여 찾아옵니다.");
 			return bookingScheduleGenerator.retryGenerate(restaurantId, bookingDateTime, seatCount);
 		}
