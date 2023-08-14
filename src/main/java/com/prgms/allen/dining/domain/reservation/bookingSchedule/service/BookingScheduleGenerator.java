@@ -44,9 +44,9 @@ public class BookingScheduleGenerator {
 		}
 	}
 
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public BookingSchedule retryGenerate(Long restaurantId, LocalDateTime bookingDateTime, int seatCounts) {
-		BookingSchedule schedule = bookingScheduleRepository.getByRestaurantIdAndAndBookingDateTime(
-			restaurantId, bookingDateTime);
+		BookingSchedule schedule = bookingScheduleRepository.findOne(restaurantId, bookingDateTime);
 
 		if (schedule == null) {
 			logger.warn("예약 현황 데이터를 찾아오지 못해 다시 생성합니다.");
