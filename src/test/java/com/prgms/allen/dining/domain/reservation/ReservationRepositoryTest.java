@@ -11,13 +11,17 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.prgms.allen.dining.domain.member.MemberRepository;
 import com.prgms.allen.dining.domain.member.entity.Member;
@@ -29,6 +33,7 @@ import com.prgms.allen.dining.domain.reservation.dto.VisitorCountPerVisitTimePro
 import com.prgms.allen.dining.domain.reservation.entity.Reservation;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationCustomerInput;
 import com.prgms.allen.dining.domain.reservation.entity.ReservationStatus;
+import com.prgms.allen.dining.domain.reservation.repository.CustomReservationRepositoryImpl;
 import com.prgms.allen.dining.domain.reservation.repository.ReservationRepository;
 import com.prgms.allen.dining.domain.restaurant.RestaurantRepository;
 import com.prgms.allen.dining.domain.restaurant.entity.ClosingDay;
@@ -36,7 +41,8 @@ import com.prgms.allen.dining.domain.restaurant.entity.FoodType;
 import com.prgms.allen.dining.domain.restaurant.entity.Menu;
 import com.prgms.allen.dining.domain.restaurant.entity.Restaurant;
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
 class ReservationRepositoryTest {
 
 	Logger log = LoggerFactory.getLogger(ReservationRepositoryTest.class);
@@ -101,10 +107,20 @@ class ReservationRepositoryTest {
 	@Autowired
 	private ReservationRepository reservationRepository;
 
+	@Autowired
+	private CustomReservationRepositoryImpl customReservationRepository;
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
 	@BeforeEach
 	void initMembersAndRestaurant() {
 		memberRepository.saveAll(List.of(customer, owner));
 		restaurantRepository.saveAll(List.of(restaurant, restaurant2));
+		entityManager
+			.createNativeQuery(
+				"CREATE ALIAS IF NOT EXISTS date_format FOR \"com.prgms.allen.dining.domain.reservation.dialect.H2DialectAlias.date_format\"")
+			.executeUpdate();
 	}
 
 	@Test
