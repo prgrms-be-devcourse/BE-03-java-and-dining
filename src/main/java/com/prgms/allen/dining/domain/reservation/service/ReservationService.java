@@ -70,7 +70,6 @@ public class ReservationService {
 		return reservationRepository.save(new Reservation(customer, restaurant, customerInput));
 	}
 
-	//Todo: 지워
 	@Transactional
 	public Long reserve(Long customerId, ReservationCreateReq createRequest) {
 		Member customer = memberService.findCustomerById(customerId);
